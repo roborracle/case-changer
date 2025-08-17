@@ -18,62 +18,54 @@
     <!-- Livewire Styles -->
     @livewireStyles
 </head>
-<body class="h-full bg-gray-50 text-gray-900 antialiased">
+<body class="h-full text-gray-900 antialiased smooth-rendering" style="background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 100%);">
     <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md">
         Skip to main content
     </a>
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo/Brand -->
+    <!-- Revolutionary Navigation (Minimal) -->
+    <nav class="blur-glass" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.8); border-bottom: 1px solid var(--neutral-200);">
+        <div style="max-width: 1400px; margin: 0 auto; padding: var(--space-md) var(--space-xl);">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <h1 class="text-xl font-bold text-gray-900">
-                        <span class="text-blue-600">Case</span>Changer
+                    <h1 class="text-gradient" style="font-size: var(--type-scale-lg); font-weight: 700; margin: 0;">
+                        Case Changer Pro
                     </h1>
-                    <span class="ml-3 text-sm text-gray-500">Professional Text Transformer</span>
                 </div>
-
-                <!-- Navigation (if needed in future) -->
-                <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
-                    <a href="#" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-                        Home
-                    </a>
-                    <a href="#features" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-                        Features
-                    </a>
-                    <a href="#style-guides" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-                        Style Guides
-                    </a>
-                </nav>
+                <div style="font-size: var(--type-scale-sm); color: var(--neutral-500);">
+                    Revolutionary Text Transformation
+                </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content -->
-    <main id="main-content" class="flex-1">
-        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {{ $slot }}
-        </div>
+    <!-- Revolutionary Main Content -->
+    <main id="main-content" class="flex-1" style="padding-top: 80px;">
+        {{ $slot }}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm text-gray-500 mb-4 md:mb-0">
-                    © {{ date('Y') }} Case Changer. Built with Laravel TALL Stack.
+    <!-- Revolutionary Footer -->
+    <footer class="blur-glass" style="background: rgba(255, 255, 255, 0.6); border-top: 1px solid var(--neutral-200); margin-top: var(--space-3xl);">
+        <div style="max-width: 1400px; margin: 0 auto; padding: var(--space-xl);">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div style="font-size: var(--type-scale-sm); color: var(--neutral-500);">
+                    © {{ date('Y') }} Case Changer Pro. Revolutionary interface design.
                 </div>
-                <div class="flex space-x-6 text-sm">
-                    <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors">
-                        Privacy Policy
+                <div class="flex gap-6" style="font-size: var(--type-scale-sm);">
+                    <a href="#" style="color: var(--neutral-500); transition: color 200ms; text-decoration: none;" 
+                       onmouseover="this.style.color='var(--accent-primary)'" 
+                       onmouseout="this.style.color='var(--neutral-500)'">
+                        Privacy
                     </a>
-                    <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors">
-                        Terms of Service
+                    <a href="#" style="color: var(--neutral-500); transition: color 200ms; text-decoration: none;"
+                       onmouseover="this.style.color='var(--accent-primary)'" 
+                       onmouseout="this.style.color='var(--neutral-500)'">
+                        Terms
                     </a>
-                    <a href="https://github.com/yourusername/case-changer" class="text-gray-500 hover:text-blue-600 transition-colors">
+                    <a href="#" style="color: var(--neutral-500); transition: color 200ms; text-decoration: none;"
+                       onmouseover="this.style.color='var(--accent-primary)'" 
+                       onmouseout="this.style.color='var(--neutral-500)'">
                         GitHub
                     </a>
                 </div>
@@ -81,44 +73,7 @@
         </div>
     </footer>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" 
-         class="fixed bottom-4 right-4 z-50 space-y-2"
-         x-data="{ toasts: [] }"
-         @toast.window="
-            toasts.push($event.detail);
-            setTimeout(() => toasts.shift(), 5000);
-         ">
-        <template x-for="(toast, index) in toasts" :key="index">
-            <div x-transition:enter="transform ease-out duration-300 transition"
-                 x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                 x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                 x-transition:leave="transition ease-in duration-100"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
-                <div class="p-4">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <template x-if="toast.type === 'success'">
-                                <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </template>
-                            <template x-if="toast.type === 'error'">
-                                <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </template>
-                        </div>
-                        <div class="ml-3 w-0 flex-1 pt-0.5">
-                            <p class="text-sm font-medium text-gray-900" x-text="toast.message"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </div>
+    <!-- Revolutionary Toast System (handled in component) -->
 
     <!-- Livewire Scripts -->
     @livewireScripts

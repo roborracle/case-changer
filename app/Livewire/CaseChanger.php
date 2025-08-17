@@ -1698,6 +1698,6 @@ class CaseChanger extends Component
      */
     public function render()
     {
-        return view('livewire.case-changer');
+        return view('livewire.revolutionary-case-changer');
     }
 }
