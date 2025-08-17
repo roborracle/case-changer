@@ -97,3 +97,122 @@
 **Consequences:**
 - Benefits: No user management overhead, GDPR compliance simplified, anonymous usage
 - Tradeoffs: No user preferences persistence, no usage tracking per user
+
+## System Architecture Patterns
+
+### High-Level Architecture
+```
+┌─────────────────────────────────────────────────┐
+│                   Browser                        │
+├─────────────────────────────────────────────────┤
+│          Alpine.js (Client Interactions)         │
+├─────────────────────────────────────────────────┤
+│         Livewire (Reactive Components)           │
+├─────────────────────────────────────────────────┤
+│            Laravel (Application Core)            │
+├─────────────────────────────────────────────────┤
+│     Text Processing Engine (Service Layer)       │
+└─────────────────────────────────────────────────┘
+```
+
+### Design Patterns Implementation
+
+#### 1. Strategy Pattern for Transformations
+Each transformation type follows a common interface pattern:
+```php
+interface TextTransformer {
+    public function transform(string $text): string;
+    public function getName(): string;
+    public function getDescription(): string;
+}
+```
+
+#### 2. Chain of Responsibility for Complex Formatting
+Style guides use chained processors for rule application:
+```php
+abstract class FormattingRule {
+    protected ?FormattingRule $next = null;
+    
+    public function setNext(FormattingRule $next): void;
+    abstract public function process(string $text): string;
+}
+```
+
+#### 3. Factory Pattern for Style Guide Creation
+```php
+class StyleGuideFactory {
+    public static function create(string $type): StyleGuide {
+        return match($type) {
+            'apa' => new ApaStyleGuide(),
+            'chicago' => new ChicagoStyleGuide(),
+            'mla' => new MlaStyleGuide(),
+            // ...
+        };
+    }
+}
+```
+
+### Data Flow Architecture
+
+#### Transformation Flow
+1. User enters text in input field
+2. Livewire component captures input via wire:model
+3. User selects transformation type
+4. Component calls TextProcessor service
+5. Service applies transformation strategy
+6. Result returned to component
+7. Component updates output field
+8. Alpine.js handles UI updates
+
+### Performance Optimization Patterns
+
+#### Caching Strategy
+```php
+class TransformationCache {
+    private array $cache = [];
+    private int $maxSize = 100;
+    
+    public function get(string $key): ?string;
+    public function set(string $key, string $value): void;
+    private function generateKey(string $text, string $type): string;
+}
+```
+
+#### Lazy Loading Transformers
+```php
+class TransformerRegistry {
+    private array $transformers = [];
+    private array $definitions = [
+        'title-case' => TitleCaseTransformer::class,
+        'sentence-case' => SentenceCaseTransformer::class,
+        // ...
+    ];
+    
+    public function get(string $type): TextTransformer;
+}
+```
+
+### Security Architecture
+
+#### XSS Prevention
+- All output escaped by default via Blade templating
+- No HTML input accepted in text processing
+- Content Security Policy headers implemented
+
+#### Input Sanitization
+```php
+trait Sanitization {
+    protected function sanitize(string $text): string {
+        // Remove zero-width characters
+        $text = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $text);
+        
+        // Normalize line endings
+        $text = str_replace(["\r\n", "\r"], "\n", $text);
+        
+        // Trim excessive whitespace
+        $text = preg_replace('/\s+/', ' ', $text);
+        
+        return $text;
+    }
+}
+```
