@@ -3,22 +3,40 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Services\TransformationService;
+use App\Services\PreservationService;
+use App\Services\StyleGuideService;
+use App\Services\HistoryService;
+use App\Services\ContextualSuggestionService;
 use Illuminate\Support\Facades\Log;
 
 /**
  * SCARLETT Documentation Standard
  * Purpose: Main Livewire component for text case transformation interface
- * Assumptions: User input is text, transformations are stateless
+ * Architecture: Service-oriented orchestrator following SOLID principles
+ * Dependencies: TransformationService, PreservationService, StyleGuideService, HistoryService
  * Constraints: Memory limit for large texts, browser clipboard API availability
- * Failure Modes: Invalid transformation type, empty input, memory overflow
+ * Failure Modes: Service unavailable, memory overflow, session timeout
  */
 class CaseChanger extends Component
 {
     /**
-     * Maximum text length allowed (100KB)
+     * Maximum text length allowed (1MB)
      * @var int
      */
-    private const MAX_TEXT_LENGTH = 100000;
+    private const MAX_TEXT_LENGTH = 1048576;
+    
+    /**
+     * Livewire event listeners
+     * @var array
+     */
+    protected $listeners = [
+        'resetCopied' => 'resetCopied',
+        'copyToClipboard' => 'copyToClipboard',
+        'clearAll' => 'clearAll',
+        'undo' => 'undo',
+        'redo' => 'redo'
+    ];
     
     /**
      * User input text to be transformed
@@ -33,10 +51,28 @@ class CaseChanger extends Component
     public string $outputText = '';
     
     /**
+     * Currently selected transformation type
+     * @var string
+     */
+    public string $selectedTransformation = '';
+    
+    /**
+     * Currently selected style guide
+     * @var string
+     */
+    public string $selectedStyleGuide = '';
+    
+    /**
      * Error message for user feedback
      * @var string
      */
     public string $errorMessage = '';
+    
+    /**
+     * Success message for user feedback
+     * @var string
+     */
+    public string $successMessage = '';
     
     /**
      * Whether advanced options are visible
@@ -45,10 +81,10 @@ class CaseChanger extends Component
     public bool $showAdvancedOptions = false;
     
     /**
-     * Maximum length for prepositions to lowercase
-     * @var int
+     * Whether preservation settings are visible
+     * @var bool
      */
-    public int $prepositionMaxLength = 4;
+    public bool $showPreservationSettings = false;
     
     /**
      * Whether text was copied to clipboard
@@ -63,15 +99,242 @@ class CaseChanger extends Component
     public array $stats = [
         'characters' => 0,
         'words' => 0,
-        'sentences' => 0
+        'sentences' => 0,
+        'lines' => 0
     ];
+
+    /**
+     * Smart preservation settings
+     * @var array
+     */
+    public array $preservationSettings = [
+        'urls' => true,
+        'emails' => true,
+        'brands' => true,
+        'code_blocks' => false,
+        'markdown' => false,
+        'mentions' => false,
+        'hashtags' => false,
+        'file_paths' => false,
+        'custom_terms' => []
+    ];
+
+    /**
+     * Available transformations grouped by category
+     * @var array
+     */
+    public array $transformationGroups = [];
+    
+    /**
+     * Available style guides
+     * @var array
+     */
+    public array $styleGuides = [];
+    
+    /**
+     * History state information
+     * @var array
+     */
+    public array $historyInfo = [
+        'can_undo' => false,
+        'can_redo' => false,
+        'position' => 0,
+        'total' => 0
+    ];
+
+    /**
+     * Contextual suggestions for current text
+     * @var array
+     */
+    public array $contextualSuggestions = [];
+    
+    // Glassmorphism UI Properties
+    public ?string $detectedContext = null;
+    public array $suggestions = [];
+    public array $popularTransformations = [];
+    public string $activeCategory = 'all';
+    public bool $showAdvanced = false;
+    public int $totalTools = 0;
+    public array $filteredTools = [];
+    public string $searchTerm = '';
+    public array $history = [];
+    public ?string $notification = null;
+    public ?string $textAnalysis = null;
+    public int $totalTransformations = 0;
+    public int $uniqueUsersToday = 0;
+    
+    // Advanced Settings
+    public bool $preserveFormatting = true;
+    public bool $smartDetection = true;
+    public bool $autoSuggest = true;
+    public bool $realTimePreview = false;
+    
+    /**
+     * Service instances
+     */
+    protected TransformationService $transformationService;
+    protected PreservationService $preservationService;
+    protected StyleGuideService $styleGuideService;
+    protected HistoryService $historyService;
+    protected ContextualSuggestionService $contextualSuggestionService;
+
+    /**
+     * Component boot lifecycle - inject services
+     */
+    public function boot(
+        TransformationService $transformationService,
+        PreservationService $preservationService,
+        StyleGuideService $styleGuideService,
+        HistoryService $historyService,
+        ContextualSuggestionService $contextualSuggestionService
+    ): void {
+        $this->transformationService = $transformationService;
+        $this->preservationService = $preservationService;
+        $this->styleGuideService = $styleGuideService;
+        $this->historyService = $historyService;
+        $this->contextualSuggestionService = $contextualSuggestionService;
+    }
+
+    /**
+     * Component mount lifecycle
+     */
+    public function mount(): void
+    {
+        $this->loadTransformationGroups();
+        $this->loadStyleGuides();
+        $this->updateStatistics();
+        $this->updateHistoryInfo();
+        $this->initializeGlassmorphismData();
+        
+        // Restore session if exists
+        $this->restoreSession();
+    }
+
+    /**
+     * Load available transformation groups
+     */
+    private function loadTransformationGroups(): void
+    {
+        $this->transformationGroups = [
+            'standard' => [
+                'title' => 'Standard Cases',
+                'transformations' => [
+                    'title' => 'Title Case',
+                    'sentence' => 'Sentence case',
+                    'upper' => 'UPPERCASE',
+                    'lower' => 'lowercase',
+                    'first_letter' => 'First letter',
+                    'alternating' => 'aLtErNaTiNg CaSe',
+                    'random' => 'RaNdOm CaSe',
+                    'inverse' => 'iNVERSE cASE'
+                ]
+            ],
+            'developer' => [
+                'title' => 'Developer Cases',
+                'transformations' => [
+                    'camel' => 'camelCase',
+                    'pascal' => 'PascalCase',
+                    'snake' => 'snake_case',
+                    'kebab' => 'kebab-case',
+                    'constant' => 'CONSTANT_CASE',
+                    'dot' => 'dot.case',
+                    'path' => 'path/case',
+                    'header' => 'Header-Case',
+                    'cobol' => 'COBOL-CASE',
+                    'macro' => 'MACRO_CASE',
+                    'train' => 'Train-Case',
+                    'flat' => 'flatcase',
+                    'slug' => 'slug-case'
+                ]
+            ],
+            'creative' => [
+                'title' => 'Creative Cases',
+                'transformations' => [
+                    'spongebob' => 'sPoNgEbOb CaSe',
+                    'wide' => 'Ｗｉｄｅ　Ｔｅｘｔ',
+                    'small_caps' => 'sᴍᴀʟʟ ᴄᴀᴘs',
+                    'strikethrough' => 's̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶',
+                    'zalgo' => 'Z̸̢̀a̸̧̕l̶̡̨g̷̨̧o̸̢̕ ̵̧̀T̶̨̕e̸̢̧x̴̨̕t̷̡̀',
+                    'upside_down' => 'uʍop ǝpısdn',
+                    'reversed' => 'desreveR',
+                    'hashtag' => '#HashtagCase',
+                    'mention' => '@mention_case',
+                    'leetspeak' => 'L337sp34k'
+                ]
+            ],
+            'encoding' => [
+                'title' => 'Encoding & Conversion',
+                'transformations' => [
+                    'binary' => 'Binary',
+                    'base64' => 'Base64',
+                    'url_encoded' => 'URL Encoded',
+                    'html_entities' => 'HTML Entities',
+                    'rot13' => 'ROT13 Cipher',
+                    'morse' => 'Morse Code',
+                    'nato' => 'NATO Phonetic'
+                ]
+            ],
+            'whitespace' => [
+                'title' => 'Whitespace & Formatting',
+                'transformations' => [
+                    'remove_spaces' => 'Remove Spaces',
+                    'remove_extra_spaces' => 'Remove Extra Spaces',
+                    'add_spaces' => 'Add Spaces',
+                    'spaces_to_underscores' => 'Spaces → Underscores',
+                    'underscores_to_spaces' => 'Underscores → Spaces',
+                    'no_whitespace' => 'No Whitespace',
+                    'smart_quotes' => 'Smart "Quotes"'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Load available style guides
+     */
+    private function loadStyleGuides(): void
+    {
+        $this->styleGuides = [
+            'academic' => [
+                'title' => 'Academic Styles',
+                'guides' => [
+                    'apa' => 'APA Style',
+                    'mla' => 'MLA Style',
+                    'chicago' => 'Chicago Style',
+                    'harvard' => 'Harvard Style',
+                    'ieee' => 'IEEE Style',
+                    'ama' => 'AMA Style',
+                    'vancouver' => 'Vancouver Style'
+                ]
+            ],
+            'journalism' => [
+                'title' => 'Journalism Styles',
+                'guides' => [
+                    'ap' => 'AP Style',
+                    'nytimes' => 'NY Times Style',
+                    'reuters' => 'Reuters Style',
+                    'bloomberg' => 'Bloomberg Style',
+                    'wikipedia' => 'Wikipedia Style'
+                ]
+            ],
+            'legal_academic' => [
+                'title' => 'Legal & Academic',
+                'guides' => [
+                    'bluebook' => 'Bluebook Style',
+                    'oscola' => 'OSCOLA Style',
+                    'oxford' => 'Oxford Style',
+                    'cambridge' => 'Cambridge Style'
+                ]
+            ]
+        ];
+    }
 
     /**
      * Update statistics when text changes
      */
     public function updatedInputText(): void
     {
-        $this->errorMessage = '';
+        $this->clearMessages();
         
         // Validate input length
         if (mb_strlen($this->inputText, 'UTF-8') > self::MAX_TEXT_LENGTH) {
@@ -86,7 +349,19 @@ class CaseChanger extends Component
         }
         
         $this->updateStatistics();
+        $this->updateContextualSuggestions();
         $this->copied = false;
+        
+        // Add to history
+        if (!empty($this->inputText)) {
+            $this->historyService->addState([
+                'input' => $this->inputText,
+                'output' => $this->outputText,
+                'transformation' => $this->selectedTransformation,
+                'style_guide' => $this->selectedStyleGuide
+            ]);
+            $this->updateHistoryInfo();
+        }
     }
 
     /**
@@ -94,1315 +369,467 @@ class CaseChanger extends Component
      */
     private function updateStatistics(): void
     {
+        $text = $this->inputText;
+        
         $this->stats = [
-            'characters' => strlen($this->inputText),
-            'words' => str_word_count($this->inputText),
-            'sentences' => preg_match_all('/[.!?]+/', $this->inputText, $matches)
+            'characters' => mb_strlen($text, 'UTF-8'),
+            'words' => str_word_count($text),
+            'sentences' => preg_match_all('/[.!?]+/', $text, $matches),
+            'lines' => substr_count($text, "\n") + 1
+        ];
+    }
+    
+    /**
+     * Update contextual suggestions based on input text
+     */
+    private function updateContextualSuggestions(): void
+    {
+        if (empty($this->inputText)) {
+            $this->contextualSuggestions = [];
+            $this->suggestions = [];
+            $this->detectedContext = null;
+            return;
+        }
+        
+        $this->contextualSuggestions = $this->contextualSuggestionService->getSuggestions($this->inputText);
+        
+        // Map to glassmorphism format
+        $this->suggestions = array_map(function($suggestion) {
+            return [
+                'type' => $suggestion['transformation'] ?? 'title',
+                'label' => $suggestion['label'] ?? $suggestion['transformation'] ?? 'Transform',
+                'style' => $this->getStyleForTransformation($suggestion['transformation'] ?? 'title')
+            ];
+        }, array_slice($this->contextualSuggestions, 0, 5));
+        
+        // Detect context
+        $analysis = $this->contextualSuggestionService->analyzeText($this->inputText);
+        if ($analysis['is_code']) {
+            $this->detectedContext = 'Code';
+        } elseif ($analysis['is_email']) {
+            $this->detectedContext = 'Email';
+        } elseif ($analysis['is_url']) {
+            $this->detectedContext = 'URL';
+        } elseif ($analysis['is_title']) {
+            $this->detectedContext = 'Title';
+        } else {
+            $this->detectedContext = null;
+        }
+        
+        // Update text analysis
+        $wordCount = str_word_count($this->inputText);
+        if ($wordCount === 1) {
+            $this->textAnalysis = 'Single word';
+        } elseif ($wordCount < 5) {
+            $this->textAnalysis = 'Short phrase';
+        } elseif ($wordCount < 20) {
+            $this->textAnalysis = 'Sentence';
+        } elseif ($wordCount < 100) {
+            $this->textAnalysis = 'Paragraph';
+        } else {
+            $this->textAnalysis = 'Long text';
+        }
+    }
+    
+    /**
+     * Initialize glassmorphism UI data
+     */
+    private function initializeGlassmorphismData(): void
+    {
+        // Initialize popular transformations
+        $this->popularTransformations = [
+            ['type' => 'upper', 'label' => 'UPPERCASE', 'style' => 'uppercase'],
+            ['type' => 'lower', 'label' => 'lowercase', 'style' => 'lowercase'],
+            ['type' => 'title', 'label' => 'Title Case', 'style' => 'title'],
+            ['type' => 'sentence', 'label' => 'Sentence case', 'style' => 'sentence'],
+            ['type' => 'camel', 'label' => 'camelCase', 'style' => 'camel'],
+            ['type' => 'pascal', 'label' => 'PascalCase', 'style' => 'pascal'],
+            ['type' => 'snake', 'label' => 'snake_case', 'style' => 'snake'],
+            ['type' => 'kebab', 'label' => 'kebab-case', 'style' => 'kebab'],
+        ];
+        
+        // Count total tools
+        $this->totalTools = 0;
+        foreach ($this->transformationGroups as $group) {
+            $this->totalTools += count($group['transformations']);
+        }
+        
+        // Initialize filtered tools
+        $this->updateFilteredTools();
+        
+        // Set demo stats
+        $this->totalTransformations = rand(50000, 100000);
+        $this->uniqueUsersToday = rand(100, 500);
+    }
+    
+    /**
+     * Analyze text (for wire:input)
+     */
+    public function analyzeText(): void
+    {
+        $this->updateContextualSuggestions();
+    }
+    
+    /**
+     * Update filtered tools based on search and category
+     */
+    public function updateFilteredTools(): void
+    {
+        $tools = [];
+        
+        foreach ($this->transformationGroups as $groupKey => $group) {
+            // Filter by category if not 'all'
+            if ($this->activeCategory !== 'all') {
+                $categoryMap = [
+                    'case' => ['standard'],
+                    'developer' => ['developer'],
+                    'style' => ['encoding', 'whitespace'],
+                    'creative' => ['creative']
+                ];
+                
+                if (isset($categoryMap[$this->activeCategory]) && 
+                    !in_array($groupKey, $categoryMap[$this->activeCategory])) {
+                    continue;
+                }
+            }
+            
+            foreach ($group['transformations'] as $key => $label) {
+                // Filter by search term
+                if (!empty($this->searchTerm)) {
+                    if (stripos($label, $this->searchTerm) === false && 
+                        stripos($key, $this->searchTerm) === false) {
+                        continue;
+                    }
+                }
+                
+                $tools[] = [
+                    'type' => $key,
+                    'label' => $label,
+                    'style' => $this->getStyleForTransformation($key),
+                    'description' => $this->getDescriptionForTransformation($key)
+                ];
+            }
+        }
+        
+        $this->filteredTools = $tools;
+    }
+    
+    /**
+     * Get style class for transformation
+     */
+    private function getStyleForTransformation(string $type): string
+    {
+        $styleMap = [
+            'upper' => 'uppercase',
+            'lower' => 'lowercase',
+            'title' => 'title',
+            'sentence' => 'sentence',
+            'camel' => 'camel',
+            'pascal' => 'pascal',
+            'snake' => 'snake',
+            'kebab' => 'kebab',
+            'alternating' => 'alternating',
+            'inverse' => 'inverse',
+            'wide' => 'wide',
+            'small_caps' => 'small-caps',
+            'reversed' => 'reversed'
+        ];
+        
+        return $styleMap[$type] ?? 'default';
+    }
+    
+    /**
+     * Get description for transformation
+     */
+    private function getDescriptionForTransformation(string $type): string
+    {
+        $descriptions = [
+            'upper' => 'Convert all text to uppercase letters',
+            'lower' => 'Convert all text to lowercase letters',
+            'title' => 'Capitalize the first letter of each word',
+            'sentence' => 'Capitalize the first letter of each sentence',
+            'camel' => 'Convert to camelCase for variables',
+            'pascal' => 'Convert to PascalCase for classes',
+            'snake' => 'Convert to snake_case for Python/Ruby',
+            'kebab' => 'Convert to kebab-case for URLs',
+            'alternating' => 'AlTeRnAtE case for each letter',
+            'inverse' => 'Invert the case of each letter',
+            'wide' => 'Convert to full-width characters',
+            'small_caps' => 'Convert to small capital letters',
+            'reversed' => 'Reverse the text order'
+        ];
+        
+        return $descriptions[$type] ?? 'Transform your text';
+    }
+
+    /**
+     * Apply selected transformation
+     */
+    public function applyTransformation(string $transformationType): void
+    {
+        try {
+            $this->clearMessages();
+            
+            if (empty($this->inputText)) {
+                $this->outputText = '';
+                return;
+            }
+            
+            $this->selectedTransformation = $transformationType;
+            $this->selectedStyleGuide = '';
+            
+            // Apply preservation if enabled
+            $text = $this->inputText;
+            $preservedItems = [];
+            
+            if ($this->shouldUsePreservation($transformationType)) {
+                [$text, $preservedItems] = $this->preservationService->preserveContent(
+                    $text,
+                    $this->preservationSettings
+                );
+            }
+            
+            // Apply transformation
+            $transformed = $this->transformationService->transform($text, $transformationType);
+            
+            // Restore preserved content
+            if (!empty($preservedItems)) {
+                $transformed = $this->preservationService->restoreContent($transformed, $preservedItems);
+            }
+            
+            $this->outputText = $transformed;
+            $this->copied = false;
+            
+            // Add to history
+            $this->addToHistory();
+            
+            // Show notification
+            $this->showNotification('Transformation applied!');
+            
+            // Update stats
+            $this->totalTransformations++;
+            
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Error during transformation: ' . $e->getMessage();
+            Log::error('Transformation failed', [
+                'type' => $transformationType,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+    
+    /**
+     * Transform text (glassmorphism method)
+     */
+    public function transform(string $type): void
+    {
+        $this->applyTransformation($type);
+    }
+
+    /**
+     * Apply selected style guide
+     */
+    public function applyStyleGuide(string $styleGuide): void
+    {
+        try {
+            $this->clearMessages();
+            
+            if (empty($this->inputText)) {
+                $this->outputText = '';
+                return;
+            }
+            
+            $this->selectedStyleGuide = $styleGuide;
+            $this->selectedTransformation = '';
+            
+            // Determine context type
+            $context = $this->determineContext($this->inputText);
+            
+            // Apply style guide formatting
+            $this->outputText = $this->styleGuideService->format(
+                $this->inputText,
+                $styleGuide,
+                $context
+            );
+            
+            $this->copied = false;
+            
+            // Add to history
+            $this->addToHistory();
+            
+            $this->successMessage = 'Style guide applied successfully!';
+            
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Error applying style guide: ' . $e->getMessage();
+            Log::error('Style guide application failed', [
+                'guide' => $styleGuide,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Determine text context for style guide application
+     */
+    private function determineContext(string $text): string
+    {
+        // Check if it's a reference/citation
+        if (preg_match('/^\s*\[?\d+\]?\.?\s*/', $text) || 
+            preg_match('/\(\d{4}\)/', $text) ||
+            preg_match('/pp?\.\s*\d+/', $text)) {
+            return 'reference';
+        }
+        
+        // Check if it's a heading (short, no ending punctuation)
+        if (mb_strlen($text, 'UTF-8') < 100 && !preg_match('/[.!?]$/', trim($text))) {
+            return 'heading';
+        }
+        
+        // Default to title context
+        return 'title';
+    }
+
+    /**
+     * Check if preservation should be used for transformation
+     */
+    private function shouldUsePreservation(string $transformationType): bool
+    {
+        // Don't preserve for encoding transformations
+        $noPreserveTypes = ['binary', 'base64', 'url_encoded', 'html_entities', 'rot13', 'morse', 'nato'];
+        
+        return !in_array($transformationType, $noPreserveTypes) && 
+               array_filter($this->preservationSettings);
+    }
+
+    /**
+     * Add custom term to preservation
+     */
+    public function addCustomTerm(string $term): void
+    {
+        if (!empty(trim($term))) {
+            $this->preservationSettings['custom_terms'][] = trim($term);
+            $this->successMessage = 'Custom term added to preservation list.';
+        }
+    }
+
+    /**
+     * Remove custom term from preservation
+     */
+    public function removeCustomTerm(int $index): void
+    {
+        if (isset($this->preservationSettings['custom_terms'][$index])) {
+            array_splice($this->preservationSettings['custom_terms'], $index, 1);
+            $this->successMessage = 'Custom term removed from preservation list.';
+        }
+    }
+
+    /**
+     * Undo last transformation
+     */
+    public function undo(): void
+    {
+        $state = $this->historyService->undo();
+        
+        if ($state) {
+            $this->inputText = $state['input'] ?? '';
+            $this->outputText = $state['output'] ?? '';
+            $this->selectedTransformation = $state['transformation'] ?? '';
+            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+            $this->updateStatistics();
+            $this->updateHistoryInfo();
+            $this->successMessage = 'Undo successful.';
+        }
+    }
+
+    /**
+     * Redo last undone transformation
+     */
+    public function redo(): void
+    {
+        $state = $this->historyService->redo();
+        
+        if ($state) {
+            $this->inputText = $state['input'] ?? '';
+            $this->outputText = $state['output'] ?? '';
+            $this->selectedTransformation = $state['transformation'] ?? '';
+            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+            $this->updateStatistics();
+            $this->updateHistoryInfo();
+            $this->successMessage = 'Redo successful.';
+        }
+    }
+
+    /**
+     * Jump to specific history state
+     */
+    public function jumpToState(int $position): void
+    {
+        $state = $this->historyService->jumpToState($position);
+        
+        if ($state) {
+            $this->inputText = $state['input'] ?? '';
+            $this->outputText = $state['output'] ?? '';
+            $this->selectedTransformation = $state['transformation'] ?? '';
+            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+            $this->updateStatistics();
+            $this->updateHistoryInfo();
+            $this->successMessage = 'Jumped to history state ' . ($position + 1) . '.';
+        }
+    }
+
+    /**
+     * Add current state to history
+     */
+    private function addToHistory(): void
+    {
+        $state = [
+            'input' => $this->inputText,
+            'output' => $this->outputText,
+            'transformation' => $this->selectedTransformation,
+            'style_guide' => $this->selectedStyleGuide,
+            'preservation' => $this->preservationSettings
+        ];
+        
+        $this->historyService->addState($state);
+        
+        // Update history array for UI
+        $this->history[] = [
+            'transformation' => $this->getTransformationName($this->selectedTransformation),
+            'timestamp' => now()->format('H:i:s'),
+            'input' => substr($this->inputText, 0, 50),
+            'output' => substr($this->outputText, 0, 50)
+        ];
+        
+        // Keep only last 10 history items for UI
+        $this->history = array_slice($this->history, -10);
+        
+        $this->updateHistoryInfo();
+    }
+    
+    /**
+     * Restore from history
+     */
+    public function restoreFromHistory(int $index): void
+    {
+        if (isset($this->history[$index])) {
+            $this->jumpToState($index);
+        }
+    }
+
+    /**
+     * Update history information
+     */
+    private function updateHistoryInfo(): void
+    {
+        $this->historyInfo = [
+            'can_undo' => $this->historyService->canUndo(),
+            'can_redo' => $this->historyService->canRedo(),
+            'position' => $this->historyService->getCurrentPosition() + 1,
+            'total' => $this->historyService->getHistoryCount()
         ];
     }
 
-    /**
-     * Transform text to Title Case
-     */
-    public function transformToTitleCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            $this->outputText = mb_convert_case($this->inputText, MB_CASE_TITLE, 'UTF-8');
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error during transformation. Please try again.';
-            Log::error('Title case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform text to Sentence case
-     */
-    public function transformToSentenceCase(): void
-    {
-        $sentences = preg_split('/([.!?]+)/', $this->inputText, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $result = '';
-        
-        foreach ($sentences as $i => $sentence) {
-            if ($i % 2 == 0) { // Text part
-                $trimmed = trim($sentence);
-                if (!empty($trimmed)) {
-                    $result .= ucfirst(strtolower($trimmed));
-                }
-            } else { // Punctuation part
-                $result .= $sentence;
-                if ($i + 1 < count($sentences)) {
-                    $result .= ' ';
-                }
-            }
-        }
-        
-        $this->outputText = $result;
-        $this->copied = false;
-    }
-
-    /**
-     * Transform text to UPPERCASE
-     */
-    public function transformToUpperCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            $this->outputText = mb_strtoupper($this->inputText, 'UTF-8');
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error during transformation. Please try again.';
-            Log::error('Uppercase transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform text to lowercase
-     */
-    public function transformToLowerCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            $this->outputText = mb_strtolower($this->inputText, 'UTF-8');
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error during transformation. Please try again.';
-            Log::error('Lowercase transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform text to First Letter capitalization
-     */
-    public function transformToFirstLetter(): void
-    {
-        $this->outputText = ucfirst(strtolower($this->inputText));
-        $this->copied = false;
-    }
-
-    /**
-     * Transform text to Alternating Case
-     */
-    public function transformToAlternatingCase(): void
-    {
-        $result = '';
-        $upper = true;
-        
-        for ($i = 0; $i < strlen($this->inputText); $i++) {
-            $char = $this->inputText[$i];
-            if (ctype_alpha($char)) {
-                $result .= $upper ? strtolower($char) : strtoupper($char);
-                $upper = !$upper;
-            } else {
-                $result .= $char;
-            }
-        }
-        
-        $this->outputText = $result;
-        $this->copied = false;
-    }
-
-    /**
-     * Transform text to Random Case
-     */
-    public function transformToRandomCase(): void
-    {
-        $result = '';
-        
-        for ($i = 0; $i < strlen($this->inputText); $i++) {
-            $char = $this->inputText[$i];
-            if (ctype_alpha($char)) {
-                $result .= rand(0, 1) ? strtoupper($char) : strtolower($char);
-            } else {
-                $result .= $char;
-            }
-        }
-        
-        $this->outputText = $result;
-        $this->copied = false;
-    }
-
-    /**
-     * Private helper to apply preposition fixing logic to a string.
-     */
-    private function applyPrepositionFix(string $text): string
-    {
-        // Always start with a title-cased string for preposition fixing.
-        $titleCasedText = ucwords(strtolower($text));
-
-        $prepositions = ['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'if', 'in', 'nor', 'of', 'on', 'or', 'so', 'the', 'to', 'up', 'yet'];
-        $words = explode(' ', $titleCasedText);
-
-        foreach ($words as $i => &$word) {
-            // Skip first and last words, as they are always capitalized in titles.
-            if ($i === 0 || $i === count($words) - 1) {
-                continue;
-            }
-
-            $lowerWord = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $word));
-            if (in_array($lowerWord, $prepositions) && strlen($lowerWord) < $this->prepositionMaxLength) {
-                $word = strtolower($word);
-            }
-        }
-
-        return implode(' ', $words);
-    }
-
-    /**
-     * Fix prepositions according to style rules
-     */
-    public function fixPrepositions(): void
-    {
-        $this->outputText = $this->applyPrepositionFix($this->inputText);
-        $this->copied = false;
-    }
-
-    /**
-     * Convert straight quotes to smart quotes
-     */
-    public function convertToSmartQuotes(): void
-    {
-        $result = $this->inputText;
-        
-        // Define smart quote characters
-        $leftDouble = "\u{201C}";   // "
-        $rightDouble = "\u{201D}";  // "
-        $leftSingle = "\u{2018}";   // '
-        $rightSingle = "\u{2019}";  // '
-        
-        // Convert double quotes
-        $result = preg_replace('/^"/', $leftDouble, $result);
-        $result = preg_replace('/"$/', $rightDouble, $result);
-        $result = preg_replace('/(\s)"/', '$1' . $leftDouble, $result);
-        $result = preg_replace('/"(\s)/', $rightDouble . '$1', $result);
-        $result = preg_replace('/([^\s])"([^\s])/', '$1' . $rightDouble . '$2', $result);
-        
-        // Convert single quotes/apostrophes
-        $result = preg_replace("/^'/", $leftSingle, $result);
-        $result = preg_replace("/'$/", $rightSingle, $result);
-        $result = preg_replace("/(\s)'/", '$1' . $leftSingle, $result);
-        $result = preg_replace("/'(\s)/", $rightSingle . '$1', $result);
-        $result = preg_replace("/([a-z])'([a-z])/i", '$1' . $rightSingle . '$2', $result);
-        
-        $this->outputText = $result;
-        $this->copied = false;
-    }
-
-    // Style Guide Formatters
-    public function applyApaStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // APA: Capitalize first word, last word, and all major words
-            // Lowercase articles (a, an, the), conjunctions (and, but, or, for, nor), 
-            // and prepositions under 4 letters
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            $apaExceptions = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up'];
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                // Always capitalize first and last word
-                if ($i === 0 || $i === count($words) - 1) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize after colon (subtitle)
-                else if ($i > 0 && mb_substr($words[$i-1], -1) === ':') {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Check if word should be lowercase
-                else if (!in_array($word, $apaExceptions)) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying APA style.';
-            Log::error('APA style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyChicagoStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Chicago: Capitalize first/last words, nouns, pronouns, verbs, adjectives, adverbs
-            // Lowercase articles, prepositions (unless 5+ letters), conjunctions, "to" in infinitives
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            $chicagoExceptions = ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'yet', 'so', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up'];
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                
-                // Always capitalize first and last word
-                if ($i === 0 || $i === count($words) - 1) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize after colon or hyphen
-                else if ($i > 0 && (mb_substr($words[$i-1], -1) === ':' || mb_substr($words[$i-1], -1) === '-')) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize prepositions 5+ letters
-                else if (in_array($word, $chicagoExceptions) && mb_strlen($word, 'UTF-8') >= 5) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Keep lowercase if in exceptions and under 5 letters
-                else if (!in_array($word, $chicagoExceptions)) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Chicago style.';
-            Log::error('Chicago style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyApStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // AP Style: Capitalize principal words
-            // Lowercase articles, conjunctions, prepositions under 4 letters
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                $wordLength = mb_strlen($word, 'UTF-8');
-                
-                // Always capitalize first and last word
-                if ($i === 0 || $i === count($words) - 1) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize words 4+ letters
-                else if ($wordLength >= 4) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Keep articles, conjunctions, prepositions under 4 letters lowercase
-                else if (in_array($word, ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'as'])) {
-                    // Keep lowercase
-                } else {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying AP style.';
-            Log::error('AP style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyMlaStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // MLA: Similar to APA but with slight differences
-            // Capitalize first, last, and all principal words
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            $mlaExceptions = ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'by', 'in', 'of', 'on', 'to', 'as', 'up'];
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                
-                // Always capitalize first and last word
-                if ($i === 0 || $i === count($words) - 1) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize after colon (subtitle)
-                else if ($i > 0 && mb_substr($words[$i-1], -1) === ':') {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Keep exceptions lowercase unless they're verbs
-                else if (!in_array($word, $mlaExceptions) || mb_strlen($word, 'UTF-8') >= 5) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying MLA style.';
-            Log::error('MLA style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyBluebookStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Bluebook: Legal citation style - specific rules for case names
-            // Main words capitalized, procedural phrases and party designations in specific format
-            $text = mb_strtolower($this->inputText, 'UTF-8');
-            
-            // Common legal abbreviations that should be formatted specifically
-            $legalTerms = [
-                'v.' => 'v.',
-                'vs.' => 'v.',
-                'versus' => 'v.',
-                'et al.' => 'et al.',
-                'ex rel.' => 'ex rel.',
-                'in re' => 'In re',
-                'corp.' => 'Corp.',
-                'inc.' => 'Inc.',
-                'ltd.' => 'Ltd.',
-                'llc' => 'LLC',
-                'l.l.c.' => 'LLC',
-                'co.' => 'Co.'
-            ];
-            
-            // Replace legal terms
-            foreach ($legalTerms as $search => $replace) {
-                $text = str_ireplace($search, $replace, $text);
-            }
-            
-            // Capitalize main words but keep certain words lowercase
-            $words = preg_split('/\s+/', $text);
-            $exceptions = ['of', 'the', 'and', 'for', 'in', 'on', 'at', 'to', 'by', 'a', 'an'];
-            
-            for ($i = 0; $i < count($words); $i++) {
-                if ($i === 0 || !in_array($words[$i], $exceptions)) {
-                    if (!in_array($words[$i], array_values($legalTerms))) {
-                        $words[$i] = mb_convert_case($words[$i], MB_CASE_TITLE, 'UTF-8');
-                    }
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Bluebook style.';
-            Log::error('Bluebook style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyAmaStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // AMA: Medical/scientific style - capitalize major words
-            // Lowercase articles, coordinating conjunctions, prepositions of 3 or fewer letters
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            $amaExceptions = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'via'];
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                
-                // Always capitalize first word
-                if ($i === 0) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Keep last word lowercase if it's a preposition in AMA style
-                else if ($i === count($words) - 1 && !in_array($word, $amaExceptions)) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize after colon
-                else if ($i > 0 && mb_substr($words[$i-1], -1) === ':') {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Apply exceptions
-                else if (!in_array($word, $amaExceptions) || mb_strlen($word, 'UTF-8') > 3) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying AMA style.';
-            Log::error('AMA style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyNyTimesStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // NY Times: Journalistic style - similar to AP but with some differences
-            // Capitalize all words except articles, conjunctions, prepositions under 4 letters
-            $words = preg_split('/\s+/', mb_strtolower($this->inputText, 'UTF-8'));
-            
-            for ($i = 0; $i < count($words); $i++) {
-                $word = $words[$i];
-                
-                // Always capitalize first and last word
-                if ($i === 0 || $i === count($words) - 1) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // NY Times capitalizes "to" in infinitives
-                else if ($word === 'to' && $i < count($words) - 1) {
-                    // Check if next word might be a verb (simplified check)
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Capitalize words 4+ letters
-                else if (mb_strlen($word, 'UTF-8') >= 4) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-                // Keep short articles, conjunctions, prepositions lowercase
-                else if (!in_array($word, ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'at', 'by', 'in', 'of', 'on', 'up'])) {
-                    $words[$i] = mb_convert_case($word, MB_CASE_TITLE, 'UTF-8');
-                }
-            }
-            
-            $this->outputText = implode(' ', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying NY Times style.';
-            Log::error('NY Times style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function applyWikipediaStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Wikipedia: Sentence case - only first word and proper nouns capitalized
-            $sentences = preg_split('/([.!?]+\s*)/', $this->inputText, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $result = '';
-            
-            foreach ($sentences as $i => $part) {
-                if ($i % 2 == 0 && !empty(trim($part))) {
-                    // This is a sentence part
-                    $part = mb_strtolower($part, 'UTF-8');
-                    // Capitalize first character
-                    $part = mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($part, 1, null, 'UTF-8');
-                    
-                    // Preserve common proper nouns and acronyms (simplified list)
-                    $properNouns = ['I', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
-                                   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
-                                   'September', 'October', 'November', 'December'];
-                    
-                    foreach ($properNouns as $proper) {
-                        $part = preg_replace('/\b' . strtolower($proper) . '\b/i', $proper, $part);
-                    }
-                }
-                $result .= $part;
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Wikipedia style.';
-            Log::error('Wikipedia style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    // Additional Style Guides
-    
-    /**
-     * Apply IEEE Style formatting
-     */
-    public function applyIeeeStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // IEEE Style: Title case, capitalize first word and words after colons
-            // Articles and prepositions under 4 letters are lowercase
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            $afterColon = false;
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so', 
-                          'at', 'by', 'in', 'of', 'on', 'to', 'up', 'as', 'is', 'if'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                
-                if ($i === 0 || $afterColon || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-                
-                $afterColon = (strpos($word, ':') !== false);
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying IEEE style.';
-            Log::error('IEEE style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Harvard Style formatting
-     */
-    public function applyHarvardStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Harvard Style: Capitalize first word and all major words
-            // Similar to Chicago but with some differences in preposition handling
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so',
-                          'at', 'by', 'in', 'of', 'on', 'to', 'as', 'is'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                
-                if ($i === 0 || $i === count($words) - 1 || strlen($cleanWord) > 3 || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Harvard style.';
-            Log::error('Harvard style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Vancouver Style formatting
-     */
-    public function applyVancouverStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Vancouver Style: Sentence case for biomedical journals
-            // Only first word and proper nouns capitalized
-            $sentences = preg_split('/([.!?]+\s*)/', $this->inputText, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $result = '';
-            
-            foreach ($sentences as $i => $part) {
-                if ($i % 2 == 0 && !empty(trim($part))) {
-                    $part = mb_strtolower($part, 'UTF-8');
-                    $part = mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($part, 1, null, 'UTF-8');
-                    
-                    // Preserve common medical acronyms
-                    $acronyms = ['DNA', 'RNA', 'HIV', 'AIDS', 'COVID', 'MRI', 'CT', 'ICU', 'ER', 'IV'];
-                    foreach ($acronyms as $acronym) {
-                        $part = preg_replace('/\b' . strtolower($acronym) . '\b/i', $acronym, $part);
-                    }
-                }
-                $result .= $part;
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Vancouver style.';
-            Log::error('Vancouver style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply OSCOLA Style formatting (Oxford Standard for Citation of Legal Authorities)
-     */
-    public function applyOscolaStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // OSCOLA Style: Minimal capitalization for legal citations
-            // Only first word and proper nouns
-            $sentences = preg_split('/([.!?]+\s*)/', $this->inputText, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $result = '';
-            
-            foreach ($sentences as $i => $part) {
-                if ($i % 2 == 0 && !empty(trim($part))) {
-                    $words = preg_split('/\s+/', $part);
-                    $processedWords = [];
-                    
-                    foreach ($words as $j => $word) {
-                        if ($j === 0) {
-                            $processedWords[] = ucfirst(strtolower($word));
-                        } else if (preg_match('/^v\.?$/i', $word)) {
-                            // Keep 'v' or 'v.' lowercase (versus in legal cases)
-                            $processedWords[] = 'v';
-                        } else if (ctype_upper(str_replace(['.',',','\''], '', $word)) && strlen($word) > 1) {
-                            // Keep acronyms uppercase
-                            $processedWords[] = $word;
-                        } else {
-                            $processedWords[] = strtolower($word);
-                        }
-                    }
-                    $part = implode(' ', $processedWords);
-                }
-                $result .= $part;
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying OSCOLA style.';
-            Log::error('OSCOLA style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Reuters Style formatting
-     */
-    public function applyReutersStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Reuters Style: Similar to AP but with some differences
-            // Capitalize principal words, lowercase articles and short prepositions
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'at', 'by', 'in', 'of', 'on', 'to'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                
-                if ($i === 0 || strlen($cleanWord) > 3 || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Reuters style.';
-            Log::error('Reuters style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Bloomberg Style formatting
-     */
-    public function applyBloombergStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Bloomberg Style: Business/financial focus, capitalize major words
-            // Similar to AP but may capitalize some financial terms differently
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'at', 'by', 'in', 'of', 'on', 'to', 'as'];
-            $financialTerms = ['CEO', 'CFO', 'IPO', 'GDP', 'ETF', 'NYSE', 'NASDAQ', 'Fed', 'SEC'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                $upperWord = strtoupper($cleanWord);
-                
-                if (in_array($upperWord, $financialTerms)) {
-                    $result[] = $upperWord . $suffix;
-                } else if ($i === 0 || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Bloomberg style.';
-            Log::error('Bloomberg style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Oxford Style formatting
-     */
-    public function applyOxfordStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Oxford Style: British English conventions, capitalize all major words
-            // Lowercase articles, conjunctions, and prepositions under 5 letters
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so',
-                          'at', 'by', 'in', 'of', 'on', 'to', 'up', 'via', 'with', 'from', 'into', 'onto', 'upon'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                
-                if ($i === 0 || $i === count($words) - 1 || strlen($cleanWord) >= 5 || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Oxford style.';
-            Log::error('Oxford style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Apply Cambridge Style formatting
-     */
-    public function applyCambridgeStyle(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Cambridge Style: Similar to Oxford but with slight variations
-            // More conservative with capitalization
-            $words = preg_split('/\s+/', $this->inputText);
-            $result = [];
-            
-            $minorWords = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so',
-                          'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up'];
-            
-            foreach ($words as $i => $word) {
-                $cleanWord = preg_replace('/[^\w\'-]/', '', $word);
-                $suffix = substr($word, strlen($cleanWord));
-                
-                // Cambridge style: first and last words always capitalized
-                // Words over 4 letters capitalized
-                if ($i === 0 || $i === count($words) - 1 || strlen($cleanWord) > 4 || !in_array(strtolower($cleanWord), $minorWords)) {
-                    $result[] = ucfirst(strtolower($cleanWord)) . $suffix;
-                } else {
-                    $result[] = strtolower($cleanWord) . $suffix;
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error applying Cambridge style.';
-            Log::error('Cambridge style transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    // Advanced Features
-    public function removeExtraSpaces(): void
-    {
-        // Remove multiple spaces and trim
-        $result = preg_replace('/\s+/', ' ', $this->inputText);
-        $this->outputText = trim($result);
-        $this->copied = false;
-    }
-
-    public function addSpaces(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Add spaces after punctuation if missing
-            $result = $this->inputText;
-            // Add space after punctuation if followed by letter
-            $result = preg_replace('/([.!?,:;])(\S)/', '$1 $2', $result);
-            // Don't add space before punctuation
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error adding spaces.';
-            Log::error('Add spaces failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function spacesToUnderscores(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            $this->outputText = str_replace(' ', '_', $this->inputText);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting spaces to underscores.';
-            Log::error('Spaces to underscores failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    // Alias for compatibility
-    public function convertSpacesToUnderscores(): void
-    {
-        $this->spacesToUnderscores();
-    }
-
-    public function underscoresToSpaces(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            $this->outputText = str_replace('_', ' ', $this->inputText);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting underscores to spaces.';
-            Log::error('Underscores to spaces failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    // Alias for compatibility
-    public function convertUnderscoresToSpaces(): void
-    {
-        $this->underscoresToSpaces();
-    }
-
-    public function removeSpaces(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Remove spaces before punctuation
-            $result = $this->inputText;
-            $result = preg_replace('/\s+([.!?,:;])/', '$1', $result);
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error removing spaces.';
-            Log::error('Remove spaces failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    // Developer Case Transformations
-    public function transformToCamelCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to camelCase
-            $str = preg_replace('/[^a-zA-Z0-9]+/', ' ', $this->inputText);
-            $str = trim($str);
-            $str = ucwords($str);
-            $str = lcfirst(str_replace(' ', '', $str));
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to camelCase.';
-            Log::error('CamelCase transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    public function transformToSnakeCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to snake_case
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '_', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1_$2', $str);
-            $str = strtolower($str);
-            $str = trim($str, '_');
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to snake_case.';
-            Log::error('Snake case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    public function transformToKebabCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to kebab-case
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '-', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1-$2', $str);
-            $str = strtolower($str);
-            $str = trim($str, '-');
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to kebab-case.';
-            Log::error('Kebab case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    public function transformToPascalCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to PascalCase
-            $str = preg_replace('/[^a-zA-Z0-9]+/', ' ', $this->inputText);
-            $str = trim($str);
-            $str = ucwords($str);
-            $str = str_replace(' ', '', $str);
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to PascalCase.';
-            Log::error('Pascal case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
-    public function transformToConstantCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to CONSTANT_CASE
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '_', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1_$2', $str);
-            $str = strtoupper($str);
-            $str = trim($str, '_');
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to CONSTANT_CASE.';
-            Log::error('Constant case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    // Additional Case Transformations
-    
-    /**
-     * Transform to dot.case
-     */
-    public function transformToDotCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to dot.case - words separated by dots
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '.', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1.$2', $str);
-            $str = strtolower($str);
-            $str = trim($str, '.');
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to dot.case.';
-            Log::error('Dot case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform to path/case
-     */
-    public function transformToPathCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to path/case - words separated by forward slashes
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '/', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1/$2', $str);
-            $str = strtolower($str);
-            $str = trim($str, '/');
-            $this->outputText = $str;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to path/case.';
-            Log::error('Path case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform to Header-Case (HTTP header style)
-     */
-    public function transformToHeaderCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to Header-Case - capitalize each word, separate with hyphens
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '-', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1-$2', $str);
-            $str = trim($str, '-');
-            $words = explode('-', $str);
-            $words = array_map('ucfirst', array_map('strtolower', $words));
-            $this->outputText = implode('-', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to Header-Case.';
-            Log::error('Header case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform to Train-Case
-     */
-    public function transformToTrainCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to Train-Case - every word capitalized with hyphens
-            $str = preg_replace('/[^a-zA-Z0-9]+/', '-', $this->inputText);
-            $str = preg_replace('/([a-z])([A-Z])/', '$1-$2', $str);
-            $str = trim($str, '-');
-            $words = explode('-', $str);
-            $words = array_map('ucfirst', array_map('strtolower', $words));
-            $this->outputText = implode('-', $words);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to Train-Case.';
-            Log::error('Train case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform to sPoNgEbOb case (mocking case)
-     */
-    public function transformToSpongebobCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to sPoNgEbOb case - alternating caps in a mocking pattern
-            $str = $this->inputText;
-            $result = '';
-            $shouldBeUpper = false;
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                if (ctype_alpha($char)) {
-                    $result .= $shouldBeUpper ? mb_strtoupper($char, 'UTF-8') : mb_strtolower($char, 'UTF-8');
-                    $shouldBeUpper = !$shouldBeUpper;
-                } else {
-                    $result .= $char;
-                }
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to sPoNgEbOb case.';
-            Log::error('Spongebob case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform to InVeRsE case (swap case)
-     */
-    public function transformToInverseCase(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to InVeRsE case - swap the case of each letter
-            $str = $this->inputText;
-            $result = '';
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                if (ctype_upper($char)) {
-                    $result .= mb_strtolower($char, 'UTF-8');
-                } elseif (ctype_lower($char)) {
-                    $result .= mb_strtoupper($char, 'UTF-8');
-                } else {
-                    $result .= $char;
-                }
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to InVeRsE case.';
-            Log::error('Inverse case transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Reverse text transformation
-     */
-    public function transformToReversedText(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Reverse the entire text
-            $reversed = '';
-            $length = mb_strlen($this->inputText, 'UTF-8');
-            
-            for ($i = $length - 1; $i >= 0; $i--) {
-                $reversed .= mb_substr($this->inputText, $i, 1, 'UTF-8');
-            }
-            
-            $this->outputText = $reversed;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error reversing text.';
-            Log::error('Reverse text transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Remove all whitespace
-     */
-    public function transformToNoWhitespace(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Remove all whitespace characters
-            $this->outputText = preg_replace('/\s+/', '', $this->inputText);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error removing whitespace.';
-            Log::error('Remove whitespace transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-    
     /**
      * Copy output to clipboard
      */
@@ -1411,10 +838,60 @@ class CaseChanger extends Component
         if (!empty($this->outputText)) {
             $this->dispatch('copy-to-clipboard', text: $this->outputText);
             $this->copied = true;
+            $this->successMessage = 'Text copied to clipboard!';
             
             // Reset copied state after 2 seconds
             $this->dispatch('reset-copied');
         }
+    }
+
+    /**
+     * Reset copied state
+     */
+    public function resetCopied(): void
+    {
+        $this->copied = false;
+    }
+
+    /**
+     * Copy input text to output
+     */
+    public function copyInputToOutput(): void
+    {
+        $this->outputText = $this->inputText;
+        $this->selectedTransformation = '';
+        $this->selectedStyleGuide = '';
+        $this->addToHistory();
+        $this->successMessage = 'Input copied to output.';
+    }
+
+    /**
+     * Swap input and output text
+     */
+    public function swapTexts(): void
+    {
+        $temp = $this->inputText;
+        $this->inputText = $this->outputText;
+        $this->outputText = $temp;
+        $this->updateStatistics();
+        $this->addToHistory();
+        $this->successMessage = 'Input and output swapped.';
+    }
+
+    /**
+     * Clear all text fields
+     */
+    public function clearAll(): void
+    {
+        $this->inputText = '';
+        $this->outputText = '';
+        $this->selectedTransformation = '';
+        $this->selectedStyleGuide = '';
+        $this->clearMessages();
+        $this->copied = false;
+        $this->updateStatistics();
+        $this->historyService->clear();
+        $this->updateHistoryInfo();
     }
 
     /**
@@ -1426,278 +903,240 @@ class CaseChanger extends Component
     }
 
     /**
-     * Component mount lifecycle
+     * Toggle preservation settings visibility
      */
-    public function mount(): void
+    public function togglePreservationSettings(): void
     {
+        $this->showPreservationSettings = !$this->showPreservationSettings;
+    }
+
+    /**
+     * Clear all messages
+     */
+    private function clearMessages(): void
+    {
+        $this->errorMessage = '';
+        $this->successMessage = '';
+    }
+
+    /**
+     * Restore session state
+     */
+    private function restoreSession(): void
+    {
+        $history = $this->historyService->getHistory();
+        
+        if (!empty($history)) {
+            $lastState = end($history);
+            $this->inputText = $lastState['input'] ?? '';
+            $this->outputText = $lastState['output'] ?? '';
+            $this->selectedTransformation = $lastState['transformation'] ?? '';
+            $this->selectedStyleGuide = $lastState['style_guide'] ?? '';
+            
+            if (isset($lastState['preservation'])) {
+                $this->preservationSettings = array_merge(
+                    $this->preservationSettings,
+                    $lastState['preservation']
+                );
+            }
+            
+            $this->updateStatistics();
+        }
+    }
+
+    /**
+     * Download output as text file
+     */
+    public function downloadOutput(): void
+    {
+        if (!empty($this->outputText)) {
+            $filename = 'transformed-text-' . date('Y-m-d-His') . '.txt';
+            
+            $this->dispatch('download-text', [
+                'content' => $this->outputText,
+                'filename' => $filename
+            ]);
+            
+            $this->successMessage = 'Download started!';
+        }
+    }
+
+    /**
+     * Export transformation history
+     */
+    public function exportHistory(): void
+    {
+        $history = $this->historyService->exportHistory();
+        
+        if (!empty($history)) {
+            $filename = 'transformation-history-' . date('Y-m-d-His') . '.json';
+            
+            $this->dispatch('download-text', [
+                'content' => json_encode($history, JSON_PRETTY_PRINT),
+                'filename' => $filename
+            ]);
+            
+            $this->successMessage = 'History exported!';
+        }
+    }
+
+    /**
+     * Get transformation display name
+     */
+    public function getTransformationName(string $type): string
+    {
+        foreach ($this->transformationGroups as $group) {
+            if (isset($group['transformations'][$type])) {
+                return $group['transformations'][$type];
+            }
+        }
+        return ucfirst(str_replace('_', ' ', $type));
+    }
+
+    /**
+     * Get style guide display name
+     */
+    public function getStyleGuideName(string $guide): string
+    {
+        foreach ($this->styleGuides as $group) {
+            if (isset($group['guides'][$guide])) {
+                return $group['guides'][$guide];
+            }
+        }
+        return strtoupper($guide) . ' Style';
+    }
+
+    // Elegant Interface Support Methods
+    public $currentText = '';
+    public $transformationHistory = [];
+    public $showCommandPalette = false;
+    public $commandSearch = '';
+    public $canUndo = false;
+    
+    /**
+     * Toggle command palette visibility
+     */
+    public function toggleCommandPalette(): void
+    {
+        $this->showCommandPalette = !$this->showCommandPalette;
+        $this->commandSearch = '';
+    }
+    
+    /**
+     * Close command palette
+     */
+    public function closeCommandPalette(): void
+    {
+        $this->showCommandPalette = false;
+        $this->commandSearch = '';
+    }
+    
+    /**
+     * Apply transformation and close command palette
+     */
+    public function applyAndClose(string $method): void
+    {
+        $this->applyTransformation($method);
+        $this->closeCommandPalette();
+    }
+    
+    /**
+     * Jump to history state
+     */
+    public function jumpToHistory(int $index): void
+    {
+        if (isset($this->transformationHistory[$index])) {
+            $this->currentText = $this->transformationHistory[$index]['text'];
+            $this->notification = 'Jumped to: ' . $this->transformationHistory[$index]['transformation'];
+        }
+    }
+    
+    /**
+     * Get filtered transformations for command palette
+     */
+    public function getFilteredTransformationsProperty()
+    {
+        if (empty($this->commandSearch)) {
+            return $this->transformationGroups;
+        }
+        
+        $search = strtolower($this->commandSearch);
+        $filtered = [];
+        
+        foreach ($this->transformationGroups as $group) {
+            $matches = [];
+            foreach ($group['transformations'] as $key => $label) {
+                if (str_contains(strtolower($label), $search) || str_contains(strtolower($key), $search)) {
+                    $matches[$key] = $label;
+                }
+            }
+            if (!empty($matches)) {
+                $filtered[$group['title']] = $matches;
+            }
+        }
+        
+        return $filtered;
+    }
+    
+    /**
+     * Update suggestions when current text changes
+     */
+    public function updatedCurrentText(): void
+    {
+        $this->updateSuggestions();
         $this->updateStatistics();
     }
-
+    
     /**
-     * Transform text to Wide Text (full-width characters)
+     * Update suggestions based on current text
      */
-    public function transformToWideText(): void
+    public function updateSuggestions(): void
     {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to full-width characters (Wide Text)
-            $str = $this->inputText;
-            $result = '';
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                $code = mb_ord($char, 'UTF-8');
-                
-                // Convert ASCII to full-width
-                if ($code >= 33 && $code <= 126) {
-                    $result .= mb_chr($code - 33 + 0xFF01, 'UTF-8');
-                } elseif ($code === 32) {
-                    $result .= mb_chr(0x3000, 'UTF-8'); // Full-width space
-                } else {
-                    $result .= $char;
-                }
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to wide text.';
-            Log::error('Wide text transformation failed', ['error' => $e->getMessage()]);
+        if (empty($this->currentText)) {
+            $this->suggestions = [];
+            return;
         }
-    }
-
-    /**
-     * Transform text to Small Caps
-     */
-    public function transformToSmallCaps(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert to small caps using Unicode small capitals
-            $str = mb_strtolower($this->inputText, 'UTF-8');
-            $smallCapsMap = [
-                'a' => 'ᴀ', 'b' => 'ʙ', 'c' => 'ᴄ', 'd' => 'ᴅ', 'e' => 'ᴇ',
-                'f' => 'ғ', 'g' => 'ɢ', 'h' => 'ʜ', 'i' => 'ɪ', 'j' => 'ᴊ',
-                'k' => 'ᴋ', 'l' => 'ʟ', 'm' => 'ᴍ', 'n' => 'ɴ', 'o' => 'ᴏ',
-                'p' => 'ᴘ', 'q' => 'ǫ', 'r' => 'ʀ', 's' => 's', 't' => 'ᴛ',
-                'u' => 'ᴜ', 'v' => 'ᴠ', 'w' => 'ᴡ', 'x' => 'x', 'y' => 'ʏ', 'z' => 'ᴢ'
-            ];
-            
-            $result = '';
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                $result .= $smallCapsMap[$char] ?? $char;
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to small caps.';
-            Log::error('Small caps transformation failed', ['error' => $e->getMessage()]);
+        
+        $this->suggestions = [];
+        
+        // Detect content type and suggest relevant transformations
+        if (preg_match('/^[A-Z\s]+$/', $this->currentText)) {
+            $this->suggestions[] = ['key' => 'lower', 'label' => 'Convert to lowercase'];
+            $this->suggestions[] = ['key' => 'sentence', 'label' => 'Sentence case'];
+        } elseif (preg_match('/^[a-z\s]+$/', $this->currentText)) {
+            $this->suggestions[] = ['key' => 'upper', 'label' => 'UPPERCASE'];
+            $this->suggestions[] = ['key' => 'title', 'label' => 'Title Case'];
         }
-    }
-
-    /**
-     * Transform text to Strikethrough
-     */
-    public function transformToStrikethrough(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Add strikethrough combining character to each character
-            $str = $this->inputText;
-            $result = '';
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                if ($char !== ' ' && $char !== "\n" && $char !== "\t") {
-                    $result .= $char . '̶'; // Combining long stroke overlay
-                } else {
-                    $result .= $char;
-                }
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to strikethrough.';
-            Log::error('Strikethrough transformation failed', ['error' => $e->getMessage()]);
+        
+        // Detect code patterns
+        if (preg_match('/function|class|const|var|let/', $this->currentText)) {
+            $this->suggestions[] = ['key' => 'camel', 'label' => 'camelCase'];
+            $this->suggestions[] = ['key' => 'snake', 'label' => 'snake_case'];
         }
-    }
-
-    /**
-     * Transform text to Zalgo Text (cursed text)
-     */
-    public function transformToZalgoText(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Zalgo combining characters
-            $zalgoUp = ['̍', '̎', '̄', '̅', '̿', '̑', '̆', '̐', '͒', '͗', '͑', '̇', '̈', '̊', '͂', '̓', '̈́', '͊', '͋', '͌', '̃', '̂', '̌', '͐', '́', '̋', '̏', '̽', '̉', 'ͣ', 'ͤ', 'ͥ', 'ͦ', 'ͧ', 'ͨ', 'ͩ', 'ͪ', 'ͫ', 'ͬ', 'ͭ', 'ͮ', 'ͯ', '̾', '͛', '͆', '̚'];
-            $zalgoDown = ['̖', '̗', '̘', '̙', '̜', '̝', '̞', '̟', '̠', '̤', '̥', '̦', '̩', '̪', '̫', '̬', '̭', '̮', '̯', '̰', '̱', '̲', '̳', '̹', '̺', '̻', '̼', 'ͅ', '͇', '͈', '͉', '͍', '͎', '͓', '͔', '͕', '͖', '͙', '͚', '̣'];
-            $zalgoMid = ['̕', '̛', '̀', '́', '͘', '̡', '̢', '̧', '̨', '̴', '̵', '̶', '͜', '͝', '͞', '͟', '͠', '͢', '̸', '̷', '͡'];
-            
-            $str = $this->inputText;
-            $result = '';
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                $result .= $char;
-                
-                if ($char !== ' ' && $char !== "\n" && $char !== "\t") {
-                    // Add random zalgo characters
-                    $numMarks = rand(1, 3);
-                    for ($j = 0; $j < $numMarks; $j++) {
-                        $type = rand(0, 2);
-                        switch ($type) {
-                            case 0:
-                                $result .= $zalgoUp[array_rand($zalgoUp)];
-                                break;
-                            case 1:
-                                $result .= $zalgoDown[array_rand($zalgoDown)];
-                                break;
-                            case 2:
-                                $result .= $zalgoMid[array_rand($zalgoMid)];
-                                break;
-                        }
-                    }
-                }
-            }
-            
-            $this->outputText = $result;
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to zalgo text.';
-            Log::error('Zalgo text transformation failed', ['error' => $e->getMessage()]);
+        
+        // Detect URLs
+        if (preg_match('/https?:\/\//', $this->currentText)) {
+            $this->suggestions[] = ['key' => 'slug', 'label' => 'URL Slug'];
+            $this->suggestions[] = ['key' => 'url_encoded', 'label' => 'URL Encode'];
         }
+        
+        // Limit to 4 suggestions
+        $this->suggestions = array_slice($this->suggestions, 0, 4);
     }
-
-    /**
-     * Transform text to Upside Down
-     */
-    public function transformToUpsideDown(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Upside down character mappings
-            $upsideDownMap = [
-                'a' => 'ɐ', 'b' => 'q', 'c' => 'ɔ', 'd' => 'p', 'e' => 'ǝ',
-                'f' => 'ɟ', 'g' => 'ƃ', 'h' => 'ɥ', 'i' => 'ᴉ', 'j' => 'ɾ',
-                'k' => 'ʞ', 'l' => 'l', 'm' => 'ɯ', 'n' => 'u', 'o' => 'o',
-                'p' => 'd', 'q' => 'b', 'r' => 'ɹ', 's' => 's', 't' => 'ʇ',
-                'u' => 'n', 'v' => 'ʌ', 'w' => 'ʍ', 'x' => 'x', 'y' => 'ʎ', 'z' => 'z',
-                'A' => '∀', 'B' => 'ᗺ', 'C' => 'Ɔ', 'D' => 'ᗡ', 'E' => 'Ǝ',
-                'F' => 'ᖴ', 'G' => 'פ', 'H' => 'H', 'I' => 'I', 'J' => 'ſ',
-                'K' => 'ʞ', 'L' => '˥', 'M' => 'W', 'N' => 'N', 'O' => 'O',
-                'P' => 'Ԁ', 'Q' => 'Q', 'R' => 'ᴿ', 'S' => 'S', 'T' => '┴',
-                'U' => '∩', 'V' => 'Λ', 'W' => 'M', 'X' => 'X', 'Y' => '⅄', 'Z' => 'Z',
-                '0' => '0', '1' => 'Ɩ', '2' => 'ᄅ', '3' => 'Ɛ', '4' => 'ㄣ',
-                '5' => 'ϛ', '6' => '9', '7' => 'ㄥ', '8' => '8', '9' => '6',
-                '?' => '¿', '!' => '¡', '.' => '˙', ',' => '\'', ';' => '؛',
-                '(' => ')', ')' => '(', '[' => ']', ']' => '[', '{' => '}', '}' => '{'
-            ];
-            
-            $str = mb_strtolower($this->inputText, 'UTF-8');
-            $result = '';
-            
-            // Process each character
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                $result .= $upsideDownMap[$char] ?? $char;
-            }
-            
-            // Reverse the string to complete the upside-down effect
-            $this->outputText = $this->mb_strrev($result, 'UTF-8');
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to upside down text.';
-            Log::error('Upside down transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Transform text to Binary
-     */
-    public function transformToBinary(): void
-    {
-        try {
-            $this->errorMessage = '';
-            if (empty($this->inputText)) {
-                $this->outputText = '';
-                return;
-            }
-            
-            // Convert each character to binary
-            $str = $this->inputText;
-            $result = [];
-            
-            for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                $char = mb_substr($str, $i, 1, 'UTF-8');
-                $ascii = ord($char);
-                
-                // Convert to 8-bit binary with leading zeros
-                if ($ascii < 128) {
-                    $result[] = sprintf('%08b', $ascii);
-                } else {
-                    // For UTF-8 characters, convert each byte
-                    $bytes = unpack('C*', $char);
-                    foreach ($bytes as $byte) {
-                        $result[] = sprintf('%08b', $byte);
-                    }
-                }
-            }
-            
-            $this->outputText = implode(' ', $result);
-            $this->copied = false;
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Error converting to binary.';
-            Log::error('Binary transformation failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Helper function to reverse a UTF-8 string
-     */
-    private function mb_strrev(string $str, string $encoding = 'UTF-8'): string
-    {
-        $result = '';
-        $length = mb_strlen($str, $encoding);
-        for ($i = $length - 1; $i >= 0; $i--) {
-            $result .= mb_substr($str, $i, 1, $encoding);
-        }
-        return $result;
-    }
-
+    
     /**
      * Render the component
      */
     public function render()
     {
-        return view('livewire.revolutionary-case-changer');
+        // Check if we should use the elegant interface
+        $useElegantInterface = request()->has('elegant') || session('use_elegant_interface');
+        
+        if ($useElegantInterface) {
+            session(['use_elegant_interface' => true]);
+            return view('livewire.elegant-case-changer');
+        }
+        
+        return view('livewire.case-changer');
     }
 }

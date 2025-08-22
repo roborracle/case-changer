@@ -1,258 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Apple-inspired Design System for Case Changer Pro */
 
-/* Import Revolutionary UI System */
-@import './revolutionary-ui.css';
+/* System Colors and Fonts */
+:root {
+    /* Apple System Colors */
+    --apple-blue: #007AFF;
+    --apple-gray-50: #F5F5F7;
+    --apple-gray-100: #E8E8ED;
+    --apple-gray-200: #D2D2D7;
+    --apple-gray-300: #C7C7CC;
+    --apple-gray-400: #8E8E93;
+    --apple-gray-500: #636366;
+    --apple-gray-600: #48484A;
+    --apple-gray-700: #363638;
+    --apple-gray-800: #2C2C2E;
+    --apple-gray-900: #1C1C1E;
+    
+    /* System Font Stack */
+    --system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    --mono-font: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+}
 
-/* Revolutionary UI Design System for Case Changer Pro */
-/* Magnetic Hierarchy & 2.5D Spatial Computing Principles */
-
-@layer base {
-  :root {
-    /* Revolutionary Design Tokens */
-    --accent-primary: #6366f1; /* Strategic accent color */
-    --accent-glow: rgba(99, 102, 241, 0.15);
-    --accent-glow-strong: rgba(99, 102, 241, 0.25);
-    --neutral-0: #ffffff;
-    --neutral-50: #fafafa;
-    --neutral-100: #f5f5f5;
-    --neutral-200: #e5e5e5;
-    --neutral-300: #d4d4d4;
-    --neutral-400: #a3a3a3;
-    --neutral-500: #737373;
-    --neutral-600: #525252;
-    --neutral-700: #404040;
-    --neutral-800: #262626;
-    --neutral-900: #171717;
-    
-    /* Spatial Computing Shadows */
-    --shadow-ambient: 0 1px 3px rgba(0, 0, 0, 0.02);
-    --shadow-micro: 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-low: 0 4px 16px rgba(0, 0, 0, 0.06);
-    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.08);
-    --shadow-high: 0 16px 40px rgba(0, 0, 0, 0.12);
-    --shadow-primary: 0 8px 32px rgba(99, 102, 241, 0.15);
-    
-    /* Kinetic Physics */
-    --spring-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --spring-smooth: cubic-bezier(0.25, 1, 0.5, 1);
-    --spring-gentle: cubic-bezier(0.16, 1, 0.3, 1);
-    
-    /* Typography Scale */
-    --type-scale-sm: 0.875rem;
-    --type-scale-base: 1rem;
-    --type-scale-lg: 1.125rem;
-    --type-scale-xl: 1.25rem;
-    --type-scale-2xl: 1.5rem;
-    --type-scale-3xl: 1.875rem;
-    --type-scale-4xl: 2.25rem;
-    
-    /* Spatial Grid */
-    --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
-    --space-md: 1rem;
-    --space-lg: 1.5rem;
-    --space-xl: 2rem;
-    --space-2xl: 3rem;
-    --space-3xl: 4rem;
-    
-    /* Magnetic Zones */
-    --magnetic-distance: 40px;
-    --magnetic-strength: 8px;
-  }
-  
-  html {
-    scroll-behavior: smooth;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-optical-sizing: auto;
+body {
+    font-family: var(--system-font);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 100%);
-    color: var(--neutral-800);
-    line-height: 1.6;
-  }
-  
-  /* Revolutionary Focus System */
-  [tabindex]:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible {
-    outline: 2px solid var(--accent-primary);
+}
+
+/* Apple-style Focus States */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--apple-blue);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--accent-glow);
-  }
 }
 
-@layer components {
-  /* Case transformation buttons */
-  .btn-transform {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 200ms;
-  }
-  
-  .btn-transform:hover {
-    transform: scale(1.05);
-  }
-  
-  .btn-transform:active {
-    transform: scale(0.95);
-  }
-  
-  .btn-transform:focus {
+/* Apple-style Components */
+.btn-apple-primary {
+    @apply px-6 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm;
+    font-family: var(--system-font);
+}
+
+.btn-apple-secondary {
+    @apply px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200;
+    font-family: var(--system-font);
+}
+
+/* Apple-style subtle shadows */
+.shadow-apple {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.shadow-apple-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Custom scrollbar for better UX */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Smooth transitions for interactive elements - Apple style */
+button {
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Focus styles for accessibility - Apple blue */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
     outline: none;
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgb(59 130 246);
-  }
-  
-  .btn-transform:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  .btn-primary {
-    background-color: rgb(37 99 235);
-    color: white;
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.25);
-  }
-  
-  .btn-primary:hover {
-    background-color: rgb(29 78 216);
-  }
-  
-  .btn-secondary {
-    background-color: rgb(229 231 235);
-    color: rgb(31 41 55);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-  
-  .btn-secondary:hover {
-    background-color: rgb(209 213 219);
-  }
-  
-  /* Text input area */
-  .text-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid rgb(209 213 219);
-    border-radius: 0.5rem;
-    transition: border-color 200ms, box-shadow 200ms;
-  }
-  
-  .text-input:focus {
-    border-color: rgb(59 130 246);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-    outline: none;
-  }
-  
-  /* Style guide cards */
-  .style-card {
-    padding: 1rem;
-    border: 2px solid rgb(229 231 235);
-    border-radius: 0.5rem;
-    transition: all 200ms;
-    cursor: pointer;
-  }
-  
-  .style-card:hover {
-    border-color: rgb(147 197 253);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .style-card-active {
-    border-color: rgb(59 130 246);
-    background-color: rgb(239 246 255);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Copy button */
-  .btn-copy {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.5rem;
-    background-color: white;
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: background-color 200ms;
-  }
-  
-  .btn-copy:hover {
-    background-color: rgb(243 244 246);
-  }
-  
-  /* Loading spinner */
-  .spinner {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid white;
-    border-top-color: transparent;
+}
+
+/* Loading spinner utility */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3b82f6;
     border-radius: 50%;
+    width: 20px;
+    height: 20px;
     animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
 }
 
-@layer utilities {
-  /* Custom animations */
-  @keyframes slideUp {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
     }
-    to {
-      transform: translateY(0);
-      opacity: 1;
+    
+    .print-only {
+        display: block !important;
     }
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
-  }
-  
-  /* Text selection colors */
-  ::selection {
-    background-color: rgb(191 219 254);
-    color: rgb(30 58 138);
-  }
-  
-  ::-moz-selection {
-    background-color: rgb(191 219 254);
-    color: rgb(30 58 138);
-  }
-  
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 0.5rem;
-    height: 0.5rem;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background-color: rgb(243 244 246);
-    border-radius: 9999px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: rgb(156 163 175);
-    border-radius: 9999px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(107 114 128);
-  }
+}
+
+/* Responsive text area heights */
+@media (min-width: 768px) {
+    textarea {
+        min-height: 16rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    textarea {
+        min-height: 20rem;
+    }
 }

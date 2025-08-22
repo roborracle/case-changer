@@ -1,489 +1,210 @@
-<div class="min-h-screen smooth-rendering" style="background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 100%);">
-    {{-- Revolutionary Header --}}
-    <header class="text-center py-12 animate-slide-up">
-        <h1 class="text-gradient" style="font-size: var(--type-scale-4xl); font-weight: 800; margin-bottom: var(--space-md); line-height: 1.1;">
-            Case Changer Pro
-        </h1>
-        <p style="font-size: var(--type-scale-lg); color: var(--neutral-600); font-weight: 400; letter-spacing: 0.02em;">
-            Transform text with revolutionary magnetic interface design
-        </p>
-    </header>
+<div class="min-h-screen bg-gray-50" style="background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        {{-- Header - Apple Style --}}
+        <header class="text-center mb-10">
+            <h1 class="text-5xl font-semibold text-gray-900 mb-2" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; letter-spacing: -0.02em;">Case Changer Pro</h1>
+            <p class="text-gray-500 text-lg">Professional Text Transformation Tool</p>
+        </header>
 
-    {{-- Revolutionary Transformation Grid --}}
-    <div class="transformation-grid">
+        {{-- Error/Success Messages --}}
+        @if($errorMessage)
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ $errorMessage }}
+            </div>
+        @endif
+        
+        @if($successMessage)
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ $successMessage }}
+            </div>
+        @endif
 
-
-        {{-- Revolutionary Input/Output Interface --}}
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-12 animate-slide-up">
-            {{-- Input Section with Revolutionary Design --}}
-            <div class="io-container animate-scale-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 style="font-size: var(--type-scale-xl); font-weight: 600; color: var(--neutral-900);">Input Text</h2>
-                    <div class="flex gap-2">
-                        <button
-                            wire:click="$set('text', '')"
-                            class="btn-copy"
-                            title="Clear input text"
-                        >
-                            Clear
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="relative">
-                    <textarea
-                        wire:model.live="inputText"
-                        id="inputText"
-                        class="text-input smooth-rendering"
-                        placeholder="Enter or paste your text here..."
-                        aria-label="Input text to transform"
-                        aria-describedby="text-stats"
-                        style="font-family: 'Inter', system-ui, sans-serif;"
-                    ></textarea>
-                </div>
-                
-                {{-- Error Display with Revolutionary Styling --}}
-                @if($errorMessage)
-                    <div class="mt-4 p-4 border border-red-200 rounded-lg" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%);">
-                        <p style="color: #dc2626; font-size: var(--type-scale-sm);">{{ $errorMessage }}</p>
-                    </div>
-                @endif
-
-                {{-- Revolutionary Statistics --}}
-                <div id="text-stats" class="grid grid-cols-3 gap-4 mt-6" role="region" aria-label="Text statistics">
-                    <div class="stat-card">
-                        <div class="stat-label">Characters</div>
-                        <div class="stat-number" aria-live="polite">{{ $stats['characters'] }}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Words</div>
-                        <div class="stat-number" aria-live="polite">{{ $stats['words'] }}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Sentences</div>
-                        <div class="stat-number" aria-live="polite">{{ $stats['sentences'] }}</div>
-                    </div>
+        {{-- Main Grid Layout - Apple Style --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {{-- Input Section --}}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold mb-4 text-gray-900">Input Text</h2>
+                <textarea
+                    wire:model.live="inputText"
+                    class="w-full h-64 p-4 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 placeholder-gray-400"
+                    placeholder="Enter or paste your text here..."
+                    style="font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', 'Monaco', monospace;"
+                ></textarea>
+                <div class="mt-3 text-xs text-gray-500 font-medium tracking-wide">
+                    {{ $stats['characters'] }} CHARACTERS • {{ $stats['words'] }} WORDS • {{ $stats['lines'] }} LINES
                 </div>
             </div>
 
-            {{-- Output Section with Revolutionary Design --}}
-            <div class="io-container animate-scale-in" style="animation-delay: 0.1s;">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 style="font-size: var(--type-scale-xl); font-weight: 600; color: var(--neutral-900);">Transformed Text</h2>
-                    <div class="flex gap-2">
-                        <button
-                            wire:click="copyToClipboard"
-                            class="btn-copy {{ $copied ? 'copied' : '' }}"
-                            title="Copy to clipboard"
-                        >
-                            @if($copied)
-                                <svg style="width: 16px; height: 16px; margin-right: var(--space-xs);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Copied!
-                            @else
-                                <svg style="width: 16px; height: 16px; margin-right: var(--space-xs);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                </svg>
-                                Copy
-                            @endif
-                        </button>
-                        <button
-                            wire:click="$set('transformedText', '')"
-                            class="btn-copy"
-                            title="Clear output text"
-                        >
-                            Clear
-                        </button>
-                    </div>
+            {{-- Output Section --}}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold mb-4 text-gray-900">Output Text</h2>
+                <div class="w-full h-64 p-4 border border-gray-200 rounded-lg bg-gray-50 overflow-auto">
+                    <pre class="whitespace-pre-wrap" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', 'Monaco', monospace;">{{ $outputText }}</pre>
                 </div>
-                
-                <div class="relative">
-                    <textarea
-                        id="outputText"
-                        wire:model="outputText"
-                        readonly
-                        class="text-input smooth-rendering"
-                        placeholder="Transformed text will appear here..."
-                        aria-label="Transformed output text"
-                        aria-live="polite"
-                        style="font-family: 'Inter', system-ui, sans-serif; background: var(--neutral-50);"
-                    ></textarea>
+                <div class="mt-3 text-xs text-gray-500 font-medium tracking-wide">
+                    {{ strlen($outputText) }} CHARACTERS • {{ str_word_count($outputText) }} WORDS
                 </div>
             </div>
         </div>
 
-        {{-- PRIMARY MAGNETIC ZONE (40% Visual Weight) --}}
-        <section class="animate-slide-up" style="animation-delay: 0.2s;">
-            <div class="text-center mb-8">
-                <h2 style="font-size: var(--type-scale-2xl); font-weight: 700; color: var(--neutral-900); margin-bottom: var(--space-sm);">Core Transformations</h2>
-                <p style="font-size: var(--type-scale-base); color: var(--neutral-600);">Essential text case transformations with magnetic attraction</p>
-            </div>
-            
-            <div class="primary-zone">
-                <button wire:click="transformToUpperCase" class="btn-transform primary demo-uppercase gpu-accelerated animate-magnetic-float">
-                    UPPERCASE
-                </button>
-                <button wire:click="transformToLowerCase" class="btn-transform primary demo-lowercase gpu-accelerated animate-magnetic-float" style="animation-delay: 0.5s;">
-                    lowercase
-                </button>
-                <button wire:click="transformToTitleCase" class="btn-transform primary demo-title gpu-accelerated animate-magnetic-float" style="animation-delay: 1s;">
-                    Title Case
-                </button>
-            </div>
-        </section>
-
-        {{-- SECONDARY RING (35% Visual Weight) --}}
-        <section class="animate-slide-up" style="animation-delay: 0.4s;">
-            <div class="text-center mb-8">
-                <h3 style="font-size: var(--type-scale-xl); font-weight: 600; color: var(--neutral-800); margin-bottom: var(--space-sm);">Professional & Developer Tools</h3>
-                <p style="font-size: var(--type-scale-sm); color: var(--neutral-600);">Code transformations and style guides for professional use</p>
-            </div>
-            
-            {{-- Code Transformations --}}
-            <div class="mb-8">
-                <h4 style="font-size: var(--type-scale-lg); font-weight: 600; color: var(--neutral-700); margin-bottom: var(--space-md);">Code Formats</h4>
-                <div class="secondary-ring">
-                    <button wire:click="transformToCamelCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        camelCase
-                    </button>
-                    <button wire:click="transformToSnakeCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        snake_case
-                    </button>
-                    <button wire:click="transformToKebabCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        kebab-case
-                    </button>
-                    <button wire:click="transformToPascalCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        PascalCase
-                    </button>
-                    <button wire:click="transformToConstantCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        CONSTANT_CASE
-                    </button>
-                    <button wire:click="transformToDotCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        dot.case
-                    </button>
-                    <button wire:click="transformToPathCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        path/case
-                    </button>
-                    <button wire:click="transformToHeaderCase" class="btn-transform gpu-accelerated" style="font-family: 'JetBrains Mono', monospace;">
-                        Header-Case
-                    </button>
-                </div>
-            </div>
-
-            {{-- Style Guides --}}
-            <div class="mb-8">
-                <h4 style="font-size: var(--type-scale-lg); font-weight: 600; color: var(--neutral-700); margin-bottom: var(--space-md);">Academic & Professional Style Guides</h4>
-                <div class="secondary-ring">
-                    <button wire:click="applyApaStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        APA Style
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Academic</div>
-                    </button>
-                    <button wire:click="applyMlaStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        MLA Style
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Literature</div>
-                    </button>
-                    <button wire:click="applyChicagoStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        Chicago
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">History</div>
-                    </button>
-                    <button wire:click="applyApStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        AP Style
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Journalism</div>
-                    </button>
-                    <button wire:click="applyBluebookStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        Bluebook
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Legal</div>
-                    </button>
-                    <button wire:click="applyIeeeStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        IEEE
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Engineering</div>
-                    </button>
-                    <button wire:click="applyAmaStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        AMA Style
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Medical</div>
-                    </button>
-                    <button wire:click="applyHarvardStyle" class="btn-transform btn-style-guide gpu-accelerated">
-                        Harvard
-                        <div style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-top: 2px;">Business</div>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        {{-- TERTIARY LAYER (25% Visual Weight) --}}
-        <section class="animate-slide-up" style="animation-delay: 0.6s;">
-            <div class="text-center mb-8">
-                <h3 style="font-size: var(--type-scale-xl); font-weight: 600; color: var(--neutral-700); margin-bottom: var(--space-sm); opacity: 0.8;">Creative & Utility Transformations</h3>
-                <p style="font-size: var(--type-scale-sm); color: var(--neutral-500);">Fun and utility transformations for special use cases</p>
-            </div>
-            
-            <div class="tertiary-layer" style="opacity: 0.75;">
-                <button wire:click="transformToSentenceCase" class="btn-transform gpu-accelerated">
-                    Sentence case
-                </button>
-                <button wire:click="transformToFirstLetter" class="btn-transform gpu-accelerated">
-                    First Letter
-                </button>
-                <button wire:click="transformToTrainCase" class="btn-transform gpu-accelerated">
-                    Train-Case
-                </button>
-                <button wire:click="transformToAlternatingCase" class="btn-transform gpu-accelerated">
-                    aLtErNaTiNg
-                </button>
-                <button wire:click="transformToSpongebobCase" class="btn-transform gpu-accelerated">
-                    sPoNgEbOb
-                </button>
-                <button wire:click="transformToInverseCase" class="btn-transform gpu-accelerated">
-                    InVeRsE
-                </button>
-                <button wire:click="transformToRandomCase" class="btn-transform gpu-accelerated">
-                    RaNDoM
-                </button>
-                <button wire:click="transformToReversedText" class="btn-transform gpu-accelerated">
-                    txeT esreveR
-                </button>
-                <button wire:click="transformToWideText" class="btn-transform gpu-accelerated">
-                    Ｗｉｄｅ Ｔｅｘｔ
-                </button>
-                <button wire:click="transformToSmallCaps" class="btn-transform gpu-accelerated">
-                    SMALL CAPS
-                </button>
-                <button wire:click="transformToStrikethrough" class="btn-transform gpu-accelerated">
-                    S̶t̶r̶i̶k̶e̶
-                </button>
-                <button wire:click="transformToZalgoText" class="btn-transform gpu-accelerated">
-                    Z̷a̸l̷g̸o̷
-                </button>
-                <button wire:click="transformToUpsideDown" class="btn-transform gpu-accelerated">
-                    ɟlᴉԀ
-                </button>
-                <button wire:click="transformToBinary" class="btn-transform gpu-accelerated">
-                    01000010
-                </button>
-                <button wire:click="transformToNoWhitespace" class="btn-transform gpu-accelerated">
-                    RemoveSpaces
-                </button>
-            </div>
-        </section>
-
-        {{-- ADVANCED UTILITIES SECTION --}}
-        <section class="animate-slide-up" style="animation-delay: 0.8s;">
-            <div class="io-container" style="margin-top: var(--space-3xl);">
-                <button
-                    wire:click="toggleAdvancedOptions"
-                    class="flex items-center justify-between w-full text-left mb-6 p-0 bg-transparent border-none cursor-pointer"
+        {{-- Action Buttons - Apple Style --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex flex-wrap gap-3">
+                <button 
+                    wire:click="copyToClipboard" 
+                    class="px-6 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm"
                 >
-                    <h3 style="font-size: var(--type-scale-xl); font-weight: 600; color: var(--neutral-800);">Advanced Text Utilities</h3>
-                    <svg
-                        style="width: 20px; height: 20px; color: var(--neutral-500); transform: {{ $showAdvancedOptions ? 'rotate(180deg)' : 'rotate(0deg)' }}; transition: transform 300ms var(--spring-smooth);"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                    @if($copied) ✓ Copied! @else Copy Output @endif
+                </button>
+                <button 
+                    wire:click="clearAll" 
+                    class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200"
+                >
+                    Clear All
+                </button>
+                <button 
+                    wire:click="swapTexts" 
+                    class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200"
+                >
+                    Output → Input
+                </button>
+                <button 
+                    wire:click="undo" 
+                    class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium text-sm border border-gray-200"
+                    @if(!$historyInfo['can_undo']) disabled @endif
+                >
+                    ↶ Undo
+                </button>
+                <button 
+                    wire:click="redo" 
+                    class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium text-sm border border-gray-200"
+                    @if(!$historyInfo['can_redo']) disabled @endif
+                >
+                    ↷ Redo
+                </button>
+            </div>
+        </div>
+
+        {{-- Transformations - Apple Style --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-900">Text Transformations</h2>
+            
+            @foreach($transformationGroups as $groupKey => $group)
+                <div class="mb-8">
+                    <h3 class="text-sm font-medium mb-4 text-gray-500 uppercase tracking-wider">{{ $group['title'] }}</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                        @foreach($group['transformations'] as $key => $label)
+                            <button 
+                                wire:click="applyTransformation('{{ $key }}')"
+                                class="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors @if($selectedTransformation === $key) !bg-blue-500 !text-white @endif"
+                            >
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
+            {{-- Style Guides - Apple Style --}}
+            <div class="border-t border-gray-200 pt-8 mt-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-900">Style Guides</h2>
+                
+                @foreach($styleGuides as $categoryKey => $category)
+                    <div class="mb-8">
+                        <h3 class="text-sm font-medium mb-4 text-gray-500 uppercase tracking-wider">{{ $category['title'] }}</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                            @foreach($category['guides'] as $key => $label)
+                                <button 
+                                    wire:click="applyStyleGuide('{{ $key }}')"
+                                    class="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors @if($selectedStyleGuide === $key) !bg-blue-500 !text-white @endif"
+                                >
+                                    {{ $label }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Preservation Settings - Apple Style --}}
+            <div class="border-t border-gray-200 pt-8 mt-8">
+                <button 
+                    wire:click="togglePreservationSettings"
+                    class="flex items-center justify-between w-full text-left group"
+                >
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-500 transition-colors">Smart Preservation Settings</h3>
+                    <svg class="w-5 h-5 transition-transform text-gray-400 @if($showPreservationSettings) rotate-180 @endif" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-
-                @if($showAdvancedOptions)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
-                        {{-- Preposition Fixer --}}
-                        <div class="io-container" style="padding: var(--space-lg);">
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 style="font-size: var(--type-scale-base); font-weight: 600; color: var(--neutral-700);">Fix Prepositions</h4>
-                                <button
-                                    wire:click="fixPrepositions"
-                                    class="btn-copy"
-                                >
-                                    Apply
-                                </button>
-                            </div>
-                            <p style="font-size: var(--type-scale-sm); color: var(--neutral-500); margin-bottom: var(--space-md);">Lowercase prepositions under {{ $prepositionMaxLength }} letters</p>
-                            <div class="flex items-center gap-2">
-                                <label style="font-size: var(--type-scale-sm); color: var(--neutral-600);">Max Length:</label>
-                                <input
-                                    type="number"
-                                    wire:model="prepositionMaxLength"
-                                    min="2"
-                                    max="10"
-                                    style="width: 60px; padding: var(--space-xs) var(--space-sm); border: 1px solid var(--neutral-300); border-radius: 6px; font-size: var(--type-scale-sm);"
-                                >
-                            </div>
-                        </div>
-
-                        {{-- Smart Quotes --}}
-                        <div class="io-container" style="padding: var(--space-lg);">
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 style="font-size: var(--type-scale-base); font-weight: 600; color: var(--neutral-700);">Smart Quotes</h4>
-                                <button
-                                    wire:click="convertToSmartQuotes"
-                                    class="btn-copy"
-                                >
-                                    Convert
-                                </button>
-                            </div>
-                            <p style="font-size: var(--type-scale-sm); color: var(--neutral-500);">Convert straight quotes to curly quotes</p>
-                        </div>
-
-                        {{-- Space Management --}}
-                        <div class="io-container" style="padding: var(--space-lg);">
-                            <h4 style="font-size: var(--type-scale-base); font-weight: 600; color: var(--neutral-700); margin-bottom: var(--space-md);">Space Management</h4>
-                            <div class="flex gap-2">
-                                <button
-                                    wire:click="removeExtraSpaces"
-                                    class="btn-copy" style="flex: 1;"
-                                >
-                                    Remove Extra
-                                </button>
-                                <button
-                                    wire:click="addSpaces"
-                                    class="btn-copy" style="flex: 1;"
-                                >
-                                    Add Spaces
-                                </button>
-                            </div>
-                        </div>
-
-                        {{-- Underscore Conversion --}}
-                        <div class="io-container" style="padding: var(--space-lg);">
-                            <h4 style="font-size: var(--type-scale-base); font-weight: 600; color: var(--neutral-700); margin-bottom: var(--space-md);">Underscore Conversion</h4>
-                            <div class="flex gap-2">
-                                <button
-                                    wire:click="spacesToUnderscores"
-                                    class="btn-copy" style="flex: 1; font-family: 'JetBrains Mono', monospace;"
-                                >
-                                    Spaces → _
-                                </button>
-                                <button
-                                    wire:click="underscoresToSpaces"
-                                    class="btn-copy" style="flex: 1; font-family: 'JetBrains Mono', monospace;"
-                                >
-                                    _ → Spaces
-                                </button>
-                            </div>
-                        </div>
+                
+                @if($showPreservationSettings)
+                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.urls" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve URLs</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.emails" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve Emails</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.brands" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve Brands</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.code_blocks" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve Code</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.markdown" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve Markdown</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.mentions" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve @mentions</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.hashtags" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve #hashtags</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" wire:model="preservationSettings.file_paths" class="mr-3 w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Preserve Paths</span>
+                        </label>
                     </div>
                 @endif
             </div>
-        </section>
+        </div>
 
+        {{-- Footer - Apple Style --}}
+        <footer class="text-center mt-16 pb-8">
+            <p class="text-gray-400 text-xs font-medium">&copy; 2025 Case Changer Pro</p>
+            <p class="mt-1 text-gray-400 text-xs">Professional Text Transformation Tool</p>
+        </footer>
     </div>
 
-    {{-- Revolutionary Toast Notification --}}
+    {{-- Copy Success Toast - Apple Style --}}
     @if($copied)
-        <div
-            x-data="{ show: true }"
-            x-show="show"
-            x-init="setTimeout(() => show = false, 3000)"
-            x-transition:enter="transition ease-out duration-400"
-            x-transition:enter-start="opacity-0 transform translate-y-8 scale-0.95"
-            x-transition:enter-end="opacity-100 transform translate-y-0 scale-1"
-            x-transition:leave="transition ease-in duration-300"
-            x-transition:leave-start="opacity-100 transform translate-y-0 scale-1"
-            x-transition:leave-end="opacity-0 transform translate-y-8 scale-0.95"
-            class="fixed bottom-6 right-6 blur-glass animate-glow-pulse"
-            style="background: var(--accent-primary); color: var(--neutral-0); padding: var(--space-md) var(--space-lg); border-radius: 12px; box-shadow: var(--shadow-high), var(--shadow-primary); font-weight: 500; z-index: 1000;"
+        <div 
+            x-data="{ show: true }" 
+            x-show="show" 
+            x-init="setTimeout(() => show = false, 2000)"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl backdrop-blur-xl"
+            style="background: rgba(0, 0, 0, 0.85);"
         >
-            <div class="flex items-center gap-2">
-                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                Text copied to clipboard!
+                <span class="font-medium text-sm">Copied to clipboard</span>
             </div>
         </div>
     @endif
-
-    {{-- Revolutionary Interaction System --}}
-    @push('scripts')
-        <script>
-            // Revolutionary Magnetic Interface System
-            document.addEventListener('DOMContentLoaded', function() {
-                // Check for reduced motion preference
-                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                if (prefersReducedMotion) return;
-                
-                // Enhanced button interactions
-                const buttons = document.querySelectorAll('.btn-transform');
-                
-                buttons.forEach((button, index) => {
-                    // Stagger animation
-                    button.style.animationDelay = `${index * 50}ms`;
-                    button.classList.add('animate-slide-up');
-                    
-                    // Magnetic hover effects
-                    button.addEventListener('mouseenter', function() {
-                        this.style.transition = 'transform 400ms cubic-bezier(0.25, 1, 0.5, 1)';
-                        this.style.transform = 'translateY(-2px) scale(1.02)';
-                    });
-                    
-                    button.addEventListener('mouseleave', function() {
-                        this.style.transform = '';
-                    });
-                    
-                    // Click animation
-                    button.addEventListener('click', function() {
-                        this.style.animation = 'textTransform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-                        setTimeout(() => {
-                            this.style.animation = '';
-                        }, 600);
-                    });
-                });
-                
-                // Enhanced text area interactions
-                const textAreas = document.querySelectorAll('.text-input');
-                textAreas.forEach(textarea => {
-                    textarea.addEventListener('focus', function() {
-                        const container = this.closest('.io-container');
-                        container.style.transform = 'translateY(-2px)';
-                        container.style.boxShadow = 'var(--shadow-high), var(--shadow-primary)';
-                    });
-                    
-                    textarea.addEventListener('blur', function() {
-                        const container = this.closest('.io-container');
-                        container.style.transform = '';
-                        container.style.boxShadow = '';
-                    });
-                });
-                
-                // Copy button enhancements
-                const copyButtons = document.querySelectorAll('.btn-copy');
-                copyButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        // Create particle effect
-                        for (let i = 0; i < 6; i++) {
-                            const particle = document.createElement('div');
-                            const angle = (i / 6) * Math.PI * 2;
-                            const distance = 30;
-                            const x = Math.cos(angle) * distance;
-                            const y = Math.sin(angle) * distance;
-                            
-                            particle.style.cssText = `
-                                position: absolute;
-                                width: 4px;
-                                height: 4px;
-                                background: var(--accent-primary);
-                                border-radius: 50%;
-                                pointer-events: none;
-                                left: 50%;
-                                top: 50%;
-                                z-index: 10;
-                            `;
-                            
-                            this.style.position = 'relative';
-                            this.appendChild(particle);
-                            
-                            // Animate particle
-                            particle.animate([
-                                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                                { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0)`, opacity: 0 }
-                            ], {
-                                duration: 800,
-                                easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
-                            }).onfinish = () => particle.remove();
-                        }
-                    });
-                });
-            });
-        </script>
-    @endpush
 </div>

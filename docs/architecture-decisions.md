@@ -215,4 +215,169 @@ trait Sanitization {
         return $text;
     }
 }
+
+## Decision: SCARLETT Design System Implementation
+**Date:** 2025-08-18
+**Technology:** CSS Custom Properties, BEM Methodology, Glassmorphic Design
+**Context:** Critical header color inconsistency and lack of design system standards
+**Decision:** Implement complete SCARLETT design system with mandatory consistency requirements
+**Rationale:**
+- Eliminates color inconsistencies through centralized variable system
+- BEM methodology provides semantic class naming and maintainability
+- Glassmorphic effects create modern, professional appearance
+- Comprehensive tooltip system improves user experience and accessibility
+**Consequences:**
+- Benefits: 100% color consistency, semantic HTML structure, comprehensive documentation
+- Tradeoffs: Increased CSS complexity, requires discipline to maintain standards
+
+## Decision: CSS Custom Properties for Color Management
+**Date:** 2025-08-18
+**Technology:** CSS Custom Properties (CSS Variables)
+**Context:** Header using different color gradient than body design
+**Decision:** Mandatory use of CSS custom properties for ALL colors, elimination of hardcoded values
+**Rationale:**
+- Centralized color management prevents inconsistencies
+- Easy theme modifications and maintenance
+- Consistent design language throughout application
+- Single source of truth for color palette
+**Consequences:**
+- Benefits: Perfect color consistency, maintainable theming, easy customization
+- Tradeoffs: Must enforce discipline to never use hardcoded color values
+
+## Decision: BEM CSS Methodology
+**Date:** 2025-08-18
+**Technology:** Block Element Modifier (BEM) CSS naming
+**Context:** Need semantic, maintainable CSS class structure
+**Decision:** Implement BEM methodology with `.case-changer__` prefix for all elements
+**Rationale:**
+- Semantic class names improve code readability
+- Modular structure supports component-based development
+- Prevents CSS conflicts and specificity issues
+- Enables targeted customization and debugging
+**Consequences:**
+- Benefits: Clear component structure, maintainable CSS, semantic naming
+- Tradeoffs: More verbose class names, requires consistent application
+
+## Decision: Comprehensive Tooltip System
+**Date:** 2025-08-18
+**Technology:** CSS-only hover tooltips with NLP descriptions
+**Context:** 60+ transformation features lack user guidance
+**Decision:** Implement tooltip for EVERY interactive element with "What is [X]?" format
+**Rationale:**
+- Improves user experience and feature discoverability
+- Reduces support burden through self-service help
+- Provides comprehensive feature documentation
+- Maintains accessibility standards
+**Consequences:**
+- Benefits: Enhanced UX, reduced support needs, comprehensive documentation
+- Tradeoffs: Increased HTML complexity, maintenance overhead for content updates
+
+## Decision: Semantic HTML Structure
+**Date:** 2025-08-18
+**Technology:** HTML5 semantic elements with ARIA attributes
+**Context:** Previous implementation lacked proper semantic structure
+**Decision:** Mandatory use of header/main/footer elements with proper accessibility
+**Rationale:**
+- Improves accessibility for screen readers and assistive technologies
+- Better SEO structure and semantic meaning
+- Future-proof markup following web standards
+- Easier maintenance and content management
+**Consequences:**
+- Benefits: Accessibility compliance, SEO benefits, semantic clarity
+- Tradeoffs: Requires understanding of semantic HTML principles
+
+## Decision: Glassmorphic Design with Floating Orbs
+**Date:** 2025-08-18
+**Technology:** CSS backdrop-filter, transforms, animations
+**Context:** Need modern, engaging visual design system
+**Decision:** Implement glassmorphic effects with four floating orbs and parallax interactions
+**Rationale:**
+- Creates modern, premium appearance
+- Engaging user experience with subtle animations
+- Differentiates from standard web applications
+- Maintains performance through optimized CSS
+**Consequences:**
+- Benefits: Premium visual appeal, engaging interactions, modern design
+- Tradeoffs: Browser compatibility requirements, performance considerations
+
+## Decision: Full-Width Layout Architecture
+**Date:** 2025-08-18
+**Technology:** CSS Grid with responsive breakpoints
+**Context:** Previous narrow design wasted available screen space
+**Decision:** Implement full-width layout utilizing complete viewport width
+**Rationale:**
+- Maximizes available screen real estate
+- Better accommodates large feature set
+- Improves visual hierarchy and content organization
+- Responsive design adapts to all screen sizes
+**Consequences:**
+- Benefits: Optimal space utilization, better content organization, responsive design
+- Tradeoffs: More complex responsive considerations, requires careful layout planning
+
+### Critical Architecture Patterns
+
+#### Color System Architecture
+```css
+:root {
+    /* Primary Palette - NEVER use hardcoded values */
+    --color-dark-purple: #2D1B3D;
+    --color-dark-red: #8B2635;
+    --color-orange-red: #D44B3A;
+    --color-orange: #F39C12;
+    --color-teal: #52C4B0;
+    --color-blue: #3498DB;
+    --color-light: #ECF0F1;
+    
+    /* Semantic Assignments */
+    --color-primary: var(--color-teal);
+    --color-secondary: var(--color-blue);
+    --color-accent: var(--color-orange);
+}
+```
+
+#### BEM Class Structure
+```css
+.case-changer__[element]                /* Base elements */
+.case-changer__[element]--[modifier]    /* Element variations */
+.case-changer__[element]--[state]       /* State-based styling */
+```
+
+#### Tooltip Pattern
+```html
+<div class="case-changer__tooltip">
+    <element class="case-changer__[type]">Feature</element>
+    <div class="case-changer__tooltip-content">
+        [Feature] is [comprehensive NLP description].
+        <a href="#" class="case-changer__tooltip-link">Learn more about [Feature]</a>
+    </div>
+</div>
+```
+
+#### Glassmorphic Container Pattern
+```css
+.case-changer__glass-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--glass-shadow);
+}
+```
+
+### Design System Validation Requirements
+
+#### Mandatory Checks Before Release
+1. **Color Consistency**: No hardcoded colors anywhere in codebase
+2. **BEM Compliance**: All elements use proper `.case-changer__` prefix
+3. **Tooltip Coverage**: Every interactive element has documentation
+4. **Semantic HTML**: Proper header/main/footer structure
+5. **Browser Validation**: Zero console errors with all functionality working
+6. **Asset Compilation**: Production build successful
+7. **Responsive Design**: Layout works across all breakpoints
+
+#### Enforcement Through SCARLETT Methodology
+- Root cause analysis for any design inconsistencies  
+- Requirements decomposition for all new features
+- Architecture considerations for design system integration
+- Mandatory browser validation before completion
 ```
