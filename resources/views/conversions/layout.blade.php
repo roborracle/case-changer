@@ -21,6 +21,18 @@
     {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
     @endif
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3D0SMK2BM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y3D0SMK2BM');
+    </script>
+    
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 </head>
 <body class="min-h-screen" style="background-color: var(--bg-secondary);">
     <!-- Navigation -->
