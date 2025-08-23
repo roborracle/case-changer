@@ -30,9 +30,6 @@
         gtag('js', new Date());
         gtag('config', 'G-Y3D0SMK2BM');
     </script>
-    
-    <!-- Google Search Console Verification -->
-    <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 </head>
 <body class="min-h-screen" style="background-color: var(--bg-secondary);">
     <!-- Navigation -->
