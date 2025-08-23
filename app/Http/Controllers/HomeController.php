@@ -17,7 +17,7 @@ class HomeController extends Controller
     {
         $schemaData = $this->schemaService->generateHomepageSchema();
         
-        return view('welcome', [
+        return view('home', [
             'schemaData' => $schemaData
         ]);
     }
