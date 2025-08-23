@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $themeClass ?? 'light' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,22 +29,22 @@
     ]))
     </script>
     
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+<body class="min-h-screen" style="background-color: var(--bg-secondary);">
     <!-- Navigation -->
     @include('components.navigation')
 
     <!-- Breadcrumbs -->
     @hasSection('breadcrumbs')
-    <div class="bg-white border-b border-gray-200">
+    <div class="border-b" style="background-color: var(--bg-primary); border-color: var(--border-primary);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="flex items-center space-x-2 text-sm">
                     <li>
-                        <a href="/" class="text-gray-500 hover:text-gray-700">
+                        <a href="/" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                             </svg>

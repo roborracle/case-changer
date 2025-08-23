@@ -11,7 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->web(append: [
+            \App\Http\Middleware\ApplyTheme::class,
+        ]);
+        
+        // Exclude theme cookie from encryption
+        $middleware->encryptCookies(except: [
+            'case-changer-theme'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
