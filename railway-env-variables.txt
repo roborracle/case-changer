@@ -8,13 +8,10 @@ APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://casechangerpro.com
 
-# Database (Railway will auto-set these if using Railway PostgreSQL)
-DB_CONNECTION=pgsql
-# DB_HOST will be auto-set by Railway
-# DB_PORT will be auto-set by Railway
-# DB_DATABASE will be auto-set by Railway
-# DB_USERNAME will be auto-set by Railway
-# DB_PASSWORD will be auto-set by Railway
+# Database Configuration - NOT USING DATABASE
+# Laravel requires DB_CONNECTION to be set even if not using a database
+DB_CONNECTION=sqlite
+DB_DATABASE=:memory:
 
 # Logging
 LOG_CHANNEL=stack
@@ -43,49 +40,31 @@ MAIL_ENCRYPTION=null
 MAIL_FROM_ADDRESS="hello@casechangerpro.com"
 MAIL_FROM_NAME="${APP_NAME}"
 
-# Optional - Only if you need these services
-REDIS_URL=null
-REDIS_HOST=null
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-REDIS_USERNAME=null
-
-# AWS (not needed for basic functionality)
-AWS_ACCESS_KEY_ID=null
-AWS_SECRET_ACCESS_KEY=null
+# AWS (not needed for this project)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=null
-AWS_URL=null
-AWS_ENDPOINT=null
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
 
-# Other optional services
-POSTMARK_TOKEN=null
-RESEND_KEY=null
-SLACK_BOT_USER_OAUTH_TOKEN=null
-SLACK_BOT_USER_DEFAULT_CHANNEL=null
+# Pusher (not needed for this project)
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
 
-# Papertrail (not needed)
-PAPERTRAIL_URL=null
-PAPERTRAIL_PORT=null
+# Vite
+VITE_APP_NAME="${APP_NAME}"
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 
-# SQS (not needed)
-SQS_SUFFIX=null
-
-# Mail logging
-MAIL_LOG_CHANNEL=null
-POSTMARK_MESSAGE_STREAM_ID=null
-
-# Database queue
-DB_QUEUE_CONNECTION=null
-
-# Log formatter
-LOG_STDERR_FORMATTER=null
-LOG_SLACK_WEBHOOK_URL=null
-
-# Mail scheme
-MAIL_SCHEME=null
-MAIL_URL=null
-
-# Session
-SESSION_STORE=null
-SESSION_DOMAIN=.casechangerpro.com
+# Railway-specific Build Settings
+NIXPACKS_BUILD_CMD="npm install && npm run build && php artisan optimize:clear"
+PHP_VERSION=8.2
+NODE_VERSION=18
