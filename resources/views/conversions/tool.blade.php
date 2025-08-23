@@ -25,30 +25,6 @@
 </li>
 @endsection
 
-@section('schema')
-<?php
-$schemaData = [
-    "@context" => "https://schema.org",
-    "@type" => "WebApplication",
-    "name" => $toolData['name'] . " Converter",
-    "applicationCategory" => "UtilityApplication",
-    "operatingSystem" => "Any",
-    "description" => $toolData['description'],
-    "offers" => [
-        "@type" => "Offer",
-        "price" => "0",
-        "priceCurrency" => "USD"
-    ],
-    "aggregateRating" => [
-        "@type" => "AggregateRating",
-        "ratingValue" => "4.8",
-        "ratingCount" => "1250"
-    ]
-];
-echo json_encode($schemaData);
-?>
-@endsection
-
 @section('content')
 <div class="bg-white">
     <!-- Tool Header -->

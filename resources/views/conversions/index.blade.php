@@ -1,24 +1,30 @@
 @extends('conversions.layout')
 
-@section('title', 'All Text Conversion Tools - Case Changer Pro')
-@section('description', 'Complete collection of text transformation tools including case converters, developer formats, style guides, and more')
-@section('keywords', 'text converter, case converter, camelCase, snake_case, AP style, APA format, text transformation')
+@section('title', 'Case Changer Pro - Universal Text Converter & Transformation Tools')
+@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 86+ more formats. Free, fast, and professional.')
+@section('keywords', 'case converter, text transformer, case changer, uppercase, lowercase, camelCase, snake_case, title case, sentence case, AP style, APA format, text conversion, developer tools, writing tools')
 
 @section('content')
-<div class="bg-white">
+<div class="bg-white dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Hero Section -->
         <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">All Text Conversion Tools</h1>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Professional text transformation tools organized by category. Choose from case conversions, 
-                developer formats, style guides, and more.
+            <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Case Changer Pro
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-2">
+                The Ultimate Text Transformation Tool
+            </p>
+            <p class="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+                Convert text to any format instantly. 91+ conversion styles including case formats, 
+                developer conventions, and professional style guides.
             </p>
         </div>
 
-        <!-- Universal Converter Tool -->
-        <div class="mb-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Universal Text Converter</h2>
-            <p class="text-gray-600 text-center mb-6">One tool to rule them all - convert to any format instantly</p>
+        <!-- Universal Converter Tool - Main Feature -->
+        <div class="mb-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-8 shadow-lg">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center">Universal Text Converter</h2>
+            <p class="text-gray-600 dark:text-gray-300 text-center mb-6 text-lg">One tool to rule them all - select from 91+ conversion formats</p>
             @livewire('universal-converter')
         </div>
 

@@ -4,20 +4,25 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\CaseChanger;
 use App\Livewire\ModernCaseChanger;
 use App\Http\Controllers\ConversionController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Homepage - Universal Converter (One Tool to Rule Them All)
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/case-changer', CaseChanger::class)->name('case-changer');
-Route::get('/modern', ModernCaseChanger::class)->name('modern-case-changer');
+// Legacy routes (redirect to home)
+Route::get('/case-changer', function() {
+    return redirect('/');
+})->name('case-changer');
+Route::get('/modern', function() {
+    return redirect('/');
+})->name('modern-case-changer');
 
 // Sitemap
 Route::get('/sitemap', function() {
     return view('sitemap');
 })->name('sitemap');
 
-// Conversion tools hierarchical routes
+// Additional conversions route for backward compatibility
 Route::get('/conversions', [ConversionController::class, 'index'])->name('conversions.index');
 Route::get('/conversions/{category}', [ConversionController::class, 'category'])->name('conversions.category');
 Route::get('/conversions/{category}/{tool}', [ConversionController::class, 'tool'])->name('conversions.tool');

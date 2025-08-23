@@ -354,12 +354,14 @@ class CaseChanger extends Component
         
         // Add to history
         if (!empty($this->inputText)) {
-            $this->historyService->addState([
-                'input' => $this->inputText,
-                'output' => $this->outputText,
-                'transformation' => $this->selectedTransformation,
-                'style_guide' => $this->selectedStyleGuide
-            ]);
+            $this->historyService->addState(
+                $this->inputText,
+                $this->selectedTransformation,
+                [
+                    'output' => $this->outputText,
+                    'style_guide' => $this->selectedStyleGuide
+                ]
+            );
             $this->updateHistoryInfo();
         }
     }
@@ -729,13 +731,14 @@ class CaseChanger extends Component
      */
     public function undo(): void
     {
-        $state = $this->historyService->undo();
+        $text = $this->historyService->undo();
         
-        if ($state) {
-            $this->inputText = $state['input'] ?? '';
-            $this->outputText = $state['output'] ?? '';
-            $this->selectedTransformation = $state['transformation'] ?? '';
-            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+        if ($text !== null) {
+            $this->inputText = $text;
+            // Clear output since we're going back to a previous input state
+            $this->outputText = '';
+            $this->selectedTransformation = '';
+            $this->selectedStyleGuide = '';
             $this->updateStatistics();
             $this->updateHistoryInfo();
             $this->successMessage = 'Undo successful.';
@@ -747,13 +750,14 @@ class CaseChanger extends Component
      */
     public function redo(): void
     {
-        $state = $this->historyService->redo();
+        $text = $this->historyService->redo();
         
-        if ($state) {
-            $this->inputText = $state['input'] ?? '';
-            $this->outputText = $state['output'] ?? '';
-            $this->selectedTransformation = $state['transformation'] ?? '';
-            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+        if ($text !== null) {
+            $this->inputText = $text;
+            // Clear output since we're moving to a different input state  
+            $this->outputText = '';
+            $this->selectedTransformation = '';
+            $this->selectedStyleGuide = '';
             $this->updateStatistics();
             $this->updateHistoryInfo();
             $this->successMessage = 'Redo successful.';
@@ -765,13 +769,14 @@ class CaseChanger extends Component
      */
     public function jumpToState(int $position): void
     {
-        $state = $this->historyService->jumpToState($position);
+        $text = $this->historyService->jumpToState($position);
         
-        if ($state) {
-            $this->inputText = $state['input'] ?? '';
-            $this->outputText = $state['output'] ?? '';
-            $this->selectedTransformation = $state['transformation'] ?? '';
-            $this->selectedStyleGuide = $state['style_guide'] ?? '';
+        if ($text !== null) {
+            $this->inputText = $text;
+            // Clear output since we're jumping to a different input state
+            $this->outputText = '';
+            $this->selectedTransformation = '';
+            $this->selectedStyleGuide = '';
             $this->updateStatistics();
             $this->updateHistoryInfo();
             $this->successMessage = 'Jumped to history state ' . ($position + 1) . '.';
@@ -783,15 +788,16 @@ class CaseChanger extends Component
      */
     private function addToHistory(): void
     {
-        $state = [
-            'input' => $this->inputText,
-            'output' => $this->outputText,
-            'transformation' => $this->selectedTransformation,
-            'style_guide' => $this->selectedStyleGuide,
-            'preservation' => $this->preservationSettings
-        ];
-        
-        $this->historyService->addState($state);
+        // Store the output text in history with transformation info
+        $this->historyService->addState(
+            $this->outputText,
+            $this->selectedTransformation ?: $this->selectedStyleGuide,
+            [
+                'input' => $this->inputText,
+                'style_guide' => $this->selectedStyleGuide,
+                'preservation' => $this->preservationSettings
+            ]
+        );
         
         // Update history array for UI
         $this->history[] = [
@@ -890,7 +896,7 @@ class CaseChanger extends Component
         $this->clearMessages();
         $this->copied = false;
         $this->updateStatistics();
-        $this->historyService->clear();
+        $this->historyService->clearHistory();
         $this->updateHistoryInfo();
     }
 
@@ -924,20 +930,20 @@ class CaseChanger extends Component
      */
     private function restoreSession(): void
     {
-        $history = $this->historyService->getHistory();
+        $currentText = $this->historyService->getCurrentState();
         
-        if (!empty($history)) {
-            $lastState = end($history);
-            $this->inputText = $lastState['input'] ?? '';
-            $this->outputText = $lastState['output'] ?? '';
-            $this->selectedTransformation = $lastState['transformation'] ?? '';
-            $this->selectedStyleGuide = $lastState['style_guide'] ?? '';
+        if ($currentText !== null) {
+            // Set the last known text as input
+            $this->inputText = $currentText;
+            $this->outputText = '';
             
-            if (isset($lastState['preservation'])) {
-                $this->preservationSettings = array_merge(
-                    $this->preservationSettings,
-                    $lastState['preservation']
-                );
+            // Get history info to restore transformation info from metadata
+            $historyInfo = $this->historyService->getHistoryInfo();
+            if (!empty($historyInfo['states'])) {
+                $currentIndex = $this->historyService->getCurrentPosition();
+                if (isset($historyInfo['states'][$currentIndex])) {
+                    $this->selectedTransformation = $historyInfo['states'][$currentIndex]['transformation'] ?? '';
+                }
             }
             
             $this->updateStatistics();
@@ -966,7 +972,7 @@ class CaseChanger extends Component
      */
     public function exportHistory(): void
     {
-        $history = $this->historyService->exportHistory();
+        $history = $this->historyService->exportHistory(true);
         
         if (!empty($history)) {
             $filename = 'transformation-history-' . date('Y-m-d-His') . '.json';
@@ -1125,10 +1131,55 @@ class CaseChanger extends Component
     }
     
     /**
+     * Show notification message
+     */
+    public function showNotification(string $message): void
+    {
+        $this->notification = $message;
+        
+        // Clear notification after 3 seconds
+        $this->dispatch('clear-notification');
+    }
+    
+    /**
+     * Toggle advanced drawer
+     */
+    public function toggleAdvancedDrawer(): void
+    {
+        $this->showAdvanced = !$this->showAdvanced;
+    }
+    
+    /**
+     * Toggle batch mode
+     */
+    public function toggleBatchMode(): void
+    {
+        // Placeholder for batch mode functionality
+        $this->showNotification('Batch mode coming soon!');
+    }
+    
+    /**
+     * Toggle chain mode
+     */
+    public function toggleChainMode(): void
+    {
+        // Placeholder for chain mode functionality
+        $this->showNotification('Chain mode coming soon!');
+    }
+    
+    /**
      * Render the component
      */
     public function render()
     {
+        // Check if we should use glassmorphism interface
+        $useGlassmorphism = request()->has('glassmorphism') || session('use_glassmorphism_interface');
+        
+        if ($useGlassmorphism) {
+            session(['use_glassmorphism_interface' => true]);
+            return view('livewire.glassmorphism-case-changer');
+        }
+        
         // Check if we should use the elegant interface
         $useElegantInterface = request()->has('elegant') || session('use_elegant_interface');
         

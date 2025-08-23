@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme System Test - Case Changer</title>
+    
+    <!-- CRITICAL: Apply theme immediately to prevent FOUC -->
+    <script>
+        (function() {
+            const getStoredTheme = () => {
+                try {
+                    return localStorage.getItem('case-changer-theme');
+                } catch {
+                    return null;
+                }
+            };
+            
+            const theme = getStoredTheme() || 'system';
+            const html = document.documentElement;
+            
+            // Remove any existing theme classes
+            html.classList.remove('light', 'dark');
+            
+            if (theme === 'system') {
+                // Apply system preference
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.classList.add(isDark ? 'dark' : 'light');
+            } else {
+                // Apply specific theme
+                html.classList.add(theme);
+            }
+        })();
+    </script>
+    
+    <style>
+        /* Basic theme variables */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --border-primary: #e2e8f0;
+        }
+        
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-primary: #334155;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-primary);
+        }
+        
+        .theme-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: 1px solid var(--border-primary);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        button:hover {
+            background-color: var(--bg-secondary);
+        }
+        
+        button.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Theme System Test</h1>
+        
+        <div class="theme-controls">
+            <button onclick="setTheme('light')" id="btn-light">Light</button>
+            <button onclick="setTheme('dark')" id="btn-dark">Dark</button>
+            <button onclick="setTheme('system')" id="btn-system">System</button>
+        </div>
+        
+        <div class="status">
+            <h3>Current Status:</h3>
+            <p><strong>Selected Theme:</strong> <span id="current-theme">Loading...</span></p>
+            <p><strong>Effective Theme:</strong> <span id="effective-theme">Loading...</span></p>
+            <p><strong>System Preference:</strong> <span id="system-preference">Loading...</span></p>
+            <p><strong>HTML Class:</strong> <span id="html-class">Loading...</span></p>
+            <p><strong>LocalStorage:</strong> <span id="storage-value">Loading...</span></p>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click the theme buttons to test switching</li>
+                <li>Refresh the page to test persistence</li>
+                <li>Change your system theme to test 'System' mode</li>
+                <li>Open in different browser tabs to test synchronization</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Theme management system
+        const themes = ['light', 'dark', 'system'];
+        let currentTheme = 'system';
+        
+        function getStoredTheme() {
+            try {
+                return localStorage.getItem('case-changer-theme');
+            } catch {
+                return null;
+            }
+        }
+        
+        function setStoredTheme(theme) {
+            try {
+                localStorage.setItem('case-changer-theme', theme);
+            } catch {
+                // LocalStorage not available
+            }
+        }
+        
+        function getEffectiveTheme() {
+            if (currentTheme === 'system') {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            return currentTheme;
+        }
+        
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            
+            // Remove existing theme classes
+            html.classList.remove('light', 'dark');
+            
+            if (theme === 'system') {
+                // Apply system preference
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.classList.add(isDark ? 'dark' : 'light');
+            } else {
+                // Apply specific theme
+                html.classList.add(theme);
+            }
+        }
+        
+        function setTheme(theme) {
+            if (!themes.includes(theme)) {
+                theme = 'system';
+            }
+            
+            currentTheme = theme;
+            setStoredTheme(theme);
+            applyTheme(theme);
+            updateStatus();
+            updateButtons();
+        }
+        
+        function updateStatus() {
+            const effective = getEffectiveTheme();
+            const systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const htmlClass = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const storageValue = getStoredTheme() || 'null';
+            
+            document.getElementById('current-theme').textContent = currentTheme;
+            document.getElementById('effective-theme').textContent = effective;
+            document.getElementById('system-preference').textContent = systemPref;
+            document.getElementById('html-class').textContent = htmlClass;
+            document.getElementById('storage-value').textContent = storageValue;
+        }
+        
+        function updateButtons() {
+            document.getElementById('btn-light').classList.toggle('active', currentTheme === 'light');
+            document.getElementById('btn-dark').classList.toggle('active', currentTheme === 'dark');
+            document.getElementById('btn-system').classList.toggle('active', currentTheme === 'system');
+        }
+        
+        // Initialize
+        currentTheme = getStoredTheme() || 'system';
+        applyTheme(currentTheme);
+        updateStatus();
+        updateButtons();
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (currentTheme === 'system') {
+                applyTheme('system');
+                updateStatus();
+            }
+        });
+        
+        // Update status every second for real-time feedback
+        setInterval(updateStatus, 1000);
+    </script>
+</body>
+</html>

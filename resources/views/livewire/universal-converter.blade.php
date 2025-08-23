@@ -1,9 +1,9 @@
 <div class="space-y-6">
     <!-- Format Selector -->
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Select Conversion Format:</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Conversion Format:</label>
         <select wire:model.live="selectedFormat" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             @foreach($formats as $category => $categoryFormats)
                 <optgroup label="{{ $category }}">
                     @foreach($categoryFormats as $key => $name)
@@ -18,14 +18,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Input -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Input Text:</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Input Text:</label>
             <textarea 
                 wire:model.live.debounce.300ms="inputText"
-                class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                class="w-full h-64 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
                 placeholder="Type or paste your text here..."
             ></textarea>
             <div class="mt-2 flex items-center justify-between">
-                <span class="text-xs text-gray-500">
+                <span class="text-xs text-gray-500 dark:text-gray-400">
                     {{ strlen($inputText) }} characters
                 </span>
                 <button 
@@ -40,12 +40,12 @@
 
         <!-- Output -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Converted Text:</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Converted Text:</label>
             <div class="relative">
                 <textarea 
                     readonly
                     wire:model="outputText"
-                    class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
+                    class="w-full h-64 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg font-mono text-sm"
                     placeholder="Converted text will appear here..."
                 ></textarea>
                 
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="mt-2">
-                <span class="text-xs text-gray-500">
+                <span class="text-xs text-gray-500 dark:text-gray-400">
                     {{ strlen($outputText) }} characters
                 </span>
             </div>

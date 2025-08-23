@@ -2,11 +2,14 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Apple-inspired Design System for Case Changer Pro */
+/* Hide Alpine elements before initialization */
+[x-cloak] { display: none !important; }
 
-/* System Colors and Fonts */
+/* Apple-inspired Design System for Case Changer Pro with Dark Mode */
+
+/* Light Theme Variables */
 :root {
-    /* Apple System Colors */
+    /* Apple System Colors - Light */
     --apple-blue: #007AFF;
     --apple-gray-50: #F5F5F7;
     --apple-gray-100: #E8E8ED;
@@ -19,15 +22,52 @@
     --apple-gray-800: #2C2C2E;
     --apple-gray-900: #1C1C1E;
     
+    /* Theme Colors - Light */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --border-primary: #e2e8f0;
+    --border-secondary: #cbd5e1;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #6366f1;
+    --shadow-primary: rgba(0, 0, 0, 0.1);
+    --shadow-secondary: rgba(0, 0, 0, 0.05);
+    
     /* System Font Stack */
     --system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     --mono-font: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+}
+
+/* Dark Theme Variables */
+.dark {
+    /* Apple System Colors - Dark */
+    --apple-blue: #0A84FF;
+    
+    /* Theme Colors - Dark */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border-primary: #334155;
+    --border-secondary: #475569;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #6366f1;
+    --shadow-primary: rgba(0, 0, 0, 0.3);
+    --shadow-secondary: rgba(0, 0, 0, 0.2);
 }
 
 body {
     font-family: var(--system-font);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Apple-style Focus States */
@@ -36,28 +76,41 @@ body {
 }
 
 *:focus-visible {
-    outline: 2px solid var(--apple-blue);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
 
 /* Apple-style Components */
 .btn-apple-primary {
-    @apply px-6 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm;
+    @apply px-6 py-2.5 rounded-lg transition-colors font-medium text-sm;
+    background-color: var(--accent-primary);
+    color: white;
     font-family: var(--system-font);
 }
 
+.btn-apple-primary:hover {
+    filter: brightness(1.1);
+}
+
 .btn-apple-secondary {
-    @apply px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200;
+    @apply px-6 py-2.5 rounded-lg transition-colors font-medium text-sm;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
     font-family: var(--system-font);
+}
+
+.btn-apple-secondary:hover {
+    background-color: var(--border-secondary);
 }
 
 /* Apple-style subtle shadows */
 .shadow-apple {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 6px -1px var(--shadow-secondary), 0 2px 4px -1px var(--shadow-secondary);
 }
 
 .shadow-apple-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 15px -3px var(--shadow-primary), 0 4px 6px -2px var(--shadow-secondary);
 }
 
 /* Custom scrollbar for better UX */
@@ -85,11 +138,19 @@ button {
     transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Focus styles for accessibility - Apple blue */
+/* Theme transition for all elements */
+* {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus styles for accessibility */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--apple-blue);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
 
@@ -102,12 +163,25 @@ textarea:focus:not(:focus-visible) {
 
 /* Loading spinner utility */
 .spinner {
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #3b82f6;
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--accent-primary);
     border-radius: 50%;
     width: 20px;
     height: 20px;
     animation: spin 1s linear infinite;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    @apply p-2 rounded-lg transition-colors;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-primary);
+}
+
+.theme-toggle:hover {
+    background-color: var(--border-secondary);
+    color: var(--text-primary);
 }
 
 @keyframes spin {

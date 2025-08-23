@@ -3,9 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\SchemaService;
 
 class ConversionController extends Controller
 {
+    protected SchemaService $schemaService;
+
+    public function __construct(SchemaService $schemaService)
+    {
+        $this->schemaService = $schemaService;
+    }
+
     /**
      * Category structure with all conversion types
      */
@@ -178,8 +186,13 @@ class ConversionController extends Controller
      */
     public function index()
     {
+        $breadcrumbs = $this->schemaService->generateBreadcrumbSchema([
+            ['name' => 'All Tools']
+        ]);
+
         return view('conversions.index', [
-            'categories' => $this->categories
+            'categories' => $this->categories,
+            'schemaData' => $breadcrumbs
         ]);
     }
 
@@ -192,10 +205,13 @@ class ConversionController extends Controller
             abort(404);
         }
 
+        $schemaData = $this->schemaService->generateCategoryPageSchema($category, $this->categories[$category]);
+
         return view('conversions.category', [
             'category' => $category,
             'categoryData' => $this->categories[$category],
-            'allCategories' => $this->categories
+            'allCategories' => $this->categories,
+            'schemaData' => $schemaData
         ]);
     }
 
@@ -208,12 +224,20 @@ class ConversionController extends Controller
             abort(404);
         }
 
+        $schemaData = $this->schemaService->generateToolPageSchema(
+            $category,
+            $tool,
+            $this->categories[$category]['tools'][$tool],
+            $this->categories[$category]
+        );
+
         return view('conversions.tool', [
             'category' => $category,
             'tool' => $tool,
             'categoryData' => $this->categories[$category],
             'toolData' => $this->categories[$category]['tools'][$tool],
-            'allCategories' => $this->categories
+            'allCategories' => $this->categories,
+            'schemaData' => $schemaData
         ]);
     }
 

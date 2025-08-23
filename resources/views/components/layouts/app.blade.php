@@ -18,6 +18,12 @@
     
     <!-- Livewire Styles -->
     @livewireStyles
+    
+    @if(isset($schemaData))
+    <script type="application/ld+json">
+    {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
 </head>
 <body class="h-full bg-gray-50 text-gray-900 antialiased">
     

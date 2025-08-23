@@ -13,25 +13,14 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     
-    <!-- Schema.org markup -->
-    <script type="application/ld+json">
-    @yield('schema', json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "WebApplication",
-        "name" => "Case Changer Pro",
-        "applicationCategory" => "UtilityApplication",
-        "operatingSystem" => "Any",
-        "offers" => [
-            "@type" => "Offer",
-            "price" => "0",
-            "priceCurrency" => "USD"
-        ]
-    ]))
-    </script>
-    
-    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    
+    @if(isset($schemaData))
+    <script type="application/ld+json">
+    {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
 </head>
 <body class="min-h-screen" style="background-color: var(--bg-secondary);">
     <!-- Navigation -->

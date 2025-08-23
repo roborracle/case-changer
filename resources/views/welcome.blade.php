@@ -3,8 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Case Changer Pro</title>
+    <title>Case Changer Pro - Professional Text Transformation Suite</title>
+    <meta name="description" content="Professional text transformation suite with 86+ conversion tools across 10 specialized categories for developers, writers, academics, and content creators">
+    <meta name="keywords" content="text converter, case converter, text transformation, uppercase, lowercase, camelCase, snake_case, title case">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @if(isset($schemaData))
+    <script type="application/ld+json">
+    {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
     <div class="min-h-screen flex items-center justify-center p-8">
