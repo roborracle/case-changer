@@ -30,3 +30,29 @@ Route::get('/conversions/{category}/{tool}', [ConversionController::class, 'tool
 // API routes for dynamic data
 Route::get('/api/conversions/{category}', [ConversionController::class, 'getCategoryData']);
 Route::get('/api/conversions', [ConversionController::class, 'getAllCategories']);
+
+// Legal Pages
+Route::get('/terms', function() {
+    return view('legal.terms');
+})->name('terms');
+
+Route::get('/privacy', function() {
+    return view('legal.privacy');
+})->name('privacy');
+
+Route::get('/cookies', function() {
+    return view('legal.cookies');
+})->name('cookies');
+
+// Information Pages
+Route::get('/about', function() {
+    return view('pages.about');
+})->name('about');
+
+Route::get('/contact', function() {
+    return view('pages.contact');
+})->name('contact');
+
+Route::get('/faq', function() {
+    return view('pages.faq');
+})->name('faq');

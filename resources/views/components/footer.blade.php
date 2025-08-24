@@ -269,10 +269,11 @@ $allCategories = [
                     © 2025 Case Changer Pro. Professional Text Transformation Tools.
                 </p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
-                    <a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a>
-                    <a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Contact</a>
-                    <a href="{{ route('conversions.index') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Sitemap</a>
+                    <a href="{{ route('privacy') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
+                    <a href="{{ route('terms') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a>
+                    <a href="{{ route('about') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">About</a>
+                    <a href="{{ route('contact') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Contact</a>
+                    <a href="/sitemap.xml" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Sitemap</a>
                 </div>
             </div>
         </div>
