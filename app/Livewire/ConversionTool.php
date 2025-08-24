@@ -186,50 +186,9 @@ class ConversionTool extends Component
 
     private function mapToolToTransformation($tool)
     {
-        // Map URL-friendly slugs to transformation keys
-        $mappings = [
-            'uppercase' => 'uppercase',
-            'lowercase' => 'lowercase',
-            'title-case' => 'title_case',
-            'sentence-case' => 'sentence_case',
-            'capitalize-words' => 'capitalize_words',
-            'alternating-case' => 'alternating_case',
-            'inverse-case' => 'inverse_case',
-            'camel-case' => 'camelCase',
-            'pascal-case' => 'PascalCase',
-            'snake-case' => 'snake_case',
-            'constant-case' => 'CONSTANT_CASE',
-            'kebab-case' => 'kebab-case',
-            'dot-case' => 'dot.case',
-            'path-case' => 'path/case',
-            'namespace-case' => 'namespace\\case',
-            'ada-case' => 'ada_case',
-            'cobol-case' => 'cobol-case',
-            'train-case' => 'train-case',
-            'http-header-case' => 'http-header-case',
-            'ap-style' => 'ap_title',
-            'nyt-style' => 'nyt_title',
-            'chicago-style' => 'chicago_title',
-            'apa-style' => 'apa_title',
-            'mla-style' => 'mla_title',
-            'email-style' => 'email_style',
-            'legal-style' => 'legal_style',
-            'marketing-headline' => 'marketing_headline',
-            'twitter-style' => 'social_media',
-            'instagram-style' => 'social_media',
-            'linkedin-style' => 'professional_social',
-            'reverse' => 'reverse',
-            'aesthetic' => 'aesthetic',
-            'sarcasm' => 'sarcasm',
-            'smallcaps' => 'smallcaps',
-            'remove-spaces' => 'remove_spaces',
-            'remove-extra-spaces' => 'remove_extra_spaces',
-            'add-dashes' => 'add_dashes',
-            'add-underscores' => 'add_underscores',
-            'remove-punctuation' => 'remove_punctuation',
-        ];
-        
-        return $mappings[$tool] ?? $tool;
+        // Simply return the tool slug as-is
+        // The TransformationService now handles all these directly
+        return $tool;
     }
 
     public function render()
