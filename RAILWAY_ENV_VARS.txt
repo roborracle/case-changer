@@ -1,4 +1,7 @@
-APP_NAME="CaseChangerPro"
+# RAILWAY ENVIRONMENT VARIABLES
+# Copy these to Railway dashboard
+
+APP_NAME="Case Changer Pro"
 APP_ENV="production"
 APP_KEY="base64:NTQ5MDFkYjRkZTZjODJkZGYxNDcwYmRiNzE5YmY2YTA="
 APP_DEBUG="false"
@@ -7,42 +10,30 @@ APP_URL="https://casechangerpro.com"
 LOG_CHANNEL="stack"
 LOG_LEVEL="error"
 
-# No database needed - use memory/file storage
+# Database - use temp file for SQLite
 DB_CONNECTION="sqlite"
-DB_DATABASE=":memory:"
+DB_DATABASE="/tmp/database.sqlite"
 
-# Sessions - use file storage (cookie has size limits)
-SESSION_DRIVER="file"
+# CRITICAL: Use cookie sessions for Railway (stateless)
+SESSION_DRIVER="cookie"
 SESSION_LIFETIME="120"
-SESSION_ENCRYPT="false"
+SESSION_ENCRYPT="true"
 SESSION_PATH="/"
 SESSION_DOMAIN=".casechangerpro.com"
 SESSION_SECURE_COOKIE="true"
 
-# Cache - use file storage
-CACHE_STORE="file"
-CACHE_DRIVER="file"
-CACHE_PREFIX="casechangerpro_cache"
+# Use array cache (in-memory, stateless)
+CACHE_STORE="array"
+CACHE_PREFIX="ccp_"
 
-# Queue - sync for simplicity
+# Queue
 QUEUE_CONNECTION="sync"
 
 # Filesystem
 FILESYSTEM_DISK="local"
 BROADCAST_CONNECTION="log"
 
-# Mail (not needed but set to log)
+# Mail
 MAIL_MAILER="log"
-
-# Remove these (not needed):
-# REDIS_URL
-# REDIS_USERNAME  
-# REDIS_PASSWORD
-# AWS_ACCESS_KEY_ID
-# AWS_SECRET_ACCESS_KEY
-# AWS_DEFAULT_REGION
-# AWS_BUCKET
-# AWS_URL
-# AWS_ENDPOINT
-# MAIL_USERNAME
-# MAIL_PASSWORD
+MAIL_FROM_ADDRESS="hello@casechangerpro.com"
+MAIL_FROM_NAME="Case Changer Pro"

@@ -179,20 +179,16 @@ class CaseChanger extends Component
     protected ContextualSuggestionService $contextualSuggestionService;
 
     /**
-     * Component boot lifecycle - inject services
+     * Component boot lifecycle - inject services using app() helper
      */
-    public function boot(
-        TransformationService $transformationService,
-        PreservationService $preservationService,
-        StyleGuideService $styleGuideService,
-        HistoryService $historyService,
-        ContextualSuggestionService $contextualSuggestionService
-    ): void {
-        $this->transformationService = $transformationService;
-        $this->preservationService = $preservationService;
-        $this->styleGuideService = $styleGuideService;
-        $this->historyService = $historyService;
-        $this->contextualSuggestionService = $contextualSuggestionService;
+    public function boot(): void
+    {
+        // Use app() helper to resolve services - Livewire compatible pattern
+        $this->transformationService = app(TransformationService::class);
+        $this->preservationService = app(PreservationService::class);
+        $this->styleGuideService = app(StyleGuideService::class);
+        $this->historyService = app(HistoryService::class);
+        $this->contextualSuggestionService = app(ContextualSuggestionService::class);
     }
 
     /**
