@@ -1,0 +1,48 @@
+APP_NAME="CaseChangerPro"
+APP_ENV="production"
+APP_KEY="base64:NTQ5MDFkYjRkZTZjODJkZGYxNDcwYmRiNzE5YmY2YTA="
+APP_DEBUG="false"
+APP_URL="https://casechangerpro.com"
+
+LOG_CHANNEL="stack"
+LOG_LEVEL="error"
+
+# No database needed - use memory/file storage
+DB_CONNECTION="sqlite"
+DB_DATABASE=":memory:"
+
+# Sessions - use file storage (cookie has size limits)
+SESSION_DRIVER="file"
+SESSION_LIFETIME="120"
+SESSION_ENCRYPT="false"
+SESSION_PATH="/"
+SESSION_DOMAIN=".casechangerpro.com"
+SESSION_SECURE_COOKIE="true"
+
+# Cache - use file storage
+CACHE_STORE="file"
+CACHE_DRIVER="file"
+CACHE_PREFIX="casechangerpro_cache"
+
+# Queue - sync for simplicity
+QUEUE_CONNECTION="sync"
+
+# Filesystem
+FILESYSTEM_DISK="local"
+BROADCAST_CONNECTION="log"
+
+# Mail (not needed but set to log)
+MAIL_MAILER="log"
+
+# Remove these (not needed):
+# REDIS_URL
+# REDIS_USERNAME  
+# REDIS_PASSWORD
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+# AWS_DEFAULT_REGION
+# AWS_BUCKET
+# AWS_URL
+# AWS_ENDPOINT
+# MAIL_USERNAME
+# MAIL_PASSWORD
