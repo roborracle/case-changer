@@ -30,7 +30,7 @@
         <div>
             <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Input Text:</label>
             <textarea 
-                wire:model.live.debounce.300ms="inputText"
+                wire:model.live="inputText"
                 class="w-full h-64 px-4 py-3 border rounded-lg focus:ring-2 font-mono text-sm"
                 style="border-color: var(--border-primary); background-color: var(--bg-primary); color: var(--text-primary); --tw-ring-color: var(--accent-primary);"
                 onfocus="this.style.borderColor='var(--accent-primary)'"
