@@ -1,5 +1,5 @@
-# RAILWAY ENVIRONMENT VARIABLES
-# Copy these to Railway dashboard
+# RAILWAY ENVIRONMENT VARIABLES - SIMPLE AS FUCK
+# This is a TEXT CONVERTER - NO DATABASE NEEDED
 
 APP_NAME="Case Changer Pro"
 APP_ENV="production"
@@ -10,11 +10,11 @@ APP_URL="https://casechangerpro.com"
 LOG_CHANNEL="stack"
 LOG_LEVEL="error"
 
-# Database - use temp file for SQLite
+# NO DATABASE - WE DON'T STORE ANYTHING
 DB_CONNECTION="sqlite"
-DB_DATABASE="/tmp/database.sqlite"
+DB_DATABASE=":memory:"
 
-# CRITICAL: Use cookie sessions for Railway (stateless)
+# Sessions in cookies - no storage needed
 SESSION_DRIVER="cookie"
 SESSION_LIFETIME="120"
 SESSION_ENCRYPT="true"
@@ -22,18 +22,15 @@ SESSION_PATH="/"
 SESSION_DOMAIN=".casechangerpro.com"
 SESSION_SECURE_COOKIE="true"
 
-# Use array cache (in-memory, stateless)
+# Cache in memory - no storage needed
 CACHE_STORE="array"
-CACHE_PREFIX="ccp_"
 
-# Queue
+# Simple queue
 QUEUE_CONNECTION="sync"
 
-# Filesystem
+# Basic filesystem
 FILESYSTEM_DISK="local"
 BROADCAST_CONNECTION="log"
 
-# Mail
+# Mail logging only
 MAIL_MAILER="log"
-MAIL_FROM_ADDRESS="hello@casechangerpro.com"
-MAIL_FROM_NAME="Case Changer Pro"

@@ -1,4 +1,4 @@
-# Nixpacks configuration for Laravel + Vite
+# SIMPLE BUILD FOR A SIMPLE TEXT CONVERTER APP
 [phases.setup]
 nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-9_x"]
 
@@ -10,26 +10,19 @@ cmds = [
 
 [phases.build]
 cmds = [
-    # Build frontend assets with Vite
+    # Build frontend assets
     "npm run build",
     
-    # Create SQLite database file
-    "touch /tmp/database.sqlite",
-    "chmod 666 /tmp/database.sqlite",
-    
-    # Clear all Laravel caches
+    # Clear and optimize Laravel
     "php artisan config:clear",
     "php artisan cache:clear",
     "php artisan view:clear",
     "php artisan route:clear",
-    "php artisan event:clear",
-    
-    # Optimize Laravel for production
     "php artisan config:cache",
     "php artisan route:cache",
     "php artisan view:cache",
     
-    # Create required directories
+    # Create directories Laravel needs
     "mkdir -p storage/framework/sessions",
     "mkdir -p storage/framework/views",
     "mkdir -p storage/framework/cache/data",
@@ -37,8 +30,7 @@ cmds = [
     "mkdir -p bootstrap/cache",
     
     # Set permissions
-    "chmod -R 775 storage",
-    "chmod -R 775 bootstrap/cache",
+    "chmod -R 775 storage bootstrap/cache",
 ]
 
 [start]
