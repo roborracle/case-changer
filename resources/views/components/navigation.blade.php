@@ -211,7 +211,49 @@ $categories = [
             <!-- Theme Toggle, Search and Mobile Menu -->
             <div class="flex items-center space-x-2">
                 <!-- Theme Toggle -->
-                <div x-data="themeToggle()" x-cloak class="relative">
+                <div x-data="{
+                    isOpen: false,
+                    themes: ['light', 'dark', 'auto'],
+                    currentTheme: localStorage.getItem('case-changer-theme') || 'auto',
+                    toggleDropdown() {
+                        this.isOpen = !this.isOpen;
+                    },
+                    setTheme(theme) {
+                        this.currentTheme = theme;
+                        localStorage.setItem('case-changer-theme', theme);
+                        
+                        if (theme === 'auto') {
+                            localStorage.removeItem('case-changer-theme');
+                            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                            document.documentElement.classList.toggle('dark', prefersDark);
+                        } else if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                        
+                        // Set cookie for server-side persistence
+                        document.cookie = 'case-changer-theme=' + theme + '; path=/; max-age=' + (365 * 24 * 60 * 60) + '; SameSite=Lax';
+                        
+                        this.isOpen = false;
+                    },
+                    getCurrentThemeIcon() {
+                        const icons = {
+                            light: '<svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z\"></path></svg>',
+                            dark: '<svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z\"></path></svg>',
+                            auto: '<svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z\"></path></svg>'
+                        };
+                        return icons[this.currentTheme] || icons.auto;
+                    },
+                    getCurrentThemeDescription() {
+                        const descriptions = {
+                            light: 'Light',
+                            dark: 'Dark',
+                            auto: 'System'
+                        };
+                        return descriptions[this.currentTheme] || 'System';
+                    }
+                }" x-cloak class="relative">
                     <button @click="toggleDropdown()" 
                             class="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
                             :aria-expanded="isOpen"

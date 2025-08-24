@@ -28,13 +28,13 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         }
         
-        // Content Security Policy
-        $csp = "default-src 'self'; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; " .
-               "style-src 'self' 'unsafe-inline'; " .
-               "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; " .
-               "font-src 'self' data:; " .
-               "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; " .
+        // Content Security Policy - allow both HTTP and HTTPS for assets during transition
+        $csp = "default-src 'self' http://casechangerpro.com https://casechangerpro.com; " .
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://casechangerpro.com https://casechangerpro.com https://www.googletagmanager.com https://www.google-analytics.com; " .
+               "style-src 'self' 'unsafe-inline' http://casechangerpro.com https://casechangerpro.com; " .
+               "img-src 'self' data: http://casechangerpro.com https://casechangerpro.com https://www.google-analytics.com https://www.googletagmanager.com; " .
+               "font-src 'self' data: http://casechangerpro.com https://casechangerpro.com; " .
+               "connect-src 'self' http://casechangerpro.com https://casechangerpro.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com wss://casechangerpro.com; " .
                "frame-ancestors 'none'; " .
                "base-uri 'self'; " .
                "form-action 'self';";
