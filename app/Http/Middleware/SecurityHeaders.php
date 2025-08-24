@@ -36,10 +36,10 @@ class SecurityHeaders
                 'max-age=63072000; includeSubDomains; preload');
         }
         
-        // Content Security Policy - simplified for production
+        // Content Security Policy - Alpine.js requires unsafe-eval
         if (app()->environment('production')) {
             $csp = "default-src 'self'; " .
-                   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " .
+                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; " .
                    "style-src 'self' 'unsafe-inline'; " .
                    "img-src 'self' data: https:; " .
                    "font-src 'self' data:; " .
@@ -49,7 +49,7 @@ class SecurityHeaders
             
             $response->headers->set('Content-Security-Policy', $csp);
         } else {
-            // Development CSP - simplified
+            // Development CSP
             $csp = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;";
             $response->headers->set('Content-Security-Policy', $csp);
         }
