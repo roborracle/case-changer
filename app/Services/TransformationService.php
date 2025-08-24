@@ -578,26 +578,54 @@ class TransformationService
             // Standard cases
             'lowercase' => 'toLowerCase',
             'uppercase' => 'toUpperCase',
+            'title-case' => 'toTitleCase',
             'titleCase' => 'toTitleCase',
+            'sentence-case' => 'toSentenceCase',
             'sentenceCase' => 'toSentenceCase',
+            'capitalize-words' => 'toFirstLetter',
             'capitalizeFirst' => 'capitalizeFirstLetterOnly',
             'capitalizeWords' => 'toFirstLetter',
+            'alternating-case' => 'toAlternatingCase',
             'alternatingCase' => 'toAlternatingCase',
+            'inverse-case' => 'toInverseCase',
             'randomCase' => 'toRandomCase',
             
             // Developer cases
             'camelCase' => 'toCamelCase',
+            'camel-case' => 'toCamelCase',
             'pascalCase' => 'toPascalCase',
+            'pascal-case' => 'toPascalCase',
             'snakeCase' => 'toSnakeCase',
+            'snake-case' => 'toSnakeCase',
             'constantCase' => 'toConstantCase',
+            'constant-case' => 'toConstantCase',
             'kebabCase' => 'toKebabCase',
+            'kebab-case' => 'toKebabCase',
             'dotCase' => 'toDotCase',
+            'dot-case' => 'toDotCase',
             'pathCase' => 'toPathCase',
+            'path-case' => 'toPathCase',
+            'namespace-case' => 'toNamespaceCase',
+            'ada-case' => 'toAdaCase',
+            'cobol-case' => 'toCobolCase',
+            'train-case' => 'toTrainCase',
+            'http-header-case' => 'toHeaderCase',
             'headerCase' => 'toHeaderCase',
             'trainCase' => 'toTrainCase',
             'slugCase' => 'toSlugCase',
             
             // Creative cases
+            'reverse' => 'reverseText',
+            'aesthetic' => 'toAestheticText',
+            'sarcasm' => 'toAlternatingCase',
+            'smallcaps' => 'toSmallCaps',
+            'bubble' => 'toBubbleText',
+            'square' => 'toSquareText',
+            'script' => 'toScriptText',
+            'double-struck' => 'toDoubleStruck',
+            'bold' => 'toBoldText',
+            'italic' => 'toItalicText',
+            'emoji-case' => 'toEmojiCase',
             'spongebobCase' => 'toSpongebobCase',
             'inverseCase' => 'toInverseCase',
             'reverseText' => 'reverseText',
@@ -619,6 +647,47 @@ class TransformationService
             'zalgo-text' => 'toZalgoText',
             'cursed-text' => 'toCursedText',
             'invisible-text' => 'toInvisibleText',
+            
+            // Business Formats
+            'email-style' => 'toTitleCase',  // Professional email formatting
+            'legal-style' => 'toUpperCase',  // Legal documents in uppercase
+            'marketing-headline' => 'toTitleCase',  // Marketing headlines
+            'press-release' => 'toSentenceCase',  // Press release formatting
+            'memo-style' => 'toTitleCase',  // Business memo format
+            'report-style' => 'toSentenceCase',  // Report formatting
+            'proposal-style' => 'toTitleCase',  // Proposal format
+            'invoice-style' => 'toUpperCase',  // Invoice headers
+            
+            // Journalistic Styles
+            'ap-style' => 'toTitleCase',  // AP Style uses title case
+            'nyt-style' => 'toTitleCase',
+            'chicago-style' => 'toTitleCase',  // Chicago style
+            'guardian-style' => 'toSentenceCase',
+            'bbc-style' => 'toSentenceCase',
+            'reuters-style' => 'toTitleCase',
+            'economist-style' => 'toTitleCase',
+            'wsj-style' => 'toTitleCase',
+            
+            // Academic Styles
+            'apa-style' => 'toTitleCase',  // APA Style title case
+            'mla-style' => 'toTitleCase',  // MLA Style title case
+            'chicago-author-date' => 'toTitleCase',  // Chicago style
+            'chicago-notes' => 'toTitleCase',  // Chicago style
+            'harvard-style' => 'toTitleCase',
+            'vancouver-style' => 'toSentenceCase',
+            'ieee-style' => 'toTitleCase',
+            'ama-style' => 'toTitleCase',
+            'bluebook-style' => 'toTitleCase',
+            
+            // Social Media Formats
+            'twitter-style' => 'toTitleCase',  // Twitter/X optimized
+            'instagram-style' => 'toLowerCase',  // Instagram style
+            'linkedin-style' => 'toTitleCase',  // Professional LinkedIn
+            'facebook-style' => 'toSentenceCase',  // Facebook posts
+            'youtube-title' => 'toTitleCase',  // YouTube video titles
+            'tiktok-style' => 'toLowerCase',  // TikTok caption style
+            'hashtag-style' => 'toCamelCase',  // Hashtag generation
+            'mention-style' => 'toLowerCase',  // @mention formatting
             'wide-text' => 'toWideText',
             
             // Generators
