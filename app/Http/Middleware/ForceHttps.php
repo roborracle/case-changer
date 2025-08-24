@@ -6,6 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Force HTTPS redirects in production
+ * HTTPS detection is already handled in public/index.php
+ */
 class ForceHttps
 {
     /**
@@ -15,31 +19,15 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Trust proxies for Railway/Cloudflare FIRST
-        if (app()->environment('production')) {
-            // Trust ALL proxies in production (Railway uses internal proxies)
-            $request->setTrustedProxies(
-                '*',
-                Request::HEADER_X_FORWARDED_FOR |
-                Request::HEADER_X_FORWARDED_HOST |
-                Request::HEADER_X_FORWARDED_PORT |
-                Request::HEADER_X_FORWARDED_PROTO |
-                Request::HEADER_X_FORWARDED_AWS_ELB
-            );
-            
-            // Force the scheme to be HTTPS if X-Forwarded-Proto says so
-            // This makes Laravel think it's HTTPS even though it's HTTP internally
-            if ($request->header('X-Forwarded-Proto') === 'https') {
-                $request->server->set('HTTPS', 'on');
-                $_SERVER['HTTPS'] = 'on';
+        // In production, ensure we're using HTTPS
+        // The request should already be marked as secure from index.php
+        if (app()->environment('production') && !$request->secure()) {
+            // If somehow we're not secure and no proxy header, redirect
+            if (!$request->header('X-Forwarded-Proto')) {
+                return redirect()->secure($request->getRequestUri(), 301);
             }
         }
-
-        // Now check if request is secure (will be true if X-Forwarded-Proto was https)
-        if (app()->environment('production') && !$request->secure()) {
-            return redirect()->secure($request->getRequestUri(), 301);
-        }
-
+        
         return $next($request);
     }
 }

@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust all proxies in production (Railway uses dynamic IPs)
+        // The HTTPS detection is now handled in public/index.php
+        $middleware->trustProxies(at: '*');
+        
+        // Web middleware stack
         $middleware->web(append: [
             \App\Http\Middleware\ForceHttps::class,
             \App\Http\Middleware\SecurityHeaders::class,
@@ -21,9 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: [
             'case-changer-theme'
         ]);
-        
-        // Trust proxies for production
-        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
