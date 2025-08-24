@@ -27,9 +27,11 @@ Route::get('/conversions', [ConversionController::class, 'index'])->name('conver
 Route::get('/conversions/{category}', [ConversionController::class, 'category'])->name('conversions.category');
 Route::get('/conversions/{category}/{tool}', [ConversionController::class, 'tool'])->name('conversions.tool');
 
-// API routes for dynamic data
-Route::get('/api/conversions/{category}', [ConversionController::class, 'getCategoryData']);
-Route::get('/api/conversions', [ConversionController::class, 'getAllCategories']);
+// API routes for dynamic data with rate limiting
+Route::middleware(['throttle:60,1'])->group(function () {
+    Route::get('/api/conversions/{category}', [ConversionController::class, 'getCategoryData']);
+    Route::get('/api/conversions', [ConversionController::class, 'getAllCategories']);
+});
 
 // Legal Pages
 Route::get('/terms', function() {

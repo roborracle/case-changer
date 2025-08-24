@@ -15,7 +15,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        $schemaData = $this->schemaService->generateHomepageSchema();
+        $schemaData = $this->schemaService->getHomepageSchemas();
         
         return view('home', [
             'schemaData' => $schemaData

@@ -13,26 +13,6 @@ namespace App\Services;
  */
 class TransformationService
 {
-    protected ?CacheService $cacheService = null;
-    protected ?SecurityService $securityService = null;
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        try {
-            $this->cacheService = app(CacheService::class);
-        } catch (\Exception $e) {
-            $this->cacheService = null;
-        }
-        
-        try {
-            $this->securityService = app(SecurityService::class);
-        } catch (\Exception $e) {
-            $this->securityService = null;
-        }
-    }
     /**
      * Transform text to title case
      * 
@@ -594,22 +574,6 @@ class TransformationService
      */
     public function transform(string $text, string $transformationType, array $preservationConfig = []): string
     {
-        // Security validation
-        if ($this->securityService) {
-            $validation = $this->securityService->validateInput($text, 'text');
-            if (!$validation['valid']) {
-                throw new \InvalidArgumentException('Invalid input detected');
-            }
-        }
-        
-        // Check cache first
-        if ($this->cacheService && strlen($text) < 5000) {
-            $cached = $this->cacheService->getCachedTransformation($text, $transformationType);
-            if ($cached !== null) {
-                return $cached;
-            }
-        }
-        
         $methodMap = [
             // Standard cases
             'lowercase' => 'toLowerCase',
@@ -771,43 +735,27 @@ class TransformationService
         // Handle special methods that need implementation
         switch ($method) {
             case 'base64Encode':
-                $result = base64_encode($text);
-                break;
+                return base64_encode($text);
             case 'base64Decode':
-                $result = base64_decode($text) ?: $text;
-                break;
+                return base64_decode($text) ?: $text;
             case 'urlEncode':
-                $result = rawurlencode($text);
-                break;
+                return rawurlencode($text);
             case 'urlDecode':
-                $result = urldecode($text);
-                break;
+                return urldecode($text);
             case 'htmlEncode':
-                $result = htmlspecialchars($text, ENT_QUOTES | ENT_HTML5);
-                break;
+                return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5);
             case 'htmlDecode':
-                $result = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
-                break;
+                return html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
             case 'rot13':
-                $result = str_rot13($text);
-                break;
+                return str_rot13($text);
             case 'trimWhitespace':
-                $result = trim($text);
-                break;
+                return trim($text);
             default:
                 if (method_exists($this, $method)) {
-                    $result = $this->$method($text);
-                } else {
-                    throw new \InvalidArgumentException("Method not found: {$method}");
+                    return $this->$method($text);
                 }
+                throw new \InvalidArgumentException("Method not found: {$method}");
         }
-        
-        // Cache the result
-        if ($this->cacheService && strlen($text) < 5000) {
-            $this->cacheService->cacheTransformation($text, $transformationType, $result);
-        }
-        
-        return $result;
     }
 
     /**

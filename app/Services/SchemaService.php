@@ -4,6 +4,13 @@ namespace App\Services;
 
 class SchemaService
 {
+    private string $baseUrl;
+    
+    public function __construct()
+    {
+        $this->baseUrl = config('app.url', 'https://casechangerpro.com');
+    }
+    
     /**
      * Generate WebSite schema for homepage
      */
@@ -12,12 +19,12 @@ class SchemaService
         return [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            '@id' => url('/') . '#website',
-            'url' => url('/'),
+            '@id' => $this->baseUrl . '/#website',
+            'url' => $this->baseUrl,
             'name' => 'Case Changer Pro',
             'description' => 'Professional text transformation suite with 86+ conversion tools across 10 specialized categories for developers, writers, academics, and content creators',
             'publisher' => [
-                '@id' => url('/') . '#organization'
+                '@id' => $this->baseUrl . '/#organization'
             ],
             'author' => [
                 '@id' => 'https://robertdavidorr.com/#person'
@@ -26,7 +33,7 @@ class SchemaService
                 '@type' => 'SearchAction',
                 'target' => [
                     '@type' => 'EntryPoint',
-                    'urlTemplate' => url('/search') . '?q={search_term_string}'
+                    'urlTemplate' => $this->baseUrl . '/search?q={search_term_string}'
                 ],
                 'query-input' => 'required name=search_term_string'
             ],
@@ -48,76 +55,82 @@ class SchemaService
             '@type' => 'Person',
             '@id' => 'https://robertdavidorr.com/#person',
             'name' => 'Robert David Orr',
-            'alternateName' => 'Robert Orr',
+            'givenName' => 'Robert',
+            'additionalName' => 'David',
+            'familyName' => 'Orr',
             'url' => 'https://robertdavidorr.com',
-            'jobTitle' => 'Web Developer & Digital Creator',
-            'alumniOf' => [
-                '@type' => 'CollegeOrUniversity',
-                'name' => 'Florida State University',
-                'sameAs' => 'https://www.fsu.edu'
+            'sameAs' => [
+                'https://github.com/roborracle',
+                'https://linkedin.com/in/robertdavidorr',
+                'https://twitter.com/roborracle'
             ],
             'knowsAbout' => [
-                'Web Development',
-                'WordPress Development',
+                'Software Development',
                 'Text Processing',
-                'Content Transformation',
-                'Laravel Development',
-                'SEO',
-                'Digital Marketing'
-            ],
-            'sameAs' => [
-                'https://twitter.com/roborracle',
-                'https://linkedin.com/in/roborracle',
-                'https://github.com/roborracle',
-                'https://instagram.com/roborracle',
-                'https://facebook.com/roborracle'
-            ],
-            'owns' => [
-                '@type' => 'CreativeWork',
-                '@id' => url('/') . '#software'
+                'Developer Tools',
+                'Web Applications'
             ]
         ];
     }
 
     /**
-     * Generate SoftwareApplication schema for main app
+     * Generate SoftwareApplication schema
      */
     public function generateSoftwareApplicationSchema(): array
     {
         return [
             '@context' => 'https://schema.org',
             '@type' => 'SoftwareApplication',
-            '@id' => url('/') . '#software',
+            '@id' => $this->baseUrl . '/#software',
             'name' => 'Case Changer Pro',
-            'applicationCategory' => 'UtilitiesApplication',
-            'applicationSubCategory' => 'Text Processing Tool',
-            'operatingSystem' => 'Web Browser',
+            'applicationCategory' => 'DeveloperApplication',
+            'operatingSystem' => 'Any',
             'offers' => [
                 '@type' => 'Offer',
                 'price' => '0',
                 'priceCurrency' => 'USD'
+            ]
+        ];
+    }
+
+    /**
+     * Generate WebApplication schema
+     */
+    public function generateWebApplicationSchema(): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebApplication',
+            '@id' => $this->baseUrl . '/#software',
+            'name' => 'Case Changer Pro',
+            'description' => 'Free online text transformation toolkit',
+            'applicationCategory' => 'DeveloperApplication',
+            'operatingSystem' => 'Any',
+            'browserRequirements' => 'Requires JavaScript. Requires HTML5.',
+            'permissions' => 'No special permissions required',
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'USD',
+                'availability' => 'https://schema.org/InStock'
             ],
-            'creator' => [
-                '@id' => 'https://robertdavidorr.com/#person'
-            ],
-            'datePublished' => '2024-01-01',
-            'softwareVersion' => '1.0',
             'featureList' => [
-                '86+ text transformation tools',
-                '10 specialized categories',
-                'Real-time conversion',
+                'Case conversion (uppercase, lowercase, title case, etc.)',
+                'Developer formats (camelCase, snake_case, kebab-case)',
+                'Text transformations',
+                'Pattern conversions',
+                'Smart formatting',
+                'Batch processing',
+                'Real-time preview',
+                'Copy to clipboard',
                 'No registration required',
-                'Privacy-focused (no data storage)',
-                'Mobile responsive',
-                'Dark mode support'
+                'Free to use'
             ],
-            'softwareRequirements' => 'Modern web browser with JavaScript enabled',
+            'screenshot' => [],
             'aggregateRating' => [
                 '@type' => 'AggregateRating',
-                'ratingValue' => '4.8',
-                'reviewCount' => '127',
-                'bestRating' => '5',
-                'worstRating' => '1'
+                'ratingValue' => '5',
+                'ratingCount' => '1'
             ]
         ];
     }
@@ -130,42 +143,46 @@ class SchemaService
         return [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            '@id' => url('/') . '#organization',
+            '@id' => $this->baseUrl . '/#organization',
             'name' => 'Case Changer Pro',
-            'url' => url('/'),
+            'url' => $this->baseUrl,
             'logo' => [
                 '@type' => 'ImageObject',
-                'url' => url('/images/logo.png'),
-                'width' => 600,
-                'height' => 60
+                'url' => $this->baseUrl . '/images/logo.png',
+                'width' => 512,
+                'height' => 512
             ],
             'founder' => [
                 '@id' => 'https://robertdavidorr.com/#person'
             ],
-            'foundingDate' => '2024-01-01',
-            'description' => 'Professional text transformation tools for developers, writers, and content creators'
+            'foundingDate' => '2024',
+            'sameAs' => [
+                'https://github.com/roborracle/case-changer'
+            ]
         ];
     }
 
     /**
      * Generate BreadcrumbList schema
      */
-    public function generateBreadcrumbSchema(array $items): array
+    public function generateBreadcrumbSchema(array $items = []): array
     {
-        $breadcrumbItems = [];
-        $position = 1;
-
-        // Always start with home
-        $breadcrumbItems[] = [
-            '@type' => 'ListItem',
-            'position' => $position++,
-            'name' => 'Home',
-            'item' => url('/')
+        $breadcrumb = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => 'Home',
+                    'item' => $this->baseUrl . '/'
+                ]
+            ]
         ];
 
-        // Add additional items
+        $position = 2;
         foreach ($items as $item) {
-            $breadcrumbItems[] = [
+            $breadcrumb['itemListElement'][] = [
                 '@type' => 'ListItem',
                 'position' => $position++,
                 'name' => $item['name'],
@@ -173,124 +190,128 @@ class SchemaService
             ];
         }
 
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => $breadcrumbItems
-        ];
+        return $breadcrumb;
     }
 
     /**
-     * Generate CollectionPage schema for category pages
+     * Generate Collection schema for category pages
      */
-    public function generateCollectionPageSchema(string $category, array $categoryData): array
+    public function generateCollectionSchema(string $category, array $categoryData): array
     {
-        $tools = [];
-        $position = 1;
+        $collection = [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            '@id' => $this->baseUrl . "/conversions/{$category}#collection",
+            'name' => $categoryData['title'],
+            'description' => $categoryData['description'],
+            'url' => $this->baseUrl . "/conversions/{$category}",
+            'isPartOf' => [
+                '@id' => $this->baseUrl . '/#website'
+            ],
+            'breadcrumb' => [
+                '@id' => '#breadcrumb'
+            ],
+            'hasPart' => []
+        ];
 
-        foreach ($categoryData['tools'] as $toolId => $tool) {
-            $tools[] = [
-                '@type' => 'ListItem',
-                'position' => $position++,
-                'item' => [
-                    '@id' => url("/conversions/{$category}/{$toolId}") . '#tool'
-                ]
+        foreach ($categoryData['tools'] as $tool) {
+            $toolId = $tool['id'] ?? str_replace(' ', '-', strtolower($tool['name']));
+            $collection['hasPart'][] = [
+                '@type' => 'SoftwareApplication',
+                'name' => $tool['name'],
+                'description' => $tool['description'],
+                'url' => $this->baseUrl . "/conversions/{$category}/{$toolId}#tool"
             ];
         }
 
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'CollectionPage',
-            '@id' => url("/conversions/{$category}") . '#collection',
-            'name' => $categoryData['title'],
-            'description' => $categoryData['description'],
-            'url' => url("/conversions/{$category}"),
-            'isPartOf' => [
-                '@id' => url('/') . '#website'
-            ],
-            'mainEntity' => [
-                '@type' => 'ItemList',
-                'numberOfItems' => count($categoryData['tools']),
-                'itemListElement' => $tools
-            ]
-        ];
+        return $collection;
     }
 
     /**
-     * Generate WebApplication schema for individual tool
+     * Generate Tool schema for individual tool pages
      */
-    public function generateToolSchema(string $category, string $tool, array $toolData, array $categoryData): array
+    public function generateToolSchema(string $category, string $tool, array $toolData): array
     {
         return [
             '@context' => 'https://schema.org',
             '@type' => 'WebApplication',
-            '@id' => url("/conversions/{$category}/{$tool}") . '#tool',
-            'name' => $toolData['name'],
-            'description' => $toolData['description'],
-            'url' => url("/conversions/{$category}/{$tool}"),
+            '@id' => $this->baseUrl . "/conversions/{$category}/{$tool}#tool",
+            'name' => $toolData['name'] . ' - Case Changer Pro',
+            'description' => $toolData['description'] ?? "Transform text using {$toolData['name']} with Case Changer Pro's free online tool",
+            'url' => $this->baseUrl . "/conversions/{$category}/{$tool}",
             'isPartOf' => [
-                '@id' => url('/') . '#software'
+                '@id' => $this->baseUrl . '/#software'
             ],
-            'creator' => [
-                '@id' => 'https://robertdavidorr.com/#person'
-            ],
+            'applicationCategory' => 'UtilityApplication',
+            'operatingSystem' => 'Any',
+            'permissions' => 'No special permissions required',
+            'browserRequirements' => 'Requires JavaScript. Requires HTML5.',
             'offers' => [
                 '@type' => 'Offer',
                 'price' => '0',
-                'priceCurrency' => 'USD',
-                'availability' => 'https://schema.org/InStock'
+                'priceCurrency' => 'USD'
             ],
-            'browserRequirements' => 'Requires JavaScript',
-            'applicationCategory' => 'Text Processing',
-            'inLanguage' => 'en',
+            'featureList' => $toolData['features'] ?? [
+                'Real-time text transformation',
+                'Copy to clipboard',
+                'No registration required',
+                'Free to use'
+            ],
             'potentialAction' => [
                 '@type' => 'UseAction',
                 'target' => [
                     '@type' => 'EntryPoint',
-                    'urlTemplate' => url("/conversions/{$category}/{$tool}"),
+                    'urlTemplate' => $this->baseUrl . "/conversions/{$category}/{$tool}",
                     'actionPlatform' => [
-                        'http://schema.org/DesktopWebPlatform',
-                        'http://schema.org/MobileWebPlatform'
+                        'https://schema.org/DesktopWebPlatform',
+                        'https://schema.org/MobileWebPlatform'
                     ]
                 ],
                 'object' => [
                     '@type' => 'Text',
-                    'name' => 'Input Text'
+                    'name' => 'Input text'
                 ],
                 'result' => [
                     '@type' => 'Text',
-                    'name' => $toolData['name'] . ' Output'
+                    'name' => 'Transformed text'
                 ]
             ]
         ];
     }
 
     /**
-     * Generate FAQPage schema
+     * Generate FAQ schema
      */
     public function generateFAQSchema(): array
     {
         return [
             '@context' => 'https://schema.org',
             '@type' => 'FAQPage',
-            '@id' => url('/faq') . '#faqpage',
-            'name' => 'Case Changer Pro FAQ',
-            'description' => 'Frequently asked questions about Case Changer Pro text transformation tools',
+            '@id' => $this->baseUrl . '/faq#faqpage',
+            'name' => 'Frequently Asked Questions - Case Changer Pro',
             'mainEntity' => [
+                [
+                    '@type' => 'Question',
+                    'name' => 'What is Case Changer Pro?',
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => 'Case Changer Pro is a comprehensive online text transformation toolkit offering 86+ conversion tools across 10 specialized categories. It\'s designed for developers, writers, academics, and content creators who need professional text formatting capabilities.'
+                    ]
+                ],
                 [
                     '@type' => 'Question',
                     'name' => 'Is Case Changer Pro free to use?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Yes, Case Changer Pro is completely free to use. All 86+ text transformation tools are available without registration or payment.'
+                        'text' => 'Yes, Case Changer Pro is completely free to use. All tools are available without registration, payment, or limitations.'
                     ]
                 ],
                 [
                     '@type' => 'Question',
-                    'name' => 'Does Case Changer Pro store my text data?',
+                    'name' => 'Do I need to create an account?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'No, Case Changer Pro processes all text transformations locally in your browser. We don\'t store, transmit, or log any text you convert.'
+                        'text' => 'No, you don\'t need to create an account. All tools are instantly accessible without any registration.'
                     ]
                 ],
                 [
@@ -298,47 +319,39 @@ class SchemaService
                     'name' => 'What types of text transformations are available?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Case Changer Pro offers 86+ transformation tools across 10 categories including case conversions, developer formats, journalistic styles, academic formats, creative formats, business formats, social media formats, technical documentation, international formats, and utility transformations.'
+                        'text' => 'We offer case conversions (uppercase, lowercase, title case), developer formats (camelCase, snake_case), academic styles (APA, MLA, Chicago), creative formats, business formats, and many more specialized transformations.'
                     ]
                 ],
                 [
                     '@type' => 'Question',
-                    'name' => 'Can I use Case Changer Pro on mobile devices?',
+                    'name' => 'Is my text data private and secure?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Yes, Case Changer Pro is fully responsive and works on all modern mobile devices and tablets with a web browser.'
+                        'text' => 'Yes, all text processing happens locally in your browser. Your text is never sent to our servers, ensuring complete privacy and security.'
                     ]
                 ],
                 [
                     '@type' => 'Question',
-                    'name' => 'How do I use Case Changer Pro?',
+                    'name' => 'Can I use Case Changer Pro for commercial purposes?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Simply select your desired conversion tool from our 10 categories, paste or type your text in the input field, and the conversion happens instantly. Click the copy button to copy the converted text to your clipboard.'
+                        'text' => 'Yes, you can use Case Changer Pro for both personal and commercial purposes without any restrictions.'
                     ]
                 ],
                 [
                     '@type' => 'Question',
-                    'name' => 'Does Case Changer Pro preserve special formatting?',
+                    'name' => 'Does it work on mobile devices?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Yes, Case Changer Pro intelligently preserves URLs, email addresses, and special formatting while converting your text. This ensures your links and contact information remain functional.'
+                        'text' => 'Yes, Case Changer Pro is fully responsive and works on all devices including smartphones, tablets, and desktop computers.'
                     ]
                 ],
                 [
                     '@type' => 'Question',
-                    'name' => 'What browsers are supported?',
+                    'name' => 'How do I report a bug or suggest a feature?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Case Changer Pro works on all modern browsers including Chrome, Firefox, Safari, Edge, and Opera. JavaScript must be enabled for the tools to function.'
-                    ]
-                ],
-                [
-                    '@type' => 'Question',
-                    'name' => 'Can I process large amounts of text?',
-                    'acceptedAnswer' => [
-                        '@type' => 'Answer',
-                        'text' => 'Yes, Case Changer Pro can handle large text inputs efficiently. The tools are optimized for performance and can process thousands of words instantly.'
+                        'text' => 'You can report bugs or suggest features through our contact page or by reaching out via our GitHub repository.'
                     ]
                 ]
             ]
@@ -353,102 +366,83 @@ class SchemaService
         return [
             '@context' => 'https://schema.org',
             '@type' => 'SiteNavigationElement',
-            '@id' => url('/') . '#navigation',
+            '@id' => $this->baseUrl . '/#navigation',
             'name' => 'Main Navigation',
             'hasPart' => [
                 [
-                    '@type' => 'SiteNavigationElement',
+                    '@type' => 'WebPage',
                     'name' => 'Home',
-                    'url' => url('/'),
-                    'position' => 1
+                    'url' => $this->baseUrl . '/'
                 ],
                 [
-                    '@type' => 'SiteNavigationElement',
+                    '@type' => 'CollectionPage',
                     'name' => 'All Tools',
-                    'url' => url('/conversions'),
-                    'position' => 2
+                    'url' => $this->baseUrl . '/conversions'
                 ],
                 [
-                    '@type' => 'SiteNavigationElement',
+                    '@type' => 'ItemList',
                     'name' => 'Categories',
-                    'url' => url('/conversions'),
-                    'position' => 3
+                    'url' => $this->baseUrl . '/conversions'
                 ],
                 [
-                    '@type' => 'SiteNavigationElement',
+                    '@type' => 'WebPage',
                     'name' => 'FAQ',
-                    'url' => url('/faq'),
-                    'position' => 4
+                    'url' => $this->baseUrl . '/faq'
                 ],
                 [
-                    '@type' => 'SiteNavigationElement',
+                    '@type' => 'WebPage',
                     'name' => 'About',
-                    'url' => url('/about'),
-                    'position' => 5
+                    'url' => $this->baseUrl . '/about'
                 ]
             ]
         ];
     }
 
     /**
-     * Generate complete homepage schema graph
+     * Combine all homepage schemas
      */
-    public function generateHomepageSchema(): array
+    public function getHomepageSchemas(): array
     {
         return [
-            '@context' => 'https://schema.org',
-            '@graph' => [
-                $this->generateWebSiteSchema(),
-                $this->generatePersonSchema(),
-                $this->generateSoftwareApplicationSchema(),
-                $this->generateOrganizationSchema(),
-                $this->generateNavigationSchema(),
-                $this->generateFAQSchema()
-            ]
+            $this->generateWebSiteSchema(),
+            $this->generateWebApplicationSchema(),
+            $this->generateOrganizationSchema(),
+            $this->generatePersonSchema(),
+            $this->generateNavigationSchema(),
+            $this->generateFAQSchema()
         ];
     }
 
     /**
-     * Generate schema for category page
+     * Get schemas for category page
      */
-    public function generateCategoryPageSchema(string $category, array $categoryData): array
+    public function getCategorySchemas(string $category, array $categoryData): array
     {
         $breadcrumbs = $this->generateBreadcrumbSchema([
-            ['name' => 'Tools', 'url' => url('/conversions')],
+            ['name' => 'Tools', 'url' => $this->baseUrl . '/conversions'],
             ['name' => $categoryData['title']]
         ]);
 
-        $collectionPage = $this->generateCollectionPageSchema($category, $categoryData);
-
         return [
-            '@context' => 'https://schema.org',
-            '@graph' => [
-                $collectionPage,
-                $breadcrumbs
-            ]
+            $this->generateCollectionSchema($category, $categoryData),
+            $breadcrumbs
         ];
     }
 
     /**
-     * Generate schema for tool page
+     * Get schemas for tool page
      */
-    public function generateToolPageSchema(string $category, string $tool, array $toolData, array $categoryData): array
+    public function getToolSchemas(string $category, string $tool, array $categoryData, array $toolData): array
     {
         $breadcrumbs = $this->generateBreadcrumbSchema([
-            ['name' => 'Tools', 'url' => url('/conversions')],
-            ['name' => $categoryData['title'], 'url' => url("/conversions/{$category}")],
+            ['name' => 'Tools', 'url' => $this->baseUrl . '/conversions'],
+            ['name' => $categoryData['title'], 'url' => $this->baseUrl . "/conversions/{$category}"],
             ['name' => $toolData['name']]
         ]);
 
-        $toolSchema = $this->generateToolSchema($category, $tool, $toolData, $categoryData);
-
         return [
-            '@context' => 'https://schema.org',
-            '@graph' => [
-                $toolSchema,
-                $breadcrumbs,
-                $this->generatePersonSchema()
-            ]
+            $this->generateToolSchema($category, $tool, $toolData),
+            $breadcrumbs
         ];
     }
 }
