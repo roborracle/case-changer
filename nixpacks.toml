@@ -1,0 +1,41 @@
+# Nixpacks configuration for Laravel + Vite
+[phases.setup]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-9_x"]
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader",
+    "npm ci --production=false",
+]
+
+[phases.build]
+cmds = [
+    # Build frontend assets with Vite
+    "npm run build",
+    
+    # Clear all Laravel caches
+    "php artisan config:clear",
+    "php artisan cache:clear",
+    "php artisan view:clear",
+    "php artisan route:clear",
+    "php artisan event:clear",
+    
+    # Optimize Laravel for production
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache",
+    "php artisan event:cache",
+    
+    # Create required directories
+    "mkdir -p storage/framework/sessions",
+    "mkdir -p storage/framework/views",
+    "mkdir -p storage/framework/cache/data",
+    "mkdir -p storage/logs",
+    
+    # Set permissions
+    "chmod -R 775 storage",
+    "chmod -R 775 bootstrap/cache",
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
