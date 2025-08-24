@@ -340,4 +340,319 @@ class CodeDataService
         
         return implode("\n", $formatted);
     }
+
+    /**
+     * Format TypeScript code
+     */
+    public function formatTypeScript(string $ts): string
+    {
+        // Basic TypeScript formatting (similar to JavaScript)
+        $ts = preg_replace('/\s*{\s*/', ' {\n  ', $ts);
+        $ts = preg_replace('/;\s*/', ';\n  ', $ts);
+        $ts = preg_replace('/\s*}\s*/', '\n}', $ts);
+        
+        return trim($ts);
+    }
+
+    /**
+     * Format GraphQL schema/query
+     */
+    public function formatGraphQL(string $graphql): string
+    {
+        // Basic GraphQL formatting
+        $graphql = preg_replace('/\s*{\s*/', ' {\n  ', $graphql);
+        $graphql = preg_replace('/,\s*/', ',\n  ', $graphql);
+        $graphql = preg_replace('/\s*}\s*/', '\n}\n', $graphql);
+        
+        return trim($graphql);
+    }
+
+    /**
+     * Format SCSS/Sass
+     */
+    public function formatSCSS(string $scss): string
+    {
+        // Basic SCSS formatting
+        $scss = preg_replace('/\s*{\s*/', ' {\n  ', $scss);
+        $scss = preg_replace('/;\s*/', ';\n  ', $scss);
+        $scss = preg_replace('/\s*}\s*/', '\n}\n\n', $scss);
+        $scss = preg_replace('/  }/', '}', $scss);
+        
+        return trim($scss);
+    }
+
+    /**
+     * Generate MD5 hash with salt option
+     */
+    public function generateMD5WithSalt(string $text, string $salt = ''): string
+    {
+        return md5($salt . $text);
+    }
+
+    /**
+     * Generate SHA1 hash
+     */
+    public function toSHA1(string $text): string
+    {
+        return sha1($text);
+    }
+
+    /**
+     * Generate SHA512 hash
+     */
+    public function toSHA512(string $text): string
+    {
+        return hash('sha512', $text);
+    }
+
+    /**
+     * JSON stringify with escape handling
+     */
+    public function jsonStringify(string $text): string
+    {
+        return json_encode($text, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Format Markdown
+     */
+    public function formatMarkdown(string $markdown): string
+    {
+        // Basic Markdown formatting
+        $lines = explode("\n", $markdown);
+        $formatted = [];
+        
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            
+            // Headers
+            if (preg_match('/^#+/', $trimmed)) {
+                $formatted[] = $trimmed;
+                $formatted[] = '';
+            }
+            // Lists
+            elseif (preg_match('/^[-*+]\s/', $trimmed) || preg_match('/^\d+\.\s/', $trimmed)) {
+                $formatted[] = $trimmed;
+            }
+            // Empty lines
+            elseif (empty($trimmed)) {
+                $formatted[] = '';
+            }
+            // Regular paragraphs
+            else {
+                $formatted[] = $trimmed;
+            }
+        }
+        
+        return implode("\n", $formatted);
+    }
+
+    /**
+     * Test regex pattern
+     */
+    public function testRegex(string $pattern, string $text, array $flags = []): array
+    {
+        $matches = [];
+        $result = [
+            'valid' => true,
+            'matches' => [],
+            'count' => 0,
+            'error' => null
+        ];
+        
+        try {
+            // Add delimiters if not present
+            if (!preg_match('/^[\/#~`].*[\/#~`][gimsx]*$/', $pattern)) {
+                $pattern = '/' . $pattern . '/';
+            }
+            
+            $count = preg_match_all($pattern, $text, $matches);
+            
+            if ($count === false) {
+                $result['valid'] = false;
+                $result['error'] = 'Invalid regex pattern';
+            } else {
+                $result['count'] = $count;
+                $result['matches'] = $matches[0] ?? [];
+            }
+        } catch (Exception $e) {
+            $result['valid'] = false;
+            $result['error'] = $e->getMessage();
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Sort numbers from text
+     */
+    public function sortNumbers(string $text, bool $ascending = true): string
+    {
+        // Extract numbers from text
+        preg_match_all('/\d+(?:\.\d+)?/', $text, $matches);
+        $numbers = array_map('floatval', $matches[0]);
+        
+        if ($ascending) {
+            sort($numbers);
+        } else {
+            rsort($numbers);
+        }
+        
+        return implode('\n', $numbers);
+    }
+
+    /**
+     * Encode UTF-8
+     */
+    public function encodeUTF8(string $text): string
+    {
+        return mb_convert_encoding($text, 'UTF-8', 'auto');
+    }
+
+    /**
+     * Decode UTF-8 to entities
+     */
+    public function decodeUTF8ToEntities(string $text): string
+    {
+        return mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8');
+    }
+
+    /**
+     * Generate secure hash
+     */
+    public function generateSecureHash(string $text, string $algorithm = 'sha256'): string
+    {
+        $supportedAlgos = ['md5', 'sha1', 'sha256', 'sha512'];
+        
+        if (!in_array($algorithm, $supportedAlgos)) {
+            $algorithm = 'sha256';
+        }
+        
+        return hash($algorithm, $text);
+    }
+
+    /**
+     * Minify JavaScript
+     */
+    public function minifyJavaScript(string $js): string
+    {
+        // Basic JS minification
+        $js = preg_replace('/\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\//', '', $js); // Remove comments
+        $js = preg_replace('/\/\/.*?\n/', '\n', $js); // Remove line comments
+        $js = preg_replace('/\s+/', ' ', $js); // Compress whitespace
+        $js = str_replace(['; ', ' {', '{ ', '} ', ' }', ', '], [';', '{', '{', '}', '}', ','], $js);
+        
+        return trim($js);
+    }
+
+    /**
+     * Convert JSON to other formats
+     */
+    public function convertJSONToFormat(string $json, string $format = 'yaml'): string
+    {
+        $data = json_decode($json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return 'Invalid JSON';
+        }
+        
+        switch (strtolower($format)) {
+            case 'yaml':
+                return $this->arrayToYAML($data);
+            case 'xml':
+                return $this->arrayToXML($data);
+            case 'csv':
+                return $this->arrayToCSV($data);
+            default:
+                return json_encode($data, JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * Convert array to YAML format
+     */
+    private function arrayToYAML(array $data, int $indent = 0): string
+    {
+        $yaml = '';
+        $spaces = str_repeat('  ', $indent);
+        
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $yaml .= $spaces . $key . ":\n";
+                $yaml .= $this->arrayToYAML($value, $indent + 1);
+            } else {
+                $yaml .= $spaces . $key . ': ' . $value . "\n";
+            }
+        }
+        
+        return $yaml;
+    }
+
+    /**
+     * Convert array to XML format
+     */
+    private function arrayToXML(array $data, string $root = 'root'): string
+    {
+        $xml = "<?xml version='1.0' encoding='UTF-8'?>\n";
+        $xml .= "<$root>\n";
+        $xml .= $this->arrayToXMLRecursive($data, 1);
+        $xml .= "</$root>";
+        
+        return $xml;
+    }
+
+    /**
+     * Recursive helper for array to XML conversion
+     */
+    private function arrayToXMLRecursive(array $data, int $indent = 0): string
+    {
+        $xml = '';
+        $spaces = str_repeat('  ', $indent);
+        
+        foreach ($data as $key => $value) {
+            $key = is_numeric($key) ? 'item' : $key;
+            
+            if (is_array($value)) {
+                $xml .= "$spaces<$key>\n";
+                $xml .= $this->arrayToXMLRecursive($value, $indent + 1);
+                $xml .= "$spaces</$key>\n";
+            } else {
+                $xml .= "$spaces<$key>" . htmlspecialchars($value) . "</$key>\n";
+            }
+        }
+        
+        return $xml;
+    }
+
+    /**
+     * Convert array to CSV format
+     */
+    private function arrayToCSV(array $data): string
+    {
+        if (empty($data)) {
+            return '';
+        }
+        
+        $csv = '';
+        
+        // Handle array of objects/associative arrays
+        if (is_array($data[0])) {
+            // Headers
+            $headers = array_keys($data[0]);
+            $csv .= implode(',', $headers) . "\n";
+            
+            // Rows
+            foreach ($data as $row) {
+                $csv .= implode(',', array_map(function($value) {
+                    return '"' . str_replace('"', '""', $value) . '"';
+                }, $row)) . "\n";
+            }
+        } else {
+            // Simple array
+            $csv = implode(',', array_map(function($value) {
+                return '"' . str_replace('"', '""', $value) . '"';
+            }, $data));
+        }
+        
+        return $csv;
+    }
 }

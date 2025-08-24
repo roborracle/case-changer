@@ -628,12 +628,81 @@ class TransformationService
             'random-letter' => 'generateRandomLetter',
             'random-date' => 'generateRandomDate',
             'random-ip' => 'generateRandomIP',
+            'random-month' => 'generateRandomMonth',
             'lorem-ipsum' => 'generateLoremIpsum',
             'username-generator' => 'generateUsername',
             'email-generator' => 'generateEmail',
             'hex-color' => 'generateHexColor',
             'phone-number' => 'generatePhoneNumber',
             'random-choice' => 'generateRandomChoice',
+            
+            // Code & Data Tools
+            'binary-translator' => 'binaryTranslator',
+            'hex-converter' => 'hexConverter',
+            'morse-code' => 'morseCodeTranslator',
+            'caesar-cipher' => 'caesarCipher',
+            'md5-hash' => 'md5Hash',
+            'sha256-hash' => 'sha256Hash',
+            'json-formatter' => 'jsonFormatter',
+            'csv-to-json' => 'csvToJson',
+            'css-formatter' => 'cssFormatter',
+            'html-formatter' => 'htmlFormatter',
+            'javascript-formatter' => 'javascriptFormatter',
+            'xml-formatter' => 'xmlFormatter',
+            'yaml-formatter' => 'yamlFormatter',
+            'utf8-converter' => 'utf8Converter',
+            'utm-builder' => 'utmBuilder',
+            'slugify-generator' => 'slugifyGenerator',
+            
+            // Image Converters
+            'ascii-art' => 'asciiArt',
+            'image-to-text' => 'imageToText',
+            'jpg-to-png' => 'jpgToPng',
+            'png-to-jpg' => 'pngToJpg',
+            'jpg-to-webp' => 'jpgToWebp',
+            'png-to-webp' => 'pngToWebp',
+            'webp-to-jpg' => 'webpToJpg',
+            'webp-to-png' => 'webpToPng',
+            'svg-to-png' => 'svgToPng',
+            
+            // Text Analysis
+            'word-counter' => 'wordCounter',
+            'sentence-counter' => 'sentenceCounter',
+            'word-frequency' => 'wordFrequency',
+            'duplicate-finder' => 'duplicateFinder',
+            'duplicate-remover' => 'duplicateRemover',
+            'sort-words' => 'sortWordsAlpha',
+            'text-replacer' => 'textReplacer',
+            'line-break-remover' => 'lineBreakRemover',
+            
+            // Text Cleanup
+            'plain-text-converter' => 'plainTextConverter',
+            'remove-formatting' => 'removeFormatting',
+            'remove-letters' => 'removeLetters',
+            'remove-underscores' => 'removeUnderscores',
+            'whitespace-remover' => 'whitespaceRemover',
+            'repeat-text' => 'repeatText',
+            'phonetic-spelling' => 'phoneticSpelling',
+            'pig-latin' => 'pigLatin',
+            
+            // Social Media Generators
+            'discord-font' => 'discordFont',
+            'facebook-font' => 'facebookFont',
+            'instagram-font' => 'instagramFont',
+            'twitter-font' => 'twitterFont',
+            'big-text' => 'bigText',
+            'slash-text' => 'slashText',
+            'stacked-text' => 'stackedText',
+            'wingdings' => 'wingdings',
+            
+            // Miscellaneous Tools
+            'nato-phonetic' => 'natoPhonetic',
+            'roman-numerals' => 'romanNumerals',
+            'word-cloud' => 'wordCloud',
+            'notepad' => 'notepad',
+            'regex-tester' => 'regexTester',
+            'number-sorter' => 'numberSorter',
+            'unicode-converter' => 'unicodeConverter',
             
             // Encoding cases
             'base64Encode' => 'base64Encode',
@@ -912,6 +981,19 @@ class TransformationService
     }
 
     /**
+     * Generate random month
+     * 
+     * @param string $text Used to determine format
+     * @return string Generated random month
+     */
+    public function generateRandomMonth(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        $fullName = stripos($text, 'short') === false;
+        return $generatorService->generateMonth($fullName);
+    }
+
+    /**
      * Generate lorem ipsum
      * 
      * @param string $text Used to parse word count
@@ -999,5 +1081,404 @@ class TransformationService
             return 'Please provide a list of items separated by commas or newlines';
         }
         return $generatorService->generateChoice($items);
+    }
+
+    // Code & Data Tools Methods
+    public function binaryTranslator(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        // Auto-detect if input is binary or text
+        if (preg_match('/^[01\s]+$/', trim($text))) {
+            return $codeDataService->fromBinary($text);
+        }
+        return $codeDataService->toBinary($text);
+    }
+
+    public function hexConverter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        // Auto-detect if input is hex or text
+        if (preg_match('/^[0-9a-fA-F\s]+$/', trim($text))) {
+            return $codeDataService->fromHex($text);
+        }
+        return $codeDataService->toHex($text);
+    }
+
+    public function morseCodeTranslator(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->toMorse($text);
+    }
+
+    public function caesarCipher(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->caesarCipher($text, 3);
+    }
+
+    public function md5Hash(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->toMD5($text);
+    }
+
+    public function sha256Hash(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->toSHA256($text);
+    }
+
+    public function jsonFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatJSON($text);
+    }
+
+    public function csvToJson(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->csvToJSON($text);
+    }
+
+    public function cssFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatCSS($text);
+    }
+
+    public function htmlFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatHTML($text);
+    }
+
+    public function javascriptFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatJavaScript($text);
+    }
+
+    public function xmlFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatXML($text);
+    }
+
+    public function yamlFormatter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->formatYAML($text);
+    }
+
+    public function utf8Converter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->toUTF8($text);
+    }
+
+    public function utmBuilder(string $text): string
+    {
+        // Parse URL and parameters from text
+        $lines = explode("\n", $text);
+        $url = trim($lines[0] ?? '');
+        $params = [];
+        
+        for ($i = 1; $i < count($lines); $i++) {
+            if (strpos($lines[$i], '=') !== false) {
+                [$key, $value] = explode('=', $lines[$i], 2);
+                $params[trim($key)] = trim($value);
+            }
+        }
+        
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->buildUTM($url, $params);
+    }
+
+    public function slugifyGenerator(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->toSlug($text);
+    }
+
+    // Image Converter Methods
+    public function asciiArt(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->generateASCIIArt($text);
+    }
+
+    public function imageToText(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->imageToText($text);
+    }
+
+    public function jpgToPng(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->jpgToPng();
+    }
+
+    public function pngToJpg(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->pngToJpg();
+    }
+
+    public function jpgToWebp(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->webPConverter('JPG', 'WebP');
+    }
+
+    public function pngToWebp(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->webPConverter('PNG', 'WebP');
+    }
+
+    public function webpToJpg(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->webPConverter('WebP', 'JPG');
+    }
+
+    public function webpToPng(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->webPConverter('WebP', 'PNG');
+    }
+
+    public function svgToPng(string $text): string
+    {
+        $imageService = app(ImageService::class);
+        return $imageService->svgToPng();
+    }
+
+    // Text Analysis Methods
+    public function wordCounter(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        $words = $textAnalysis->countWords($text);
+        $chars = $textAnalysis->countCharacters($text);
+        $charsNoSpaces = $textAnalysis->countCharacters($text, false);
+        $sentences = $textAnalysis->countSentences($text);
+        $paragraphs = $textAnalysis->countParagraphs($text);
+        
+        return "Text Statistics:\n\n" .
+               "Words: {$words}\n" .
+               "Characters (with spaces): {$chars}\n" .
+               "Characters (no spaces): {$charsNoSpaces}\n" .
+               "Sentences: {$sentences}\n" .
+               "Paragraphs: {$paragraphs}";
+    }
+
+    public function sentenceCounter(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        $count = $textAnalysis->countSentences($text);
+        return "Total sentences: {$count}";
+    }
+
+    public function wordFrequency(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        $frequency = $textAnalysis->getWordFrequency($text, 20);
+        
+        $result = "Word Frequency Analysis:\n" . str_repeat("=", 30) . "\n\n";
+        foreach ($frequency as $word => $count) {
+            $result .= "{$word}: {$count}\n";
+        }
+        
+        return $result;
+    }
+
+    public function duplicateFinder(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        $duplicates = $textAnalysis->findDuplicateWords($text);
+        
+        if (empty($duplicates)) {
+            return "No duplicate words found.";
+        }
+        
+        $result = "Duplicate Words Found:\n" . str_repeat("=", 25) . "\n\n";
+        foreach ($duplicates as $word => $count) {
+            $result .= "{$word}: appears {$count} times\n";
+        }
+        
+        return $result;
+    }
+
+    public function duplicateRemover(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->removeDuplicateWords($text);
+    }
+
+    public function sortWordsAlpha(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->sortWords($text);
+    }
+
+    public function textReplacer(string $text): string
+    {
+        // Example replacement - in real implementation, would accept find/replace params
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->replaceText($text, 'old', 'new', true);
+    }
+
+    public function lineBreakRemover(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->removeLineBreaks($text);
+    }
+
+    // Text Cleanup Methods
+    public function plainTextConverter(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->toPlainText($text);
+    }
+
+    public function removeFormatting(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->removeFormatting($text);
+    }
+
+    public function removeLetters(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->removeLetters($text);
+    }
+
+    public function removeUnderscores(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->removeUnderscores($text);
+    }
+
+    public function whitespaceRemover(string $text): string
+    {
+        return $this->removeWhitespace($text);
+    }
+
+    public function repeatText(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->repeatText($text, 3, "\n");
+    }
+
+    public function phoneticSpelling(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generatePhoneticSpelling($text);
+    }
+
+    public function pigLatin(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->toPigLatin($text);
+    }
+
+    // Social Media Generator Methods
+    public function discordFont(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateSocialFont($text, 'discord');
+    }
+
+    public function facebookFont(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateSocialFont($text, 'facebook');
+    }
+
+    public function instagramFont(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateSocialFont($text, 'instagram');
+    }
+
+    public function twitterFont(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateSocialFont($text, 'twitter');
+    }
+
+    public function bigText(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateBigText($text);
+    }
+
+    public function slashText(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateSlashText($text);
+    }
+
+    public function stackedText(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateStackedText($text);
+    }
+
+    public function wingdings(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->toWingdings($text);
+    }
+
+    // Miscellaneous Tool Methods
+    public function natoPhonetic(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        return $textAnalysis->toNATOPhonetic($text);
+    }
+
+    public function romanNumerals(string $text): string
+    {
+        $textAnalysis = app(TextAnalysisService::class);
+        // Try to parse as number first
+        if (is_numeric($text)) {
+            return $textAnalysis->numberToRoman((int)$text);
+        }
+        // Otherwise try to parse as Roman numeral
+        $number = $textAnalysis->romanToNumber($text);
+        return "Roman: {$text} = Decimal: {$number}";
+    }
+
+    public function wordCloud(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->generateWordCloud($text);
+    }
+
+    public function notepad(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->notepad($text);
+    }
+
+    public function regexTester(string $text): string
+    {
+        // Simple regex test - in practice would accept pattern and text separately
+        $codeDataService = app(CodeDataService::class);
+        return json_encode($codeDataService->testRegex('/\w+/', $text), JSON_PRETTY_PRINT);
+    }
+
+    public function numberSorter(string $text): string
+    {
+        $codeDataService = app(CodeDataService::class);
+        return $codeDataService->sortNumbers($text);
+    }
+
+    public function unicodeConverter(string $text): string
+    {
+        $miscService = app(MiscellaneousService::class);
+        return $miscService->convertToUnicode($text);
     }
 }

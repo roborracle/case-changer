@@ -208,6 +208,7 @@ class ConversionController extends Controller
                 'random-number' => ['name' => 'Random Number', 'description' => 'Generate random numbers'],
                 'random-letter' => ['name' => 'Random Letter', 'description' => 'Generate random letters'],
                 'random-date' => ['name' => 'Random Date', 'description' => 'Generate random dates'],
+                'random-month' => ['name' => 'Random Month', 'description' => 'Generate random months'],
                 'random-ip' => ['name' => 'Random IP', 'description' => 'Generate random IP addresses'],
                 'random-choice' => ['name' => 'Random Choice', 'description' => 'Pick random items from a list'],
                 'lorem-ipsum' => ['name' => 'Lorem Ipsum', 'description' => 'Generate placeholder text'],
@@ -217,6 +218,104 @@ class ConversionController extends Controller
                 'phone-number' => ['name' => 'Phone Number', 'description' => 'Generate random phone numbers'],
             ]
         ],
+        'code-data-tools' => [
+            'title' => 'Code & Data Tools',
+            'description' => 'Formatters, converters, encoders for developers',
+            'icon' => 'code',
+            'tools' => [
+                'binary-translator' => ['name' => 'Binary Translator', 'description' => 'Convert text to/from binary code'],
+                'hex-converter' => ['name' => 'Hex Converter', 'description' => 'Convert text to/from hexadecimal'],
+                'morse-code' => ['name' => 'Morse Code Translator', 'description' => 'Convert text to/from Morse code'],
+                'caesar-cipher' => ['name' => 'Caesar Cipher', 'description' => 'Encrypt/decrypt with Caesar cipher'],
+                'md5-hash' => ['name' => 'MD5 Hash Generator', 'description' => 'Generate MD5 hash from text'],
+                'sha256-hash' => ['name' => 'SHA256 Hash Generator', 'description' => 'Generate SHA256 hash from text'],
+                'json-formatter' => ['name' => 'JSON Formatter', 'description' => 'Format and minify JSON data'],
+                'csv-to-json' => ['name' => 'CSV to JSON Converter', 'description' => 'Convert CSV data to JSON format'],
+                'css-formatter' => ['name' => 'CSS Formatter', 'description' => 'Format and minify CSS code'],
+                'html-formatter' => ['name' => 'HTML Formatter', 'description' => 'Format and minify HTML code'],
+                'javascript-formatter' => ['name' => 'JavaScript Formatter', 'description' => 'Format JavaScript code'],
+                'xml-formatter' => ['name' => 'XML Formatter', 'description' => 'Format XML documents'],
+                'yaml-formatter' => ['name' => 'YAML Formatter', 'description' => 'Format YAML configuration files'],
+                'utf8-converter' => ['name' => 'UTF-8 Converter', 'description' => 'Convert text to UTF-8 encoding'],
+                'utm-builder' => ['name' => 'UTM Builder', 'description' => 'Build UTM tracking URLs'],
+                'slugify-generator' => ['name' => 'Slug Generator', 'description' => 'Create URL-friendly slugs']
+            ]
+        ],
+        'image-converters' => [
+            'title' => 'Image Converters',
+            'description' => 'Image format conversion tools',
+            'icon' => 'image',
+            'tools' => [
+                'ascii-art' => ['name' => 'ASCII Art Generator', 'description' => 'Convert text to ASCII art'],
+                'image-to-text' => ['name' => 'Image to Text', 'description' => 'Extract text from images (OCR)'],
+                'jpg-to-png' => ['name' => 'JPG to PNG', 'description' => 'Convert JPG images to PNG format'],
+                'png-to-jpg' => ['name' => 'PNG to JPG', 'description' => 'Convert PNG images to JPG format'],
+                'jpg-to-webp' => ['name' => 'JPG to WebP', 'description' => 'Convert JPG images to WebP format'],
+                'png-to-webp' => ['name' => 'PNG to WebP', 'description' => 'Convert PNG images to WebP format'],
+                'webp-to-jpg' => ['name' => 'WebP to JPG', 'description' => 'Convert WebP images to JPG format'],
+                'webp-to-png' => ['name' => 'WebP to PNG', 'description' => 'Convert WebP images to PNG format'],
+                'svg-to-png' => ['name' => 'SVG to PNG', 'description' => 'Convert SVG images to PNG format']
+            ]
+        ],
+        'text-analysis' => [
+            'title' => 'Text Analysis',
+            'description' => 'Analyze and process text content',
+            'icon' => 'chart',
+            'tools' => [
+                'word-counter' => ['name' => 'Word Counter', 'description' => 'Count words, characters, and sentences'],
+                'sentence-counter' => ['name' => 'Sentence Counter', 'description' => 'Count sentences in text'],
+                'word-frequency' => ['name' => 'Word Frequency', 'description' => 'Analyze word frequency and usage'],
+                'duplicate-finder' => ['name' => 'Duplicate Finder', 'description' => 'Find duplicate words and lines'],
+                'duplicate-remover' => ['name' => 'Duplicate Remover', 'description' => 'Remove duplicate lines'],
+                'sort-words' => ['name' => 'Sort Words', 'description' => 'Sort words alphabetically'],
+                'text-replacer' => ['name' => 'Text Replacer', 'description' => 'Find and replace text patterns'],
+                'line-break-remover' => ['name' => 'Line Break Remover', 'description' => 'Remove line breaks from text']
+            ]
+        ],
+        'text-cleanup' => [
+            'title' => 'Text Cleanup',
+            'description' => 'Clean and format text content',
+            'icon' => 'eraser',
+            'tools' => [
+                'plain-text-converter' => ['name' => 'Plain Text Converter', 'description' => 'Convert to plain text format'],
+                'remove-formatting' => ['name' => 'Remove Formatting', 'description' => 'Strip all text formatting'],
+                'remove-letters' => ['name' => 'Remove Letters', 'description' => 'Remove specific letters/characters'],
+                'remove-underscores' => ['name' => 'Remove Underscores', 'description' => 'Remove underscore characters'],
+                'whitespace-remover' => ['name' => 'Whitespace Remover', 'description' => 'Remove extra whitespace'],
+                'repeat-text' => ['name' => 'Repeat Text', 'description' => 'Repeat text multiple times'],
+                'phonetic-spelling' => ['name' => 'Phonetic Spelling', 'description' => 'Convert to phonetic spelling'],
+                'pig-latin' => ['name' => 'Pig Latin Translator', 'description' => 'Convert text to Pig Latin']
+            ]
+        ],
+        'social-media-generators' => [
+            'title' => 'Social Media Generators',
+            'description' => 'Generate fonts for social media platforms',
+            'icon' => 'hashtag',
+            'tools' => [
+                'discord-font' => ['name' => 'Discord Font Generator', 'description' => 'Generate Discord-compatible fonts'],
+                'facebook-font' => ['name' => 'Facebook Font Generator', 'description' => 'Generate Facebook-compatible fonts'],
+                'instagram-font' => ['name' => 'Instagram Font Generator', 'description' => 'Generate Instagram-compatible fonts'],
+                'twitter-font' => ['name' => 'Twitter Font Generator', 'description' => 'Generate Twitter/X-compatible fonts'],
+                'big-text' => ['name' => 'Big Text Converter', 'description' => 'Generate large text for social media'],
+                'slash-text' => ['name' => 'Slash Text Generator', 'description' => 'Add slashes through text'],
+                'stacked-text' => ['name' => 'Stacked Text Generator', 'description' => 'Create vertically stacked text'],
+                'wingdings' => ['name' => 'Wingdings Converter', 'description' => 'Convert text to Wingdings symbols']
+            ]
+        ],
+        'miscellaneous-tools' => [
+            'title' => 'Miscellaneous Tools',
+            'description' => 'Various utility tools and converters',
+            'icon' => 'wrench',
+            'tools' => [
+                'nato-phonetic' => ['name' => 'NATO Phonetic Alphabet', 'description' => 'Convert to NATO phonetic alphabet'],
+                'roman-numerals' => ['name' => 'Roman Numerals', 'description' => 'Convert numbers to Roman numerals'],
+                'word-cloud' => ['name' => 'Word Cloud Generator', 'description' => 'Generate word cloud from text'],
+                'notepad' => ['name' => 'Online Notepad', 'description' => 'Simple online text editor'],
+                'regex-tester' => ['name' => 'Regex Tester', 'description' => 'Test regular expressions'],
+                'number-sorter' => ['name' => 'Number Sorter', 'description' => 'Sort numbers in ascending/descending order'],
+                'unicode-converter' => ['name' => 'Unicode Converter', 'description' => 'Convert text to Unicode format']
+            ]
+        ]
     ];
 
     /**
