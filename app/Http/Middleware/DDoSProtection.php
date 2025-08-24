@@ -120,18 +120,18 @@ class DDoSProtection
     {
         // Track per-second
         $secondKey = 'req:sec:' . $ip . ':' . time();
-        Cache::increment($secondKey);
-        Cache::expire($secondKey, 2);
+        $count = Cache::get($secondKey, 0);
+        Cache::put($secondKey, $count + 1, 2);
         
         // Track per-minute
         $minuteKey = 'req:min:' . $ip . ':' . floor(time() / 60);
-        Cache::increment($minuteKey);
-        Cache::expire($minuteKey, 120);
+        $count = Cache::get($minuteKey, 0);
+        Cache::put($minuteKey, $count + 1, 120);
         
         // Track per-hour
         $hourKey = 'req:hour:' . $ip . ':' . floor(time() / 3600);
-        Cache::increment($hourKey);
-        Cache::expire($hourKey, 7200);
+        $count = Cache::get($hourKey, 0);
+        Cache::put($hourKey, $count + 1, 7200);
     }
     
     /**

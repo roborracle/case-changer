@@ -21,8 +21,17 @@ class TransformationService
      */
     public function __construct()
     {
-        $this->cacheService = app(CacheService::class);
-        $this->securityService = app(SecurityService::class);
+        try {
+            $this->cacheService = app(CacheService::class);
+        } catch (\Exception $e) {
+            $this->cacheService = null;
+        }
+        
+        try {
+            $this->securityService = app(SecurityService::class);
+        } catch (\Exception $e) {
+            $this->securityService = null;
+        }
     }
     /**
      * Transform text to title case
