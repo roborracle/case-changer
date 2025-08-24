@@ -3,28 +3,37 @@
         <!-- Input Section -->
         <div>
             <div class="flex items-center justify-between mb-3">
-                <label class="text-sm font-semibold text-gray-700">Input Text</label>
-                <span class="text-xs text-gray-500">
+                <label class="text-sm font-semibold" style="color: var(--text-primary);">Input Text</label>
+                <span class="text-xs" style="color: var(--text-tertiary);">
                     {{ $stats['inputChars'] }} chars • {{ $stats['inputWords'] }} words
                 </span>
             </div>
             <textarea
                 wire:model.live="inputText"
                 placeholder="Enter or paste your text here..."
-                class="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full h-96 p-4 border rounded-lg resize-none focus:ring-2"
+                style="border-color: var(--border-primary); background-color: var(--bg-primary); color: var(--text-primary); --tw-ring-color: var(--accent-primary);"
+                onfocus="this.style.borderColor='var(--accent-primary)'"
+                onblur="this.style.borderColor='var(--border-primary)'"
                 autofocus
             ></textarea>
             
             <div class="mt-4 flex gap-2">
                 <button
                     wire:click="clearAll"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    class="px-4 py-2 text-sm font-medium border rounded-lg transition-colors"
+                    style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                    onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+                    onmouseout="this.style.backgroundColor='var(--bg-primary)'"
                 >
                     Clear All
                 </button>
                 <button
                     wire:click="swapTexts"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    class="px-4 py-2 text-sm font-medium border rounded-lg transition-colors"
+                    style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                    onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+                    onmouseout="this.style.backgroundColor='var(--bg-primary)'"
                 >
                     ⇄ Swap
                 </button>
@@ -34,8 +43,8 @@
         <!-- Output Section -->
         <div>
             <div class="flex items-center justify-between mb-3">
-                <label class="text-sm font-semibold text-gray-700">Output Text</label>
-                <span class="text-xs text-gray-500">
+                <label class="text-sm font-semibold" style="color: var(--text-primary);">Output Text</label>
+                <span class="text-xs" style="color: var(--text-tertiary);">
                     {{ $stats['outputChars'] }} chars • {{ $stats['outputWords'] }} words
                 </span>
             </div>
@@ -44,14 +53,18 @@
                     readonly
                     wire:model="outputText"
                     placeholder="Transformed text will appear here..."
-                    class="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none bg-gray-50"
+                    class="w-full h-96 p-4 border rounded-lg resize-none"
+                    style="border-color: var(--border-primary); background-color: var(--bg-secondary); color: var(--text-primary);"
                 ></textarea>
                 
                 @if($outputText)
                 <div class="absolute top-2 right-2 flex gap-2">
                     <button
                         wire:click="copyToClipboard"
-                        class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1"
+                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
+                        style="background-color: var(--accent-primary); color: white;"
+                        onmouseover="this.style.opacity='0.8'"
+                        onmouseout="this.style.opacity='1'"
                     >
                         @if($copied)
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +80,10 @@
                     </button>
                     <button
                         wire:click="downloadOutput"
-                        class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1"
+                        class="px-3 py-1.5 text-xs font-medium border rounded-lg transition-colors flex items-center gap-1"
+                        style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                        onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+                        onmouseout="this.style.backgroundColor='var(--bg-primary)'"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -81,40 +97,40 @@
     </div>
 
     <!-- Preservation Settings -->
-    <div class="mt-8 bg-gray-50 rounded-lg p-6">
-        <h3 class="text-sm font-semibold text-gray-700 mb-4">Smart Preservation Settings</h3>
+    <div class="mt-8 rounded-lg p-6" style="background-color: var(--bg-secondary);">
+        <h3 class="text-sm font-semibold mb-4" style="color: var(--text-primary);">Smart Preservation Settings</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.urls" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve URLs</span>
+                <input type="checkbox" wire:model.live="preservationSettings.urls" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve URLs</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.emails" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve Emails</span>
+                <input type="checkbox" wire:model.live="preservationSettings.emails" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve Emails</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.brands" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve Brands</span>
+                <input type="checkbox" wire:model.live="preservationSettings.brands" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve Brands</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.code_blocks" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve Code</span>
+                <input type="checkbox" wire:model.live="preservationSettings.code_blocks" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve Code</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.markdown" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve Markdown</span>
+                <input type="checkbox" wire:model.live="preservationSettings.markdown" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve Markdown</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.mentions" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve @mentions</span>
+                <input type="checkbox" wire:model.live="preservationSettings.mentions" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve @mentions</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.hashtags" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve #hashtags</span>
+                <input type="checkbox" wire:model.live="preservationSettings.hashtags" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve #hashtags</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="preservationSettings.file_paths" class="mr-2 text-blue-600 rounded focus:ring-blue-500">
-                <span class="text-sm text-gray-700">Preserve Paths</span>
+                <input type="checkbox" wire:model.live="preservationSettings.file_paths" class="mr-2 rounded" style="color: var(--accent-primary); --tw-ring-color: var(--accent-primary);">
+                <span class="text-sm" style="color: var(--text-primary);">Preserve Paths</span>
             </label>
         </div>
     </div>

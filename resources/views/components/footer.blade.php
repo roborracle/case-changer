@@ -144,27 +144,33 @@ $allCategories = [
 ];
 @endphp
 
-<footer class="bg-gray-900 text-gray-300 mt-auto">
+<footer class="mt-auto" style="background-color: var(--bg-tertiary); color: var(--text-secondary); border-top: 1px solid var(--border-primary);">
     <!-- Main Footer Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Top Section with Logo and Description -->
-        <div class="mb-12 pb-8 border-b border-gray-800">
+        <div class="mb-12 pb-8" style="border-bottom: 1px solid var(--border-primary);">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="md:col-span-1">
-                    <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-3">
+                    <h2 class="text-2xl font-bold mb-3" style="color: var(--accent-primary);">
                         Case Changer Pro
                     </h2>
-                    <p class="text-sm text-gray-400 mb-4">
+                    <p class="text-sm mb-4" style="color: var(--text-tertiary);">
                         Professional text transformation tools for developers, writers, and content creators. 
                         Convert between 90+ text formats instantly.
                     </p>
                     <div class="flex space-x-4">
                         <a href="{{ route('modern-case-changer') }}" 
-                           class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                           class="px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors" 
+                           style="background-color: var(--accent-primary);" 
+                           onmouseover="this.style.filter = 'brightness(1.1)';" 
+                           onmouseout="this.style.filter = '';">
                             Quick Convert
                         </a>
                         <a href="{{ route('conversions.index') }}" 
-                           class="px-4 py-2 bg-gray-800 text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors">
+                           class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" 
+                           style="background-color: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-primary);" 
+                           onmouseover="this.style.backgroundColor = 'var(--bg-primary)';" 
+                           onmouseout="this.style.backgroundColor = 'var(--bg-secondary)';">
                             Browse All Tools
                         </a>
                     </div>
@@ -172,27 +178,27 @@ $allCategories = [
                 
                 <!-- Popular Tools -->
                 <div class="md:col-span-1">
-                    <h3 class="text-lg font-semibold text-white mb-4">Most Popular Tools</h3>
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Most Popular Tools</h3>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'uppercase']) }}" class="text-sm hover:text-white transition-colors">UPPERCASE Converter</a></li>
-                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'lowercase']) }}" class="text-sm hover:text-white transition-colors">lowercase Converter</a></li>
-                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'title-case']) }}" class="text-sm hover:text-white transition-colors">Title Case Converter</a></li>
-                        <li><a href="{{ route('conversions.tool', ['developer-formats', 'camel-case']) }}" class="text-sm hover:text-white transition-colors">camelCase Converter</a></li>
-                        <li><a href="{{ route('conversions.tool', ['developer-formats', 'snake-case']) }}" class="text-sm hover:text-white transition-colors">snake_case Converter</a></li>
-                        <li><a href="{{ route('conversions.tool', ['journalistic-styles', 'ap-style']) }}" class="text-sm hover:text-white transition-colors">AP Style Guide</a></li>
+                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'uppercase']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">UPPERCASE Converter</a></li>
+                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'lowercase']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">lowercase Converter</a></li>
+                        <li><a href="{{ route('conversions.tool', ['case-conversions', 'title-case']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">Title Case Converter</a></li>
+                        <li><a href="{{ route('conversions.tool', ['developer-formats', 'camel-case']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">camelCase Converter</a></li>
+                        <li><a href="{{ route('conversions.tool', ['developer-formats', 'snake-case']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">snake_case Converter</a></li>
+                        <li><a href="{{ route('conversions.tool', ['journalistic-styles', 'ap-style']) }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">AP Style Guide</a></li>
                     </ul>
                 </div>
                 
                 <!-- Quick Links -->
                 <div class="md:col-span-1">
-                    <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="/" class="text-sm hover:text-white transition-colors">Home</a></li>
-                        <li><a href="{{ route('conversions.index') }}" class="text-sm hover:text-white transition-colors">All Conversion Tools</a></li>
-                        <li><a href="{{ route('modern-case-changer') }}" class="text-sm hover:text-white transition-colors">Modern Interface</a></li>
-                        <li><a href="{{ route('case-changer') }}" class="text-sm hover:text-white transition-colors">Classic Interface</a></li>
-                        <li><a href="{{ route('conversions.index') }}#sitemap" class="text-sm hover:text-white transition-colors">Sitemap</a></li>
-                        <li><a href="#" class="text-sm hover:text-white transition-colors">API Documentation</a></li>
+                        <li><a href="/" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">Home</a></li>
+                        <li><a href="{{ route('conversions.index') }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">All Conversion Tools</a></li>
+                        <li><a href="{{ route('modern-case-changer') }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">Modern Interface</a></li>
+                        <li><a href="{{ route('case-changer') }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">Classic Interface</a></li>
+                        <li><a href="{{ route('sitemap') }}" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">Sitemap</a></li>
+                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-secondary)';">API Documentation</a></li>
                     </ul>
                 </div>
             </div>
@@ -202,8 +208,8 @@ $allCategories = [
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             @foreach(array_slice($allCategories, 0, 5) as $catSlug => $category)
             <div>
-                <h4 class="text-sm font-semibold text-white mb-3">
-                    <a href="{{ route('conversions.category', $catSlug) }}" class="hover:text-blue-400 transition-colors">
+                <h4 class="text-sm font-semibold mb-3">
+                    <a href="{{ route('conversions.category', $catSlug) }}" class="transition-colors" style="color: var(--text-primary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-primary)';">
                         {{ $category['title'] }}
                     </a>
                 </h4>
@@ -211,7 +217,10 @@ $allCategories = [
                     @foreach(array_slice($category['tools'], 0, 6) as $toolSlug => $toolName)
                     <li>
                         <a href="{{ route('conversions.tool', [$catSlug, $toolSlug]) }}" 
-                           class="text-xs text-gray-400 hover:text-white transition-colors">
+                           class="text-xs transition-colors" 
+                           style="color: var(--text-tertiary);" 
+                           onmouseover="this.style.color = 'var(--text-primary)';" 
+                           onmouseout="this.style.color = 'var(--text-tertiary)';">
                             {{ $toolName }}
                         </a>
                     </li>
@@ -219,7 +228,10 @@ $allCategories = [
                     @if(count($category['tools']) > 6)
                     <li>
                         <a href="{{ route('conversions.category', $catSlug) }}" 
-                           class="text-xs text-blue-400 hover:text-blue-300 font-medium">
+                           class="text-xs font-medium transition-colors"
+                           style="color: var(--accent-primary);" 
+                           onmouseover="this.style.filter = 'brightness(1.2)';" 
+                           onmouseout="this.style.filter = '';">
                             View all →
                         </a>
                     </li>
@@ -233,8 +245,8 @@ $allCategories = [
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
             @foreach(array_slice($allCategories, 5, 5) as $catSlug => $category)
             <div>
-                <h4 class="text-sm font-semibold text-white mb-3">
-                    <a href="{{ route('conversions.category', $catSlug) }}" class="hover:text-blue-400 transition-colors">
+                <h4 class="text-sm font-semibold mb-3">
+                    <a href="{{ route('conversions.category', $catSlug) }}" class="transition-colors" style="color: var(--text-primary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-primary)';">
                         {{ $category['title'] }}
                     </a>
                 </h4>
@@ -242,7 +254,10 @@ $allCategories = [
                     @foreach(array_slice($category['tools'], 0, 6) as $toolSlug => $toolName)
                     <li>
                         <a href="{{ route('conversions.tool', [$catSlug, $toolSlug]) }}" 
-                           class="text-xs text-gray-400 hover:text-white transition-colors">
+                           class="text-xs transition-colors" 
+                           style="color: var(--text-tertiary);" 
+                           onmouseover="this.style.color = 'var(--text-primary)';" 
+                           onmouseout="this.style.color = 'var(--text-tertiary)';">
                             {{ $toolName }}
                         </a>
                     </li>
@@ -250,7 +265,10 @@ $allCategories = [
                     @if(count($category['tools']) > 6)
                     <li>
                         <a href="{{ route('conversions.category', $catSlug) }}" 
-                           class="text-xs text-blue-400 hover:text-blue-300 font-medium">
+                           class="text-xs font-medium transition-colors"
+                           style="color: var(--accent-primary);" 
+                           onmouseover="this.style.filter = 'brightness(1.2)';" 
+                           onmouseout="this.style.filter = '';">
                             View all →
                         </a>
                     </li>
@@ -262,18 +280,18 @@ $allCategories = [
     </div>
     
     <!-- Bottom Bar -->
-    <div class="bg-gray-950 border-t border-gray-800">
+    <div style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-primary);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-gray-500">
+                <p class="text-sm" style="color: var(--text-tertiary);">
                     © 2025 Case Changer Pro. Professional Text Transformation Tools.
                 </p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="{{ route('privacy') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
-                    <a href="{{ route('terms') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a>
-                    <a href="{{ route('about') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">About</a>
-                    <a href="{{ route('contact') }}" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Contact</a>
-                    <a href="/sitemap.xml" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Sitemap</a>
+                    <a href="{{ route('privacy') }}" class="text-sm transition-colors" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">Privacy Policy</a>
+                    <a href="{{ route('terms') }}" class="text-sm transition-colors" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">Terms of Service</a>
+                    <a href="{{ route('about') }}" class="text-sm transition-colors" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">About</a>
+                    <a href="{{ route('contact') }}" class="text-sm transition-colors" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">Contact</a>
+                    <a href="/sitemap.xml" class="text-sm transition-colors" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-primary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">Sitemap</a>
                 </div>
             </div>
         </div>
