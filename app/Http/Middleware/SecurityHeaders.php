@@ -36,36 +36,23 @@ class SecurityHeaders
                 'max-age=63072000; includeSubDomains; preload');
         }
         
-        // Content Security Policy
-        $securityService = app('App\Services\SecurityService');
-        $nonce = base64_encode(random_bytes(16));
-        session(['csp_nonce' => $nonce]);
-        
+        // Content Security Policy - simplified for production
         if (app()->environment('production')) {
-            $csp = "default-src 'self' https://case-changer.up.railway.app https://casechangerpro.com; " .
-                   "script-src 'self' 'nonce-{$nonce}' https://www.googletagmanager.com https://www.google-analytics.com; " .
+            $csp = "default-src 'self'; " .
+                   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " .
                    "style-src 'self' 'unsafe-inline'; " .
-                   "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; " .
+                   "img-src 'self' data: https:; " .
                    "font-src 'self' data:; " .
-                   "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; " .
+                   "connect-src 'self' https:; " .
                    "frame-ancestors 'none'; " .
-                   "base-uri 'self'; " .
-                   "form-action 'self'; " .
-                   "upgrade-insecure-requests; " .
-                   "block-all-mixed-content;";
+                   "upgrade-insecure-requests;";
+            
+            $response->headers->set('Content-Security-Policy', $csp);
         } else {
-            // Development CSP - more permissive
-            $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; " .
-                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:*; " .
-                   "style-src 'self' 'unsafe-inline' http://localhost:* http://127.0.0.1:*; " .
-                   "img-src 'self' data: http://localhost:* http://127.0.0.1:*; " .
-                   "font-src 'self' data: http://localhost:* http://127.0.0.1:*; " .
-                   "connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*;";
+            // Development CSP - simplified
+            $csp = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;";
+            $response->headers->set('Content-Security-Policy', $csp);
         }
-        
-        $response->headers->set('Content-Security-Policy', $csp);
-        $response->headers->set('X-Content-Security-Policy', $csp);
-        $response->headers->set('X-WebKit-CSP', $csp);
         
         // CORS headers for API endpoints
         if ($request->is('api/*')) {
