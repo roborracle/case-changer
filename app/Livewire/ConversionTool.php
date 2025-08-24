@@ -33,15 +33,19 @@ class ConversionTool extends Component
         'file_paths' => false
     ];
 
-    private TransformationService $transformationService;
-    private PreservationService $preservationService;
-    private StyleGuideService $styleGuideService;
-
-    public function boot()
+    protected function getTransformationService(): TransformationService
     {
-        $this->transformationService = app(TransformationService::class);
-        $this->preservationService = app(PreservationService::class);
-        $this->styleGuideService = app(StyleGuideService::class);
+        return app(TransformationService::class);
+    }
+    
+    protected function getPreservationService(): PreservationService
+    {
+        return app(PreservationService::class);
+    }
+    
+    protected function getStyleGuideService(): StyleGuideService
+    {
+        return app(StyleGuideService::class);
     }
 
     public function mount($category, $tool, $toolData)
@@ -69,20 +73,20 @@ class ConversionTool extends Component
 
         try {
             // Apply preservation
-            $preserved = $this->preservationService->preserve($this->inputText, $this->preservationSettings);
+            $preserved = $this->getPreservationService()->preserve($this->inputText, $this->preservationSettings);
             
             // Map tool slug to transformation key
             $transformationKey = $this->mapToolToTransformation($this->tool);
             
             // Apply transformation based on category
             if (in_array($this->category, ['journalistic-styles', 'academic-styles', 'business-formats'])) {
-                $transformed = $this->styleGuideService->applyStyleGuide($preserved['text'], $transformationKey);
+                $transformed = $this->getStyleGuideService()->applyStyleGuide($preserved['text'], $transformationKey);
             } else {
-                $transformed = $this->transformationService->transform($preserved['text'], $transformationKey);
+                $transformed = $this->getTransformationService()->transform($preserved['text'], $transformationKey);
             }
             
             // Restore preserved content
-            $this->outputText = $this->preservationService->restore($transformed, $preserved['preserved']);
+            $this->outputText = $this->getPreservationService()->restore($transformed, $preserved['preserved']);
             
         } catch (\Exception $e) {
             // Log the error for debugging
