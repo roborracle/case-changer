@@ -85,7 +85,13 @@ class ConversionTool extends Component
             $this->outputText = $this->preservationService->restore($transformed, $preserved['preserved']);
             
         } catch (\Exception $e) {
-            $this->outputText = $this->inputText;
+            // Log the error for debugging
+            \Log::error('ConversionTool transform error: ' . $e->getMessage(), [
+                'tool' => $this->tool,
+                'category' => $this->category,
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->outputText = 'Error: ' . $e->getMessage();
         }
         
         $this->updateStats();
