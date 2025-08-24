@@ -18,10 +18,6 @@ class UniversalConverter extends Component
     public $preserveMentions = true;
     public $preserveCodeBlocks = false;
     public $showPreservationOptions = false;
-    
-    protected $transformationService;
-    protected $preservationService;
-    protected $styleGuideService;
 
     // All available formats organized by category
     public $formats = [
@@ -107,11 +103,28 @@ class UniversalConverter extends Component
         ]
     ];
 
-    public function boot()
+    /**
+     * Get the transformation service instance
+     */
+    protected function getTransformationService(): TransformationService
     {
-        $this->transformationService = app(TransformationService::class);
-        $this->preservationService = app(PreservationService::class);
-        $this->styleGuideService = app(StyleGuideService::class);
+        return app(TransformationService::class);
+    }
+
+    /**
+     * Get the preservation service instance
+     */
+    protected function getPreservationService(): PreservationService
+    {
+        return app(PreservationService::class);
+    }
+
+    /**
+     * Get the style guide service instance
+     */
+    protected function getStyleGuideService(): StyleGuideService
+    {
+        return app(StyleGuideService::class);
     }
 
     public function updatedInputText()
@@ -135,23 +148,30 @@ class UniversalConverter extends Component
             return;
         }
 
-        // Configure preservation
-        $preservationConfig = [
-            'urls' => $this->preserveUrls,
-            'emails' => $this->preserveEmails,
-            'hashtags' => $this->preserveHashtags,
-            'mentions' => $this->preserveMentions,
-            'code_blocks' => $this->preserveCodeBlocks,
-        ];
+        try {
+            // Configure preservation
+            $preservationConfig = [
+                'urls' => $this->preserveUrls,
+                'emails' => $this->preserveEmails,
+                'hashtags' => $this->preserveHashtags,
+                'mentions' => $this->preserveMentions,
+                'code_blocks' => $this->preserveCodeBlocks,
+            ];
 
-        // Apply transformation based on selected format
-        $result = $this->transformationService->transform(
-            $this->inputText,
-            $this->selectedFormat,
-            $preservationConfig
-        );
+            // Apply transformation based on selected format
+            $transformationService = $this->getTransformationService();
+            $result = $transformationService->transform(
+                $this->inputText,
+                $this->selectedFormat,
+                $preservationConfig
+            );
 
-        $this->outputText = $result;
+            $this->outputText = $result;
+        } catch (\Exception $e) {
+            // Handle any transformation errors gracefully
+            $this->outputText = $this->inputText; // Fallback to original text
+            \Log::error('Transformation error: ' . $e->getMessage());
+        }
     }
 
     public function copyToClipboard()
