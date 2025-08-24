@@ -361,11 +361,11 @@ class ConversionController extends Controller
             abort(404);
         }
 
-        $schemaData = $this->schemaService->generateToolPageSchema(
+        $schemaData = $this->schemaService->getToolSchemas(
             $category,
             $tool,
-            $this->categories[$category]['tools'][$tool],
-            $this->categories[$category]
+            $this->categories[$category],
+            $this->categories[$category]['tools'][$tool]
         );
 
         return view('conversions.tool', [

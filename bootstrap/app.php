@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\ForceHttps::class,
+            // \App\Http\Middleware\ForceHttps::class, // Disabled for local testing
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\ApplyTheme::class,
         ]);

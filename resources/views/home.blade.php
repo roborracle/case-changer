@@ -1,7 +1,7 @@
 @extends('conversions.layout')
 
 @section('title', 'Case Changer Pro - Universal Text Converter & Transformation Tools')
-@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 86+ more formats. Free, fast, and professional.')
+@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 167+ more formats. Free, fast, and professional.')
 @section('keywords', 'case converter, text transformer, case changer, uppercase, lowercase, camelCase, snake_case, title case, sentence case, AP style, APA format, text conversion, developer tools, writing tools')
 
 @section('content')
@@ -16,7 +16,7 @@
                 The Ultimate Text Transformation Tool
             </p>
             <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-tertiary);">
-                Convert text to any format instantly. 86+ conversion styles including case formats, 
+                Convert text to any format instantly. 172 conversion styles including case formats, 
                 developer conventions, and professional style guides.
             </p>
         </div>
@@ -24,7 +24,7 @@
         <!-- Universal Converter Tool - Main Feature -->
         <div class="mb-16 rounded-xl p-8 shadow-lg" style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border: 1px solid var(--border-primary);">
             <h2 class="text-3xl font-bold mb-4 text-center" style="color: var(--text-primary);">Universal Text Converter</h2>
-            <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 86+ conversion formats</p>
+            <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 172 conversion formats</p>
             @livewire('universal-converter')
         </div>
 

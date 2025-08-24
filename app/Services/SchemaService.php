@@ -22,7 +22,7 @@ class SchemaService
             '@id' => $this->baseUrl . '/#website',
             'url' => $this->baseUrl,
             'name' => 'Case Changer Pro',
-            'description' => 'Professional text transformation suite with 86+ conversion tools across 10 specialized categories for developers, writers, academics, and content creators',
+            'description' => 'Professional text transformation suite with 172 conversion tools across 18 specialized categories for developers, writers, academics, and content creators',
             'publisher' => [
                 '@id' => $this->baseUrl . '/#organization'
             ],
@@ -295,7 +295,7 @@ class SchemaService
                     'name' => 'What is Case Changer Pro?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Case Changer Pro is a comprehensive online text transformation toolkit offering 86+ conversion tools across 10 specialized categories. It\'s designed for developers, writers, academics, and content creators who need professional text formatting capabilities.'
+                        'text' => 'Case Changer Pro is a comprehensive online text transformation toolkit offering 172 conversion tools across 18 specialized categories. It\'s designed for developers, writers, academics, and content creators who need professional text formatting capabilities.'
                     ]
                 ],
                 [

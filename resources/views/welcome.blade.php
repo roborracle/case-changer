@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Case Changer Pro - Professional Text Transformation Suite</title>
-    <meta name="description" content="Professional text transformation suite with 86+ conversion tools across 10 specialized categories for developers, writers, academics, and content creators">
+    <meta name="description" content="Professional text transformation suite with 172 conversion tools across 18 specialized categories for developers, writers, academics, and content creators">
     <meta name="keywords" content="text converter, case converter, text transformation, uppercase, lowercase, camelCase, snake_case, title case">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])

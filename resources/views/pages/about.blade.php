@@ -1,7 +1,7 @@
 @extends('conversions.layout')
 
 @section('title', 'About - Case Changer Pro')
-@section('description', 'Learn about Case Changer Pro - Your comprehensive text transformation toolkit with 100+ tools for developers, writers, and content creators.')
+@section('description', 'Learn about Case Changer Pro - Your comprehensive text transformation toolkit with 172 tools for developers, writers, and content creators.')
 
 @section('content')
 <div class="min-h-screen" style="background-color: var(--bg-secondary);">
