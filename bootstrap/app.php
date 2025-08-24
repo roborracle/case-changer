@@ -13,8 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\ForceHttps::class,
+            \App\Http\Middleware\DDoSProtection::class,
             \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\RateLimiting::class.':global',
             \App\Http\Middleware\ApplyTheme::class,
+        ]);
+        
+        // API rate limiting
+        $middleware->api(append: [
+            \App\Http\Middleware\RateLimiting::class.':api',
         ]);
         
         // Exclude theme cookie from encryption

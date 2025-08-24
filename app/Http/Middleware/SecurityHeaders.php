@@ -16,31 +16,72 @@ class SecurityHeaders
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-
+        
+        // Security headers
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        $response->headers->set('Permissions-Policy', 
+            'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()');
+        
+        // Additional security headers
+        $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
+        $response->headers->set('X-Download-Options', 'noopen');
+        $response->headers->set('X-DNS-Prefetch-Control', 'off');
         
         // Strict Transport Security (HSTS) for HTTPS
-        if ($request->secure()) {
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+        if ($request->secure() || app()->environment('production')) {
+            $response->headers->set('Strict-Transport-Security', 
+                'max-age=63072000; includeSubDomains; preload');
         }
         
-        // Content Security Policy - allow both HTTP and HTTPS for assets during transition
-        $csp = "default-src 'self' http://casechangerpro.com https://casechangerpro.com; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://casechangerpro.com https://casechangerpro.com https://www.googletagmanager.com https://www.google-analytics.com; " .
-               "style-src 'self' 'unsafe-inline' http://casechangerpro.com https://casechangerpro.com; " .
-               "img-src 'self' data: http://casechangerpro.com https://casechangerpro.com https://www.google-analytics.com https://www.googletagmanager.com; " .
-               "font-src 'self' data: http://casechangerpro.com https://casechangerpro.com; " .
-               "connect-src 'self' http://casechangerpro.com https://casechangerpro.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com wss://casechangerpro.com; " .
-               "frame-ancestors 'none'; " .
-               "base-uri 'self'; " .
-               "form-action 'self';";
+        // Content Security Policy
+        $securityService = app('App\Services\SecurityService');
+        $nonce = base64_encode(random_bytes(16));
+        session(['csp_nonce' => $nonce]);
+        
+        if (app()->environment('production')) {
+            $csp = "default-src 'self' https://case-changer.up.railway.app https://casechangerpro.com; " .
+                   "script-src 'self' 'nonce-{$nonce}' https://www.googletagmanager.com https://www.google-analytics.com; " .
+                   "style-src 'self' 'unsafe-inline'; " .
+                   "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; " .
+                   "font-src 'self' data:; " .
+                   "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; " .
+                   "frame-ancestors 'none'; " .
+                   "base-uri 'self'; " .
+                   "form-action 'self'; " .
+                   "upgrade-insecure-requests; " .
+                   "block-all-mixed-content;";
+        } else {
+            // Development CSP - more permissive
+            $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; " .
+                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:*; " .
+                   "style-src 'self' 'unsafe-inline' http://localhost:* http://127.0.0.1:*; " .
+                   "img-src 'self' data: http://localhost:* http://127.0.0.1:*; " .
+                   "font-src 'self' data: http://localhost:* http://127.0.0.1:*; " .
+                   "connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*;";
+        }
         
         $response->headers->set('Content-Security-Policy', $csp);
-
+        $response->headers->set('X-Content-Security-Policy', $csp);
+        $response->headers->set('X-WebKit-CSP', $csp);
+        
+        // CORS headers for API endpoints
+        if ($request->is('api/*')) {
+            $allowedOrigins = app()->environment('production') 
+                ? ['https://case-changer.up.railway.app', 'https://casechangerpro.com']
+                : ['http://localhost:8002', 'http://127.0.0.1:8002'];
+                
+            $origin = $request->header('Origin');
+            if (in_array($origin, $allowedOrigins)) {
+                $response->headers->set('Access-Control-Allow-Origin', $origin);
+                $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+                $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, X-CSRF-TOKEN');
+                $response->headers->set('Access-Control-Max-Age', '86400');
+            }
+        }
+        
         return $response;
     }
 }
