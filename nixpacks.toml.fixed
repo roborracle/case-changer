@@ -1,0 +1,31 @@
+# MINIMAL BUILD - NO UNNECESSARY SHIT
+[phases.setup]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --no-scripts",
+    "npm ci --production=false",
+]
+
+[phases.build] 
+cmds = [
+    # Build frontend assets
+    "npm run build",
+    
+    # Clear Laravel caches - NO CACHE BUILDING (it fails on Railway)
+    "php artisan config:clear",
+    "php artisan cache:clear", 
+    "php artisan view:clear",
+    "php artisan route:clear",
+    
+    # Create ONLY the directories we actually need
+    "mkdir -p storage/logs",
+    "mkdir -p bootstrap/cache",
+    
+    # Minimal permissions
+    "chmod -R 775 storage bootstrap/cache",
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"

@@ -64,9 +64,10 @@ class HistoryService
     public function __construct(int $maxSize = 20, ?string $sessionId = null)
     {
         $this->maxHistorySize = $maxSize;
-        $this->sessionId = $sessionId;
+        // DISABLE persistence on Railway - ephemeral filesystem
+        $this->sessionId = app()->environment('production') ? null : $sessionId;
         
-        if ($sessionId) {
+        if ($this->sessionId) {
             $this->loadHistory();
         }
     }
@@ -115,10 +116,10 @@ class HistoryService
             unset($removed);
         }
 
-        // Persist if session is active
-        if ($this->sessionId) {
-            $this->saveHistory();
-        }
+        // DISABLED: Don't persist on Railway (ephemeral filesystem)
+        // if ($this->sessionId) {
+        //     $this->saveHistory();
+        // }
 
         return $this;
     }

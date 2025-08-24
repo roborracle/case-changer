@@ -18,11 +18,7 @@ class UniversalTool extends Component
     public $options = [];
     public $toolInfo = [];
     
-    protected $transformationService;
-    protected $textEffectsService;
-    protected $codeDataService;
-    protected $generatorService;
-    protected $textAnalysisService;
+    // Services are resolved via getter methods to avoid Livewire serialization issues
 
     public function mount($tool, $category)
     {
@@ -38,13 +34,29 @@ class UniversalTool extends Component
         }
     }
 
-    public function boot()
+    protected function getTransformationService(): TransformationService
     {
-        $this->transformationService = app(TransformationService::class);
-        $this->textEffectsService = app(TextEffectsService::class);
-        $this->codeDataService = app(CodeDataService::class);
-        $this->generatorService = app(GeneratorService::class);
-        $this->textAnalysisService = app(TextAnalysisService::class);
+        return app(TransformationService::class);
+    }
+
+    protected function getTextEffectsService(): TextEffectsService
+    {
+        return app(TextEffectsService::class);
+    }
+
+    protected function getCodeDataService(): CodeDataService
+    {
+        return app(CodeDataService::class);
+    }
+
+    protected function getGeneratorService(): GeneratorService
+    {
+        return app(GeneratorService::class);
+    }
+
+    protected function getTextAnalysisService(): TextAnalysisService
+    {
+        return app(TextAnalysisService::class);
     }
 
     public function updatedInput()
@@ -108,34 +120,34 @@ class UniversalTool extends Component
     {
         switch ($this->tool) {
             case 'bold':
-                return $this->textEffectsService->toBold($text);
+                return $this->getTextEffectsService()->toBold($text);
             case 'italic':
-                return $this->textEffectsService->toItalic($text);
+                return $this->getTextEffectsService()->toItalic($text);
             case 'strikethrough':
-                return $this->textEffectsService->toStrikethrough($text);
+                return $this->getTextEffectsService()->toStrikethrough($text);
             case 'underline':
-                return $this->textEffectsService->toUnderline($text);
+                return $this->getTextEffectsService()->toUnderline($text);
             case 'bubble':
-                return $this->textEffectsService->toBubble($text);
+                return $this->getTextEffectsService()->toBubble($text);
             case 'square':
-                return $this->textEffectsService->toSquare($text);
+                return $this->getTextEffectsService()->toSquare($text);
             case 'upside-down':
-                return $this->textEffectsService->toUpsideDown($text);
+                return $this->getTextEffectsService()->toUpsideDown($text);
             case 'wide':
-                return $this->textEffectsService->toWide($text);
+                return $this->getTextEffectsService()->toWide($text);
             case 'mirror':
-                return $this->textEffectsService->toMirror($text);
+                return $this->getTextEffectsService()->toMirror($text);
             case 'zalgo':
                 $intensity = $this->options['intensity'] ?? 5;
-                return $this->textEffectsService->toZalgo($text, $intensity);
+                return $this->getTextEffectsService()->toZalgo($text, $intensity);
             case 'cursed':
-                return $this->textEffectsService->toCursed($text);
+                return $this->getTextEffectsService()->toCursed($text);
             case 'invisible':
-                return $this->textEffectsService->toInvisible($text);
+                return $this->getTextEffectsService()->toInvisible($text);
             case 'superscript':
-                return $this->textEffectsService->toSuperscript($text);
+                return $this->getTextEffectsService()->toSuperscript($text);
             case 'subscript':
-                return $this->textEffectsService->toSubscript($text);
+                return $this->getTextEffectsService()->toSubscript($text);
             default:
                 return $text;
         }
@@ -145,44 +157,44 @@ class UniversalTool extends Component
     {
         switch ($this->tool) {
             case 'binary':
-                return $this->codeDataService->toBinary($text);
+                return $this->getCodeDataService()->toBinary($text);
             case 'from-binary':
-                return $this->codeDataService->fromBinary($text);
+                return $this->getCodeDataService()->fromBinary($text);
             case 'hex':
-                return $this->codeDataService->toHex($text);
+                return $this->getCodeDataService()->toHex($text);
             case 'from-hex':
-                return $this->codeDataService->fromHex($text);
+                return $this->getCodeDataService()->fromHex($text);
             case 'morse':
-                return $this->codeDataService->toMorse($text);
+                return $this->getCodeDataService()->toMorse($text);
             case 'caesar':
                 $shift = $this->options['shift'] ?? 3;
-                return $this->codeDataService->caesarCipher($text, $shift);
+                return $this->getCodeDataService()->caesarCipher($text, $shift);
             case 'md5':
-                return $this->codeDataService->toMD5($text);
+                return $this->getCodeDataService()->toMD5($text);
             case 'sha256':
-                return $this->codeDataService->toSHA256($text);
+                return $this->getCodeDataService()->toSHA256($text);
             case 'slug':
-                return $this->codeDataService->toSlug($text);
+                return $this->getCodeDataService()->toSlug($text);
             case 'json-format':
-                return $this->codeDataService->formatJSON($text);
+                return $this->getCodeDataService()->formatJSON($text);
             case 'json-minify':
-                return $this->codeDataService->minifyJSON($text);
+                return $this->getCodeDataService()->minifyJSON($text);
             case 'csv-to-json':
-                return $this->codeDataService->csvToJSON($text);
+                return $this->getCodeDataService()->csvToJSON($text);
             case 'css-format':
-                return $this->codeDataService->formatCSS($text);
+                return $this->getCodeDataService()->formatCSS($text);
             case 'css-minify':
-                return $this->codeDataService->minifyCSS($text);
+                return $this->getCodeDataService()->minifyCSS($text);
             case 'html-format':
-                return $this->codeDataService->formatHTML($text);
+                return $this->getCodeDataService()->formatHTML($text);
             case 'html-minify':
-                return $this->codeDataService->minifyHTML($text);
+                return $this->getCodeDataService()->minifyHTML($text);
             case 'js-format':
-                return $this->codeDataService->formatJavaScript($text);
+                return $this->getCodeDataService()->formatJavaScript($text);
             case 'xml-format':
-                return $this->codeDataService->formatXML($text);
+                return $this->getCodeDataService()->formatXML($text);
             case 'yaml-format':
-                return $this->codeDataService->formatYAML($text);
+                return $this->getCodeDataService()->formatYAML($text);
             case 'base64-encode':
                 return base64_encode($text);
             case 'base64-decode':
@@ -203,43 +215,43 @@ class UniversalTool extends Component
         switch ($this->tool) {
             case 'password':
                 $length = $this->options['length'] ?? 16;
-                return $this->generatorService->generatePassword($length, $this->options);
+                return $this->getGeneratorService()->generatePassword($length, $this->options);
             case 'uuid':
-                return $this->generatorService->generateUUID();
+                return $this->getGeneratorService()->generateUUID();
             case 'number':
                 $min = $this->options['min'] ?? 0;
                 $max = $this->options['max'] ?? 100;
-                return (string) $this->generatorService->generateNumber($min, $max);
+                return (string) $this->getGeneratorService()->generateNumber($min, $max);
             case 'letter':
                 $count = $this->options['count'] ?? 5;
                 $uppercase = $this->options['uppercase'] ?? false;
-                return $this->generatorService->generateLetters($count, $uppercase);
+                return $this->getGeneratorService()->generateLetters($count, $uppercase);
             case 'date':
                 $format = $this->options['format'] ?? 'Y-m-d';
-                return $this->generatorService->generateDate('-1 year', 'now', $format);
+                return $this->getGeneratorService()->generateDate('-1 year', 'now', $format);
             case 'month':
                 $fullName = $this->options['full_name'] ?? true;
-                return $this->generatorService->generateMonth($fullName);
+                return $this->getGeneratorService()->generateMonth($fullName);
             case 'ip-address':
                 $version = $this->options['version'] ?? 'v4';
-                return $this->generatorService->generateIPAddress($version);
+                return $this->getGeneratorService()->generateIPAddress($version);
             case 'mac-address':
-                return $this->generatorService->generateMACAddress();
+                return $this->getGeneratorService()->generateMACAddress();
             case 'hex-color':
-                return $this->generatorService->generateHexColor();
+                return $this->getGeneratorService()->generateHexColor();
             case 'rgb-color':
-                return $this->generatorService->generateRGBColor();
+                return $this->getGeneratorService()->generateRGBColor();
             case 'phone':
                 $format = $this->options['format'] ?? 'US';
-                return $this->generatorService->generatePhoneNumber($format);
+                return $this->getGeneratorService()->generatePhoneNumber($format);
             case 'lorem-ipsum':
                 $words = $this->options['words'] ?? 50;
-                return $this->generatorService->generateLoremIpsum($words);
+                return $this->getGeneratorService()->generateLoremIpsum($words);
             case 'username':
-                return $this->generatorService->generateUsername();
+                return $this->getGeneratorService()->generateUsername();
             case 'email':
                 $domain = $this->options['domain'] ?? 'example.com';
-                return $this->generatorService->generateEmail($domain);
+                return $this->getGeneratorService()->generateEmail($domain);
             default:
                 return '';
         }
@@ -249,48 +261,48 @@ class UniversalTool extends Component
     {
         switch ($this->tool) {
             case 'word-count':
-                return 'Words: ' . $this->textAnalysisService->countWords($text);
+                return 'Words: ' . $this->getTextAnalysisService()->countWords($text);
             case 'character-count':
-                $withSpaces = $this->textAnalysisService->countCharacters($text, true);
-                $withoutSpaces = $this->textAnalysisService->countCharacters($text, false);
+                $withSpaces = $this->getTextAnalysisService()->countCharacters($text, true);
+                $withoutSpaces = $this->getTextAnalysisService()->countCharacters($text, false);
                 return "Characters: $withSpaces (with spaces), $withoutSpaces (without spaces)";
             case 'sentence-count':
-                return 'Sentences: ' . $this->textAnalysisService->countSentences($text);
+                return 'Sentences: ' . $this->getTextAnalysisService()->countSentences($text);
             case 'word-frequency':
-                $frequency = $this->textAnalysisService->getWordFrequency($text, 10);
+                $frequency = $this->getTextAnalysisService()->getWordFrequency($text, 10);
                 return $this->formatWordFrequency($frequency);
             case 'remove-duplicates':
-                return $this->textAnalysisService->removeDuplicateLines($text);
+                return $this->getTextAnalysisService()->removeDuplicateLines($text);
             case 'remove-duplicate-words':
-                return $this->textAnalysisService->removeDuplicateWords($text);
+                return $this->getTextAnalysisService()->removeDuplicateWords($text);
             case 'find-duplicates':
-                $duplicates = $this->textAnalysisService->findDuplicateWords($text);
+                $duplicates = $this->getTextAnalysisService()->findDuplicateWords($text);
                 return $this->formatDuplicates($duplicates);
             case 'remove-line-breaks':
-                return $this->textAnalysisService->removeLineBreaks($text);
+                return $this->getTextAnalysisService()->removeLineBreaks($text);
             case 'remove-extra-spaces':
-                return $this->textAnalysisService->removeExtraSpaces($text);
+                return $this->getTextAnalysisService()->removeExtraSpaces($text);
             case 'remove-punctuation':
-                return $this->textAnalysisService->removePunctuation($text);
+                return $this->getTextAnalysisService()->removePunctuation($text);
             case 'sort-words':
-                return $this->textAnalysisService->sortWords($text);
+                return $this->getTextAnalysisService()->sortWords($text);
             case 'sort-lines':
-                return $this->textAnalysisService->sortLines($text);
+                return $this->getTextAnalysisService()->sortLines($text);
             case 'shuffle-words':
-                return $this->textAnalysisService->shuffleWords($text);
+                return $this->getTextAnalysisService()->shuffleWords($text);
             case 'repeat-text':
                 $times = $this->options['times'] ?? 3;
                 $separator = $this->options['separator'] ?? ' ';
-                return $this->textAnalysisService->repeatText($text, $times, $separator);
+                return $this->getTextAnalysisService()->repeatText($text, $times, $separator);
             case 'nato-phonetic':
-                return $this->textAnalysisService->toNATOPhonetic($text);
+                return $this->getTextAnalysisService()->toNATOPhonetic($text);
             case 'pig-latin':
-                return $this->textAnalysisService->toPigLatin($text);
+                return $this->getTextAnalysisService()->toPigLatin($text);
             case 'extract-urls':
-                $urls = $this->textAnalysisService->extractURLs($text);
+                $urls = $this->getTextAnalysisService()->extractURLs($text);
                 return implode("\n", $urls);
             case 'extract-emails':
-                $emails = $this->textAnalysisService->extractEmails($text);
+                $emails = $this->getTextAnalysisService()->extractEmails($text);
                 return implode("\n", $emails);
             default:
                 return $text;
@@ -301,19 +313,19 @@ class UniversalTool extends Component
     {
         switch ($this->tool) {
             case 'uppercase':
-                return $this->transformationService->toUpperCase($text);
+                return $this->getTransformationService()->toUpperCase($text);
             case 'lowercase':
-                return $this->transformationService->toLowerCase($text);
+                return $this->getTransformationService()->toLowerCase($text);
             case 'title-case':
-                return $this->transformationService->toTitleCase($text);
+                return $this->getTransformationService()->toTitleCase($text);
             case 'sentence-case':
-                return $this->transformationService->toSentenceCase($text);
+                return $this->getTransformationService()->toSentenceCase($text);
             case 'capitalize-words':
-                return $this->transformationService->toCapitalizedWords($text);
+                return $this->getTransformationService()->toCapitalizedWords($text);
             case 'alternating-case':
-                return $this->transformationService->toAlternatingCase($text);
+                return $this->getTransformationService()->toAlternatingCase($text);
             case 'inverse-case':
-                return $this->transformationService->toInverseCase($text);
+                return $this->getTransformationService()->toInverseCase($text);
             default:
                 return $text;
         }
@@ -323,19 +335,19 @@ class UniversalTool extends Component
     {
         switch ($this->tool) {
             case 'camel-case':
-                return $this->transformationService->toCamelCase($text);
+                return $this->getTransformationService()->toCamelCase($text);
             case 'pascal-case':
-                return $this->transformationService->toPascalCase($text);
+                return $this->getTransformationService()->toPascalCase($text);
             case 'snake-case':
-                return $this->transformationService->toSnakeCase($text);
+                return $this->getTransformationService()->toSnakeCase($text);
             case 'kebab-case':
-                return $this->transformationService->toKebabCase($text);
+                return $this->getTransformationService()->toKebabCase($text);
             case 'constant-case':
-                return $this->transformationService->toConstantCase($text);
+                return $this->getTransformationService()->toConstantCase($text);
             case 'dot-case':
-                return $this->transformationService->toDotCase($text);
+                return $this->getTransformationService()->toDotCase($text);
             case 'path-case':
-                return $this->transformationService->toPathCase($text);
+                return $this->getTransformationService()->toPathCase($text);
             default:
                 return $text;
         }

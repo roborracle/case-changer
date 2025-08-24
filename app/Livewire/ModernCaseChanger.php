@@ -46,11 +46,7 @@ class ModernCaseChanger extends Component
         'file_paths' => true
     ];
     
-    private TransformationService $transformationService;
-    private PreservationService $preservationService;
-    private StyleGuideService $styleGuideService;
-    private HistoryService $historyService;
-    private ContextualSuggestionService $suggestionService;
+    // Services are resolved via getter methods to avoid Livewire serialization issues
     
     private array $quickTransformations = [
         'uppercase' => 'UPPERCASE',
@@ -132,13 +128,29 @@ class ModernCaseChanger extends Component
         ]
     ];
     
-    public function boot()
+    protected function getTransformationService(): TransformationService
     {
-        $this->transformationService = app(TransformationService::class);
-        $this->preservationService = app(PreservationService::class);
-        $this->styleGuideService = app(StyleGuideService::class);
-        $this->historyService = app(HistoryService::class);
-        $this->suggestionService = app(ContextualSuggestionService::class);
+        return app(TransformationService::class);
+    }
+
+    protected function getPreservationService(): PreservationService
+    {
+        return app(PreservationService::class);
+    }
+
+    protected function getStyleGuideService(): StyleGuideService
+    {
+        return app(StyleGuideService::class);
+    }
+
+    protected function getHistoryService(): HistoryService
+    {
+        return app(HistoryService::class);
+    }
+
+    protected function getSuggestionService(): ContextualSuggestionService
+    {
+        return app(ContextualSuggestionService::class);
     }
     
     public function mount()
@@ -259,17 +271,17 @@ class ModernCaseChanger extends Component
         
         try {
             // Apply preservation
-            $preserved = $this->preservationService->preserve($this->text, $this->preservationSettings);
+            $preserved = $this->getPreservationService()->preserve($this->text, $this->preservationSettings);
             
             // Apply transformation
             if (strpos($transformation, '_title') !== false || strpos($transformation, '_style') !== false) {
-                $transformed = $this->styleGuideService->applyStyleGuide($preserved['text'], $transformation);
+                $transformed = $this->getStyleGuideService()->applyStyleGuide($preserved['text'], $transformation);
             } else {
-                $transformed = $this->transformationService->transform($preserved['text'], $transformation);
+                $transformed = $this->getTransformationService()->transform($preserved['text'], $transformation);
             }
             
             // Restore preserved content
-            $result = $this->preservationService->restore($transformed, $preserved['preserved']);
+            $result = $this->getPreservationService()->restore($transformed, $preserved['preserved']);
             
             $this->text = $result;
             
@@ -297,15 +309,15 @@ class ModernCaseChanger extends Component
         }
         
         try {
-            $preserved = $this->preservationService->preserve($this->text, $this->preservationSettings);
+            $preserved = $this->getPreservationService()->preserve($this->text, $this->preservationSettings);
             
             if (strpos($transformation, '_title') !== false || strpos($transformation, '_style') !== false) {
-                $transformed = $this->styleGuideService->applyStyleGuide($preserved['text'], $transformation);
+                $transformed = $this->getStyleGuideService()->applyStyleGuide($preserved['text'], $transformation);
             } else {
-                $transformed = $this->transformationService->transform($preserved['text'], $transformation);
+                $transformed = $this->getTransformationService()->transform($preserved['text'], $transformation);
             }
             
-            $result = $this->preservationService->restore($transformed, $preserved['preserved']);
+            $result = $this->getPreservationService()->restore($transformed, $preserved['preserved']);
             
             // Limit preview length
             $this->previewText = strlen($result) > 100 ? substr($result, 0, 100) . '...' : $result;

@@ -170,25 +170,48 @@ class CaseChanger extends Component
     public bool $realTimePreview = false;
     
     /**
-     * Service instances
+     * Services are resolved via getter methods to avoid Livewire serialization issues
+     * DO NOT store service instances as properties - they cannot be serialized
      */
-    protected TransformationService $transformationService;
-    protected PreservationService $preservationService;
-    protected StyleGuideService $styleGuideService;
-    protected HistoryService $historyService;
-    protected ContextualSuggestionService $contextualSuggestionService;
 
     /**
-     * Component boot lifecycle - inject services using app() helper
+     * Get transformation service instance
      */
-    public function boot(): void
+    protected function getTransformationService(): TransformationService
     {
-        // Use app() helper to resolve services - Livewire compatible pattern
-        $this->transformationService = app(TransformationService::class);
-        $this->preservationService = app(PreservationService::class);
-        $this->styleGuideService = app(StyleGuideService::class);
-        $this->historyService = app(HistoryService::class);
-        $this->contextualSuggestionService = app(ContextualSuggestionService::class);
+        return app(TransformationService::class);
+    }
+
+    /**
+     * Get preservation service instance
+     */
+    protected function getPreservationService(): PreservationService
+    {
+        return app(PreservationService::class);
+    }
+
+    /**
+     * Get style guide service instance
+     */
+    protected function getStyleGuideService(): StyleGuideService
+    {
+        return app(StyleGuideService::class);
+    }
+
+    /**
+     * Get history service instance
+     */
+    protected function getHistoryService(): HistoryService
+    {
+        return app(HistoryService::class);
+    }
+
+    /**
+     * Get contextual suggestion service instance
+     */
+    protected function getContextualSuggestionService(): ContextualSuggestionService
+    {
+        return app(ContextualSuggestionService::class);
     }
 
     /**
@@ -350,7 +373,7 @@ class CaseChanger extends Component
         
         // Add to history
         if (!empty($this->inputText)) {
-            $this->historyService->addState(
+            $this->getHistoryService()->addState(
                 $this->inputText,
                 $this->selectedTransformation,
                 [
@@ -389,7 +412,7 @@ class CaseChanger extends Component
             return;
         }
         
-        $this->contextualSuggestions = $this->contextualSuggestionService->getSuggestions($this->inputText);
+        $this->contextualSuggestions = $this->getContextualSuggestionService()->getSuggestions($this->inputText);
         
         // Map to glassmorphism format
         $this->suggestions = array_map(function($suggestion) {
@@ -401,7 +424,7 @@ class CaseChanger extends Component
         }, array_slice($this->contextualSuggestions, 0, 5));
         
         // Detect context
-        $analysis = $this->contextualSuggestionService->analyzeText($this->inputText);
+        $analysis = $this->getContextualSuggestionService()->analyzeText($this->inputText);
         if ($analysis['is_code']) {
             $this->detectedContext = 'Code';
         } elseif ($analysis['is_email']) {
@@ -581,18 +604,18 @@ class CaseChanger extends Component
             $preservedItems = [];
             
             if ($this->shouldUsePreservation($transformationType)) {
-                [$text, $preservedItems] = $this->preservationService->preserveContent(
+                [$text, $preservedItems] = $this->getPreservationService()->preserveContent(
                     $text,
                     $this->preservationSettings
                 );
             }
             
             // Apply transformation
-            $transformed = $this->transformationService->transform($text, $transformationType);
+            $transformed = $this->getTransformationService()->transform($text, $transformationType);
             
             // Restore preserved content
             if (!empty($preservedItems)) {
-                $transformed = $this->preservationService->restoreContent($transformed, $preservedItems);
+                $transformed = $this->getPreservationService()->restoreContent($transformed, $preservedItems);
             }
             
             $this->outputText = $transformed;
@@ -645,7 +668,7 @@ class CaseChanger extends Component
             $context = $this->determineContext($this->inputText);
             
             // Apply style guide formatting
-            $this->outputText = $this->styleGuideService->format(
+            $this->outputText = $this->getStyleGuideService()->format(
                 $this->inputText,
                 $styleGuide,
                 $context
@@ -727,7 +750,7 @@ class CaseChanger extends Component
      */
     public function undo(): void
     {
-        $text = $this->historyService->undo();
+        $text = $this->getHistoryService()->undo();
         
         if ($text !== null) {
             $this->inputText = $text;
@@ -746,7 +769,7 @@ class CaseChanger extends Component
      */
     public function redo(): void
     {
-        $text = $this->historyService->redo();
+        $text = $this->getHistoryService()->redo();
         
         if ($text !== null) {
             $this->inputText = $text;
@@ -765,7 +788,7 @@ class CaseChanger extends Component
      */
     public function jumpToState(int $position): void
     {
-        $text = $this->historyService->jumpToState($position);
+        $text = $this->getHistoryService()->jumpToState($position);
         
         if ($text !== null) {
             $this->inputText = $text;
@@ -825,10 +848,10 @@ class CaseChanger extends Component
     private function updateHistoryInfo(): void
     {
         $this->historyInfo = [
-            'can_undo' => $this->historyService->canUndo(),
-            'can_redo' => $this->historyService->canRedo(),
-            'position' => $this->historyService->getCurrentPosition() + 1,
-            'total' => $this->historyService->getHistoryCount()
+            'can_undo' => $this->getHistoryService()->canUndo(),
+            'can_redo' => $this->getHistoryService()->canRedo(),
+            'position' => $this->getHistoryService()->getCurrentPosition() + 1,
+            'total' => $this->getHistoryService()->getHistoryCount()
         ];
     }
 
@@ -892,7 +915,7 @@ class CaseChanger extends Component
         $this->clearMessages();
         $this->copied = false;
         $this->updateStatistics();
-        $this->historyService->clearHistory();
+        $this->getHistoryService()->clearHistory();
         $this->updateHistoryInfo();
     }
 
@@ -926,7 +949,7 @@ class CaseChanger extends Component
      */
     private function restoreSession(): void
     {
-        $currentText = $this->historyService->getCurrentState();
+        $currentText = $this->getHistoryService()->getCurrentState();
         
         if ($currentText !== null) {
             // Set the last known text as input
@@ -934,9 +957,9 @@ class CaseChanger extends Component
             $this->outputText = '';
             
             // Get history info to restore transformation info from metadata
-            $historyInfo = $this->historyService->getHistoryInfo();
+            $historyInfo = $this->getHistoryService()->getHistoryInfo();
             if (!empty($historyInfo['states'])) {
-                $currentIndex = $this->historyService->getCurrentPosition();
+                $currentIndex = $this->getHistoryService()->getCurrentPosition();
                 if (isset($historyInfo['states'][$currentIndex])) {
                     $this->selectedTransformation = $historyInfo['states'][$currentIndex]['transformation'] ?? '';
                 }
@@ -968,7 +991,7 @@ class CaseChanger extends Component
      */
     public function exportHistory(): void
     {
-        $history = $this->historyService->exportHistory(true);
+        $history = $this->getHistoryService()->exportHistory(true);
         
         if (!empty($history)) {
             $filename = 'transformation-history-' . date('Y-m-d-His') . '.json';

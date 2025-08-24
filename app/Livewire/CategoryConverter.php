@@ -21,9 +21,7 @@ class CategoryConverter extends Component
     public $preserveCodeBlocks = false;
     public $showPreservationOptions = false;
     
-    protected $transformationService;
-    protected $preservationService;
-    protected $styleGuideService;
+    // Services are resolved via getter methods to avoid Livewire serialization issues
 
     public function mount($category, $categoryData)
     {
@@ -38,11 +36,19 @@ class CategoryConverter extends Component
         $this->showPreservationOptions = in_array($category, ['developer-formats', 'technical-documentation']);
     }
 
-    public function boot()
+    protected function getTransformationService(): TransformationService
     {
-        $this->transformationService = app(TransformationService::class);
-        $this->preservationService = app(PreservationService::class);
-        $this->styleGuideService = app(StyleGuideService::class);
+        return app(TransformationService::class);
+    }
+
+    protected function getPreservationService(): PreservationService
+    {
+        return app(PreservationService::class);
+    }
+
+    protected function getStyleGuideService(): StyleGuideService
+    {
+        return app(StyleGuideService::class);
     }
 
     public function updatedInputText()
@@ -72,7 +78,7 @@ class CategoryConverter extends Component
         ];
 
         // Apply transformation
-        $result = $this->transformationService->transform(
+        $result = $this->getTransformationService()->transform(
             $this->inputText,
             $this->selectedFormat,
             $preservationConfig
