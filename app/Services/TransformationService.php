@@ -512,40 +512,8 @@ class TransformationService
      */
     public function toZalgoText(string $text, int $intensity = 5): string
     {
-        $zalgoUp = [
-            "\u{030d}", "\u{030e}", "\u{0304}", "\u{0305}", "\u{033f}",
-            "\u{0311}", "\u{0306}", "\u{0310}", "\u{0352}", "\u{0357}",
-            "\u{0351}", "\u{0307}", "\u{0308}", "\u{030a}", "\u{0342}",
-            "\u{0343}", "\u{0344}", "\u{034a}", "\u{034b}", "\u{034c}"
-        ];
-        
-        $zalgoDown = [
-            "\u{0316}", "\u{0317}", "\u{0318}", "\u{0319}", "\u{031c}",
-            "\u{031d}", "\u{031e}", "\u{031f}", "\u{0320}", "\u{0324}",
-            "\u{0325}", "\u{0326}", "\u{0329}", "\u{032a}", "\u{032b}",
-            "\u{032c}", "\u{032d}", "\u{032e}", "\u{032f}", "\u{0330}"
-        ];
-        
-        $result = '';
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            $result .= $char;
-            
-            if (preg_match('/\p{L}/u', $char)) {
-                $count = rand(0, $intensity);
-                for ($i = 0; $i < $count; $i++) {
-                    $result .= $zalgoUp[array_rand($zalgoUp)];
-                }
-                
-                $count = rand(0, $intensity);
-                for ($i = 0; $i < $count; $i++) {
-                    $result .= $zalgoDown[array_rand($zalgoDown)];
-                }
-            }
-        }
-        
-        return $result;
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toZalgo($text, $intensity);
     }
 
     /**
@@ -604,7 +572,7 @@ class TransformationService
      * @return string Transformed text
      * @throws \InvalidArgumentException If transformation type is not supported
      */
-    public function transform(string $text, string $transformationType): string
+    public function transform(string $text, string $transformationType, array $preservationConfig = []): string
     {
         $methodMap = [
             // Standard cases
@@ -638,6 +606,34 @@ class TransformationService
             'zalgoText' => 'toZalgoText',
             'morseCode' => 'toMorseCode',
             'binary' => 'toBinary',
+            
+            // Text Effects
+            'bold-text' => 'toBoldText',
+            'italic-text' => 'toItalicText',
+            'strikethrough-text' => 'toStrikethroughText',
+            'underline-text' => 'toUnderlineText',
+            'superscript' => 'toSuperscript',
+            'subscript' => 'toSubscript',
+            'upside-down' => 'toUpsideDown',
+            'mirror-text' => 'toMirrorText',
+            'zalgo-text' => 'toZalgoText',
+            'cursed-text' => 'toCursedText',
+            'invisible-text' => 'toInvisibleText',
+            'wide-text' => 'toWideText',
+            
+            // Generators
+            'password-generator' => 'generatePassword',
+            'uuid-generator' => 'generateUUID',
+            'random-number' => 'generateRandomNumber',
+            'random-letter' => 'generateRandomLetter',
+            'random-date' => 'generateRandomDate',
+            'random-ip' => 'generateRandomIP',
+            'lorem-ipsum' => 'generateLoremIpsum',
+            'username-generator' => 'generateUsername',
+            'email-generator' => 'generateEmail',
+            'hex-color' => 'generateHexColor',
+            'phone-number' => 'generatePhoneNumber',
+            'random-choice' => 'generateRandomChoice',
             
             // Encoding cases
             'base64Encode' => 'base64Encode',
@@ -711,5 +707,297 @@ class TransformationService
         $text = str_replace("'", "'", $text); // Apostrophes
         
         return $text;
+    }
+
+    /**
+     * Convert text to bold using Unicode characters
+     * 
+     * @param string $text Input text to transform
+     * @return string Bold text using Unicode
+     */
+    public function toBoldText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toBold($text);
+    }
+
+    /**
+     * Convert text to italic using Unicode characters
+     * 
+     * @param string $text Input text to transform
+     * @return string Italic text using Unicode
+     */
+    public function toItalicText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toItalic($text);
+    }
+
+    /**
+     * Add strikethrough to text using Unicode
+     * 
+     * @param string $text Input text to transform
+     * @return string Strikethrough text
+     */
+    public function toStrikethroughText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toStrikethrough($text);
+    }
+
+    /**
+     * Add underline to text using Unicode
+     * 
+     * @param string $text Input text to transform
+     * @return string Underlined text
+     */
+    public function toUnderlineText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toUnderline($text);
+    }
+
+    /**
+     * Convert text to superscript
+     * 
+     * @param string $text Input text to transform
+     * @return string Superscript text
+     */
+    public function toSuperscript(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toSuperscript($text);
+    }
+
+    /**
+     * Convert text to subscript
+     * 
+     * @param string $text Input text to transform
+     * @return string Subscript text
+     */
+    public function toSubscript(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toSubscript($text);
+    }
+
+    /**
+     * Convert text to upside down
+     * 
+     * @param string $text Input text to transform
+     * @return string Upside down text
+     */
+    public function toUpsideDown(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toUpsideDown($text);
+    }
+
+    /**
+     * Convert text to mirror/reverse
+     * 
+     * @param string $text Input text to transform
+     * @return string Mirrored text
+     */
+    public function toMirrorText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toMirror($text);
+    }
+
+
+    /**
+     * Convert text to cursed text
+     * 
+     * @param string $text Input text to transform
+     * @return string Cursed text
+     */
+    public function toCursedText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toCursed($text);
+    }
+
+    /**
+     * Convert text to invisible text
+     * 
+     * @param string $text Input text to transform
+     * @return string Invisible text
+     */
+    public function toInvisibleText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toInvisible($text);
+    }
+
+    /**
+     * Generate strong password
+     * 
+     * @param string $text Ignored, generates new password
+     * @return string Generated password
+     */
+    public function generatePassword(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        return $generatorService->generatePassword();
+    }
+
+    /**
+     * Generate UUID
+     * 
+     * @param string $text Ignored, generates new UUID
+     * @return string Generated UUID
+     */
+    public function generateUUID(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        return $generatorService->generateUUID();
+    }
+
+    /**
+     * Generate random number
+     * 
+     * @param string $text Used to parse min/max if provided
+     * @return string Generated random number
+     */
+    public function generateRandomNumber(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        // Parse text for range if provided (e.g., "1-100")
+        if (preg_match('/(\d+)\s*-\s*(\d+)/', $text, $matches)) {
+            return (string) $generatorService->generateNumber((int)$matches[1], (int)$matches[2]);
+        }
+        return (string) $generatorService->generateNumber(1, 100);
+    }
+
+    /**
+     * Generate random letters
+     * 
+     * @param string $text Used to parse count if provided
+     * @return string Generated random letters
+     */
+    public function generateRandomLetter(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        // Parse text for count if provided
+        if (preg_match('/\d+/', $text, $matches)) {
+            return $generatorService->generateLetters((int)$matches[0]);
+        }
+        return $generatorService->generateLetters(5);
+    }
+
+    /**
+     * Generate random date
+     * 
+     * @param string $text Ignored, generates random date
+     * @return string Generated random date
+     */
+    public function generateRandomDate(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        return $generatorService->generateDate();
+    }
+
+    /**
+     * Generate random IP address
+     * 
+     * @param string $text Used to determine v4/v6
+     * @return string Generated IP address
+     */
+    public function generateRandomIP(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        $version = strpos(strtolower($text), 'v6') !== false ? 'v6' : 'v4';
+        return $generatorService->generateIPAddress($version);
+    }
+
+    /**
+     * Generate lorem ipsum
+     * 
+     * @param string $text Used to parse word count
+     * @return string Generated lorem ipsum
+     */
+    public function generateLoremIpsum(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        // Parse text for word count if provided
+        if (preg_match('/\d+/', $text, $matches)) {
+            return $generatorService->generateLoremIpsum((int)$matches[0]);
+        }
+        return $generatorService->generateLoremIpsum(50);
+    }
+
+    /**
+     * Generate username
+     * 
+     * @param string $text Ignored, generates random username
+     * @return string Generated username
+     */
+    public function generateUsername(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        return $generatorService->generateUsername();
+    }
+
+    /**
+     * Generate email
+     * 
+     * @param string $text Can contain domain
+     * @return string Generated email
+     */
+    public function generateEmail(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        // Check if text contains a domain
+        if (filter_var($text, FILTER_VALIDATE_DOMAIN)) {
+            return $generatorService->generateEmail($text);
+        }
+        return $generatorService->generateEmail();
+    }
+
+    /**
+     * Generate hex color
+     * 
+     * @param string $text Ignored, generates random hex color
+     * @return string Generated hex color
+     */
+    public function generateHexColor(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        return $generatorService->generateHexColor();
+    }
+
+    /**
+     * Generate phone number
+     * 
+     * @param string $text Can specify format (US, UK, International)
+     * @return string Generated phone number
+     */
+    public function generatePhoneNumber(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        $format = 'US';
+        if (stripos($text, 'uk') !== false) $format = 'UK';
+        elseif (stripos($text, 'international') !== false) $format = 'International';
+        return $generatorService->generatePhoneNumber($format);
+    }
+
+    /**
+     * Generate random choice from list
+     * 
+     * @param string $text List separated by newlines or commas
+     * @return string Random choice from list
+     */
+    public function generateRandomChoice(string $text): string
+    {
+        $generatorService = app(GeneratorService::class);
+        // Parse list from text
+        $items = preg_split('/[\n,]+/', $text);
+        $items = array_map('trim', $items);
+        $items = array_filter($items);
+        if (empty($items)) {
+            return 'Please provide a list of items separated by commas or newlines';
+        }
+        return $generatorService->generateChoice($items);
     }
 }

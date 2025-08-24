@@ -179,6 +179,44 @@ class ConversionController extends Controller
                 'word-frequency' => ['name' => 'Word Frequency', 'description' => 'Count word occurrences'],
             ]
         ],
+        'text-effects' => [
+            'title' => 'Text Effects',
+            'description' => 'Visual text effects and stylized formatting',
+            'icon' => 'sparkles',
+            'tools' => [
+                'bold-text' => ['name' => 'Bold Text', 'description' => '𝗕𝗼𝗹𝗱 𝘁𝗲𝘅𝘁 𝗴𝗲𝗻𝗲𝗿𝗮𝘁𝗼𝗿'],
+                'italic-text' => ['name' => 'Italic Text', 'description' => '𝘐𝘵𝘢𝘭𝘪𝘤 𝘵𝘦𝘹𝘵 𝘤𝘰𝘯𝘷𝘦𝘳𝘵𝘦𝘳'],
+                'strikethrough-text' => ['name' => 'Strikethrough Text', 'description' => 'S̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶ ̶t̶e̶x̶t̶'],
+                'underline-text' => ['name' => 'Underline Text', 'description' => 'U̲n̲d̲e̲r̲l̲i̲n̲e̲ ̲t̲e̲x̲t̲'],
+                'superscript' => ['name' => 'Superscript', 'description' => 'ˢᵘᵖᵉʳˢᶜʳⁱᵖᵗ text'],
+                'subscript' => ['name' => 'Subscript', 'description' => 'ₛᵤbₛcᵣᵢₚₜ text'],
+                'wide-text' => ['name' => 'Wide Text', 'description' => 'Ｗｉｄｅ　ｔｅｘｔ　ｇｅｎｅｒａｔｏｒ'],
+                'upside-down' => ['name' => 'Upside Down', 'description' => 'uʍop ǝpᴉsdn text'],
+                'mirror-text' => ['name' => 'Mirror Text', 'description' => 'txet rorriM'],
+                'zalgo-text' => ['name' => 'Zalgo Text', 'description' => 'Z̴̢̪͚̱̦̀a̵̡̺̓l̸̥̇g̷͉̈́o̶̝̐ ̴̱̇t̵̯͌ë̵̱x̴̱̾t̷̩̀'],
+                'cursed-text' => ['name' => 'Cursed Text', 'description' => 'C̷u̸r̶s̸e̷d̶ ̴t̸e̷x̴t̶'],
+                'invisible-text' => ['name' => 'Invisible Text', 'description' => 'Hidden zero-width text'],
+            ]
+        ],
+        'generators' => [
+            'title' => 'Random Generators',
+            'description' => 'Generate random data, passwords, IDs, and more',
+            'icon' => 'dice',
+            'tools' => [
+                'password-generator' => ['name' => 'Password Generator', 'description' => 'Generate strong random passwords'],
+                'uuid-generator' => ['name' => 'UUID Generator', 'description' => 'Generate unique identifiers (UUID v4)'],
+                'random-number' => ['name' => 'Random Number', 'description' => 'Generate random numbers'],
+                'random-letter' => ['name' => 'Random Letter', 'description' => 'Generate random letters'],
+                'random-date' => ['name' => 'Random Date', 'description' => 'Generate random dates'],
+                'random-ip' => ['name' => 'Random IP', 'description' => 'Generate random IP addresses'],
+                'random-choice' => ['name' => 'Random Choice', 'description' => 'Pick random items from a list'],
+                'lorem-ipsum' => ['name' => 'Lorem Ipsum', 'description' => 'Generate placeholder text'],
+                'username-generator' => ['name' => 'Username Generator', 'description' => 'Generate random usernames'],
+                'email-generator' => ['name' => 'Email Generator', 'description' => 'Generate random email addresses'],
+                'hex-color' => ['name' => 'Hex Color', 'description' => 'Generate random hex colors'],
+                'phone-number' => ['name' => 'Phone Number', 'description' => 'Generate random phone numbers'],
+            ]
+        ],
     ];
 
     /**
