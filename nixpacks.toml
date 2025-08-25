@@ -1,35 +1,29 @@
-# SIMPLE BUILD FOR A SIMPLE TEXT CONVERTER APP
+# MINIMAL BUILD - NO UNNECESSARY SHIT
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-9_x"]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader",
+    "composer install --no-dev --optimize-autoloader --no-scripts",
     "npm ci --production=false",
 ]
 
-[phases.build]
+[phases.build] 
 cmds = [
     # Build frontend assets
     "npm run build",
     
-    # Clear and optimize Laravel
+    # Clear Laravel caches - NO CACHE BUILDING (it fails on Railway)
     "php artisan config:clear",
-    "php artisan cache:clear",
+    "php artisan cache:clear", 
     "php artisan view:clear",
     "php artisan route:clear",
-    "php artisan config:cache",
-    "php artisan route:cache",
-    "php artisan view:cache",
     
-    # Create directories Laravel needs
-    "mkdir -p storage/framework/sessions",
-    "mkdir -p storage/framework/views",
-    "mkdir -p storage/framework/cache/data",
+    # Create ONLY the directories we actually need
     "mkdir -p storage/logs",
     "mkdir -p bootstrap/cache",
     
-    # Set permissions
+    # Minimal permissions
     "chmod -R 775 storage bootstrap/cache",
 ]
 
