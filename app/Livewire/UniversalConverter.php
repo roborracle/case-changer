@@ -127,11 +127,6 @@ class UniversalConverter extends Component
         return app(StyleGuideService::class);
     }
 
-    public function updatedInputText()
-    {
-        $this->convertText();
-    }
-
     public function updatedSelectedFormat()
     {
         $this->convertText();
@@ -143,6 +138,8 @@ class UniversalConverter extends Component
 
     public function convertText()
     {
+        \Log::info('UniversalConverter::convertText called, inputText length: ' . strlen($this->inputText));
+        
         if (empty($this->inputText)) {
             $this->outputText = '';
             return;
@@ -197,5 +194,10 @@ class UniversalConverter extends Component
     public function render()
     {
         return view('livewire.universal-converter');
+    }
+
+    public function id($length = 8): string
+    {
+        return bin2hex(random_bytes($length));
     }
 }

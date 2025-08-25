@@ -299,6 +299,172 @@ class TransformationService
         return $result;
     }
 
+    public function toClapCase(string $text): string
+    {
+        return str_replace(' ', ' 👏 ', $text);
+    }
+
+    public function toAestheticText(string $text): string
+    {
+        return $this->toWideText($text);
+    }
+
+    public function toBubbleText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toBubble($text);
+    }
+
+    public function toSquareText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toSquare($text);
+    }
+
+    public function toScriptText(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toScript($text);
+    }
+
+    public function toDoubleStruck(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toDoubleStruck($text);
+    }
+
+    public function toEmojiCase(string $text): string
+    {
+        $textEffectsService = app(TextEffectsService::class);
+        return $textEffectsService->toEmoji($text);
+    }
+
+    public function toEmailSubject(string $text): string
+    {
+        return $this->toTitleCase($text);
+    }
+
+    public function toHeadlineStyle(string $text): string
+    {
+        return $this->toTitleCase($text);
+    }
+
+    public function toBrandName(string $text): string
+    {
+        return $this->toPascalCase($text);
+    }
+
+    public function toDomainSafe(string $text): string
+    {
+        return $this->toKebabCase($text);
+    }
+
+    public function toFilenameSafe(string $text): string
+    {
+        return $this->toSnakeCase($text);
+    }
+
+    public function toHashtagFormat(string $text): string
+    {
+        return '#' . $this->toPascalCase($text);
+    }
+
+    public function toTwitterThread(string $text): string
+    {
+        return $text;
+    }
+
+    public function toInstagramCaption(string $text): string
+    {
+        return $text;
+    }
+
+    public function toLinkedinHeadline(string $text): string
+    {
+        return $this->toTitleCase($text);
+    }
+
+    public function toTiktokCaption(string $text): string
+    {
+        return $text;
+    }
+
+    public function toMarkdownHeader(string $text): string
+    {
+        return '# ' . $this->toTitleCase($text);
+    }
+
+    public function toJiraTicket(string $text): string
+    {
+        return $this->toConstantCase($text);
+    }
+
+    public function toGitBranch(string $text): string
+    {
+        return $this->toKebabCase($text);
+    }
+
+    public function toDockerImage(string $text): string
+    {
+        return $this->toKebabCase($text);
+    }
+
+    public function toK8sResource(string $text): string
+    {
+        return $this->toKebabCase($text);
+    }
+
+    public function toGermanNouns(string $text): string
+    {
+        return $text;
+    }
+
+    public function toFrenchTitle(string $text): string
+    {
+        return $this->toTitleCase($text);
+    }
+
+    public function toSpanishTitle(string $text): string
+    {
+        return $this->toTitleCase($text);
+    }
+
+    public function toRemoveSpaces(string $text): string
+    {
+        return $this->removeWhitespace($text);
+    }
+
+    public function toDoubleSpace(string $text): string
+    {
+        return str_replace(' ', '  ', $text);
+    }
+
+    public function toAcronymGenerator(string $text): string
+    {
+        $words = explode(' ', $text);
+        $acronym = '';
+        foreach ($words as $word) {
+            $acronym .= mb_strtoupper(mb_substr($word, 0, 1)) . '.';
+        }
+        return $acronym;
+    }
+
+    public function toSlugFormat(string $text): string
+    {
+        return $this->toSlugCase($text);
+    }
+
+    public function toRemovePunctuation(string $text): string
+    {
+        return preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
+    }
+
+    public function toNumbersToWords(string $text): string
+    {
+        $numberFormatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+        return $numberFormatter->format((int)$text);
+    }
+
     /**
      * Transform text to Wide Text (fullwidth Unicode)
      * 
@@ -626,6 +792,38 @@ class TransformationService
             'bold' => 'toBoldText',
             'italic' => 'toItalicText',
             'emoji-case' => 'toEmojiCase',
+            'spongebob-mocking' => 'toSpongebobCase',
+            'clap-case' => 'toClapCase',
+            'aesthetic-wide' => 'toAestheticText',
+            'small-caps' => 'toSmallCaps',
+            'bubble-text' => 'toBubbleText',
+            'bold-serif' => 'toBoldText',
+            'italic-serif' => 'toItalicText',
+            'email-subject' => 'toEmailSubject',
+            'headline-style' => 'toHeadlineStyle',
+            'brand-name' => 'toBrandName',
+            'domain-safe' => 'toDomainSafe',
+            'filename-safe' => 'toFilenameSafe',
+            'hashtag-format' => 'toHashtagFormat',
+            'twitter-thread' => 'toTwitterThread',
+            'instagram-caption' => 'toInstagramCaption',
+            'linkedin-headline' => 'toLinkedinHeadline',
+            'tiktok-caption' => 'toTiktokCaption',
+            'markdown-header' => 'toMarkdownHeader',
+            'jira-ticket' => 'toJiraTicket',
+            'git-branch' => 'toGitBranch',
+            'docker-image' => 'toDockerImage',
+            'k8s-resource' => 'toK8sResource',
+            'german-nouns' => 'toGermanNouns',
+            'french-title' => 'toFrenchTitle',
+            'spanish-title' => 'toSpanishTitle',
+            'reverse-text' => 'reverseText',
+            'remove-spaces' => 'toRemoveSpaces',
+            'double-space' => 'toDoubleSpace',
+            'acronym-generator' => 'toAcronymGenerator',
+            'slug-format' => 'toSlugFormat',
+            'remove-punctuation' => 'toRemovePunctuation',
+            'numbers-to-words' => 'toNumbersToWords',
             'spongebobCase' => 'toSpongebobCase',
             'inverseCase' => 'toInverseCase',
             'reverseText' => 'reverseText',

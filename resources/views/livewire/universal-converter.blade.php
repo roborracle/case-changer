@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6" wire:key="{{ $this->id() }}">
     <!-- Format Selector -->
     <div>
         <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Select Conversion Format:</label>
@@ -30,7 +30,7 @@
         <div>
             <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Input Text:</label>
             <textarea 
-                wire:model.live="inputText"
+                wire:model.blur="inputText"
                 class="w-full h-64 px-4 py-3 border rounded-lg focus:ring-2 font-mono text-sm"
                 style="border-color: var(--border-primary); background-color: var(--bg-primary); color: var(--text-primary); --tw-ring-color: var(--accent-primary);"
                 onfocus="this.style.borderColor='var(--accent-primary)'"
@@ -41,6 +41,13 @@
                 <span class="text-xs" style="color: var(--text-tertiary);">
                     {{ strlen($inputText) }} characters
                 </span>
+                <button
+                    wire:click="convertText"
+                    class="px-3 py-1 text-xs border rounded transition-colors"
+                    style="background-color: var(--accent-primary); border-color: var(--accent-primary); color: white;"
+                >
+                    Convert
+                </button>
                 <button 
                     wire:click="clearText"
                     class="text-xs font-medium"
