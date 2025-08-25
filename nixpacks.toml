@@ -1,6 +1,6 @@
 # MINIMAL BUILD - NO UNNECESSARY SHIT
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-9_x"]
 
 [phases.install]
 cmds = [
@@ -10,6 +10,9 @@ cmds = [
 
 [phases.build] 
 cmds = [
+    # Copy environment example for artisan commands
+    "cp .env.example .env",
+    
     # Build frontend assets
     "npm run build",
     
