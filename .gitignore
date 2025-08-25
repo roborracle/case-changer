@@ -1,3 +1,4 @@
+# General Laravel ignores
 *.log
 .DS_Store
 .env
@@ -22,3 +23,32 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Production-specific ignores
+/.clinerules/
+/browser-test.php
+/test-browser.html
+/test-case-changer.php
+/test-console-errors.html
+/test-converters.php
+/test-design.php
+/test-localhost.php
+/test-nav-debug.php
+/test-pages.php
+/test-theme-system.html
+/test-theme.html
+/test-validation.php
+/validation-test.js
+/phpunit.xml
+/database/
+/tests/
+/resources/views/livewire/
+/public/test-js-theme.html
+/public/test-theme.html
+/public/verify-theme.html
+/.editorconfig
+/.env.example
+/.gitattributes
+/postcss.config.js
+/tailwind.config.js
+/vite.config.js
