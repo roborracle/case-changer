@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\CaseChanger;
-use App\Livewire\ModernCaseChanger;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TransformationController;
 
 // Homepage - Universal Converter (One Tool to Rule Them All)
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [TransformationController::class, 'transform'])->name('home');
+Route::post('/', [TransformationController::class, 'transform'])->name('transform');
 
 // Legacy routes (redirect to home)
 Route::get('/case-changer', function() {
@@ -16,11 +16,6 @@ Route::get('/case-changer', function() {
 Route::get('/modern', function() {
     return redirect('/');
 })->name('modern-case-changer');
-
-// Sitemap
-Route::get('/sitemap', function() {
-    return view('sitemap');
-})->name('sitemap');
 
 // Additional conversions route for backward compatibility
 Route::get('/conversions', [ConversionController::class, 'index'])->name('conversions.index');
@@ -32,6 +27,11 @@ Route::middleware(['throttle:60,1'])->group(function () {
     Route::get('/api/conversions/{category}', [ConversionController::class, 'getCategoryData']);
     Route::get('/api/conversions', [ConversionController::class, 'getAllCategories']);
 });
+
+// Sitemap
+Route::get('/sitemap', function() {
+    return view('sitemap');
+})->name('sitemap');
 
 // Legal Pages
 Route::get('/terms', function() {

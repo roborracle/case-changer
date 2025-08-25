@@ -58,7 +58,7 @@ $categories = [
 ];
 @endphp
 
-<nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40" x-data="{ mobileMenu: false, openDropdown: null }">
+<nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo and Desktop Navigation -->
@@ -81,7 +81,7 @@ $categories = [
                     </a>
 
                     <!-- All Tools Dropdown -->
-                    <div class="relative" @mouseenter="openDropdown = 'tools'" @mouseleave="openDropdown = null">
+                    <div class="relative">
                         <a href="/" 
                            class="inline-flex items-center h-full px-4 py-2 text-sm font-medium rounded-md transition-colors"
                            style="color: var(--text-secondary);"
@@ -93,15 +93,8 @@ $categories = [
                             </svg>
                         </a>
                         
-                        <!-- Mega Dropdown -->
-                        <div x-show="openDropdown === 'tools'" 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-1"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-1"
-                             class="absolute left-0 mt-2 w-screen max-w-4xl shadow-xl rounded-lg border"
+                        <!-- Mega Dropdown (functionality disabled) -->
+                        <div class="absolute left-0 mt-2 w-screen max-w-4xl shadow-xl rounded-lg border"
                              style="background-color: var(--bg-primary); border-color: var(--border-primary); display: none;">
                             <div class="p-6">
                                 <div class="grid grid-cols-3 gap-8">
@@ -171,7 +164,7 @@ $categories = [
                     </a>
 
                     <!-- Popular Tools Dropdown -->
-                    <div class="relative" @mouseenter="openDropdown = 'popular'" @mouseleave="openDropdown = null">
+                    <div class="relative">
                         <button class="inline-flex items-center h-full px-4 py-2 text-sm font-medium rounded-md transition-colors"
                                 style="color: var(--text-secondary);"
                                 onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';"
@@ -182,14 +175,7 @@ $categories = [
                             </svg>
                         </button>
                         
-                        <div x-show="openDropdown === 'popular'"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-1"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-1"
-                             class="absolute right-0 mt-2 w-64 shadow-xl rounded-lg border"
+                        <div class="absolute right-0 mt-2 w-64 shadow-xl rounded-lg border"
                              style="background-color: var(--bg-primary); border-color: var(--border-primary); display: none;">
                             <div class="p-2">
                                 <a href="{{ route('conversions.tool', ['case-conversions', 'uppercase']) }}" 
@@ -210,69 +196,18 @@ $categories = [
 
             <!-- Theme Toggle, Search and Mobile Menu -->
             <div class="flex items-center space-x-2">
-                <!-- Theme Toggle -->
-                <div x-data="themeToggle" x-cloak class="relative">
-                    <button @click="toggleDropdown()" 
-                            class="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
-                            :aria-expanded="isOpen"
-                            :aria-label="'Current theme: ' + getCurrentThemeDescription()">
-                        <!-- Theme Icons -->
-                        <svg x-show="currentTheme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Theme Toggle (functionality disabled) -->
+                <div class="relative">
+                    <button class="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700">
+                        <!-- Theme Icon -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
-                        <svg x-show="currentTheme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                        </svg>
-                        <svg x-show="currentTheme === 'system' || currentTheme === 'auto'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
                     </button>
-                    
-                    <!-- Theme Dropdown -->
-                    <div x-show="isOpen" 
-                         @click.away="isOpen = false"
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 translate-y-1"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700"
-                         x-cloak>
-                        <div class="py-1">
-                            <template x-for="theme in themes" :key="theme">
-                                <button @click="selectTheme(theme)"
-                                        class="w-full px-4 py-2.5 text-sm text-left transition-colors flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        :class="{ 'font-semibold bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400': currentTheme === theme }">
-                                    <span class="w-5 h-5 flex-shrink-0">
-                                        <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                        </svg>
-                                        <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                                        </svg>
-                                        <svg x-show="theme === 'system' || theme === 'auto'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                        </svg>
-                                    </span>
-                                    <div class="flex-1">
-                                        <div x-text="getThemeLabel(theme)" class="font-medium"></div>
-                                        <div x-show="theme === 'system'" class="text-xs opacity-75" x-text="'Auto (' + (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light') + ')'"></div>
-                                    </div>
-                                    <span x-show="currentTheme === theme" class="flex-shrink-0">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
                 </div>
                 
-                <!-- Search Button -->
-                <button @click="$dispatch('open-search')" 
-                        class="p-2 rounded-md transition-colors"
+                <!-- Search Button (functionality disabled) -->
+                <button class="p-2 rounded-md transition-colors"
                         style="color: var(--text-secondary);"
                         onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';"
                         onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">
@@ -281,83 +216,47 @@ $categories = [
                     </svg>
                 </button>
 
-                <!-- Mobile menu button -->
-                <button @click="mobileMenu = !mobileMenu" 
-                        class="md:hidden p-2 rounded-md transition-colors"
+                <!-- Mobile menu button (functionality disabled) -->
+                <button class="md:hidden p-2 rounded-md transition-colors"
                         style="color: var(--text-secondary);"
                         onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';"
                         onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">
-                    <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                    <svg x-show="mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <div x-show="mobileMenu" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 -translate-y-1"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-1"
-         class="md:hidden border-t shadow-lg"
+    <!-- Mobile Navigation (functionality disabled) -->
+    <div class="md:hidden border-t shadow-lg"
          style="background-color: var(--bg-primary); border-color: var(--border-primary); display: none;">
         <div class="px-4 py-3 space-y-1">
             <a href="/" class="block px-4 py-2.5 text-base font-medium rounded-md transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">Home</a>
-            <a href="{{ route('conversions.index') }}" class="block px-4 py-2.5 text-base font-medium rounded-md transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">All Tools</a>
-            <a href="{{ route('modern-case-changer') }}" class="block px-4 py-2.5 text-base font-medium rounded-md transition-colors" style="color: var(--text-secondary);" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">Quick Convert</a>
+            <span class="block px-4 py-2.5 text-base font-medium rounded-md transition-colors" style="color: var(--text-secondary);">All Tools</span>
+            <span class="block px-4 py-2.5 text-base font-medium rounded-md transition-colors" style="color: var(--text-secondary);">Quick Convert</span>
             
             <div class="pt-3 mt-3 border-t" style="border-color: var(--border-primary);">
                 <p class="px-4 py-2 text-xs font-semibold uppercase tracking-wider" style="color: var(--text-tertiary);">Categories</p>
                 @foreach($categories as $catSlug => $category)
-                <a href="{{ route('conversions.category', $catSlug) }}" 
-                   class="block px-4 py-2 text-sm rounded-md transition-colors" 
-                   style="color: var(--text-secondary);" 
-                   onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" 
-                   onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">
+                <span class="block px-4 py-2 text-sm rounded-md transition-colors" style="color: var(--text-secondary);">
                     {{ $category['title'] }}
                     <span class="text-xs ml-1" style="color: var(--text-tertiary);">({{ count($category['tools']) }})</span>
-                </a>
+                </span>
                 @endforeach
             </div>
         </div>
     </div>
 </nav>
 
-<!-- Search Modal -->
-<div x-data="{ open: false }" 
-     x-show="open" 
-     @open-search.window="open = true"
-     @keydown.escape.window="open = false"
-     class="fixed inset-0 z-50 overflow-y-auto"
-     style="display: none;">
+<!-- Search Modal (functionality disabled) -->
+<div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="flex items-start justify-center min-h-screen pt-20 px-4">
-        <div x-show="open" 
-             @click="open = false"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
-        <div x-show="open"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="relative rounded-lg shadow-xl max-w-2xl w-full"
-             style="background-color: var(--bg-primary);"
-             @click.stop>
+        <div class="relative rounded-lg shadow-xl max-w-2xl w-full"
+             style="background-color: var(--bg-primary);">
             <div class="p-6">
                 <div class="flex items-center mb-4">
                     <svg class="w-5 h-5 mr-3" style="color: var(--text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -366,10 +265,8 @@ $categories = [
                     <input type="text" 
                            placeholder="Search for conversion tools..." 
                            class="flex-1 text-lg outline-none"
-                           style="background-color: transparent; color: var(--text-primary);"
-                           x-ref="searchInput"
-                           x-init="$watch('open', value => { if (value) $nextTick(() => $refs.searchInput.focus()) })">
-                    <button @click="open = false" style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-secondary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">
+                           style="background-color: transparent; color: var(--text-primary);">
+                    <button style="color: var(--text-tertiary);" onmouseover="this.style.color = 'var(--text-secondary)';" onmouseout="this.style.color = 'var(--text-tertiary)';">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -380,26 +277,10 @@ $categories = [
                 <div class="border-t pt-4" style="border-color: var(--border-primary);">
                     <p class="text-xs font-semibold uppercase tracking-wider mb-3" style="color: var(--text-tertiary);">Quick Access</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <a href="{{ route('conversions.tool', ['case-conversions', 'uppercase']) }}" 
-                           class="px-3 py-2 text-sm rounded-lg transition-colors" 
-                           style="color: var(--text-secondary);" 
-                           onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" 
-                           onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">UPPERCASE</a>
-                        <a href="{{ route('conversions.tool', ['case-conversions', 'lowercase']) }}" 
-                           class="px-3 py-2 text-sm rounded-lg transition-colors" 
-                           style="color: var(--text-secondary);" 
-                           onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" 
-                           onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">lowercase</a>
-                        <a href="{{ route('conversions.tool', ['developer-formats', 'camel-case']) }}" 
-                           class="px-3 py-2 text-sm rounded-lg transition-colors" 
-                           style="color: var(--text-secondary);" 
-                           onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" 
-                           onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">camelCase</a>
-                        <a href="{{ route('conversions.tool', ['developer-formats', 'snake-case']) }}" 
-                           class="px-3 py-2 text-sm rounded-lg transition-colors" 
-                           style="color: var(--text-secondary);" 
-                           onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)';" 
-                           onmouseout="this.style.backgroundColor = 'transparent'; this.style.color = 'var(--text-secondary)';">snake_case</a>
+                        <span class="px-3 py-2 text-sm rounded-lg transition-colors" style="color: var(--text-secondary);">UPPERCASE</span>
+                        <span class="px-3 py-2 text-sm rounded-lg transition-colors" style="color: var(--text-secondary);">lowercase</span>
+                        <span class="px-3 py-2 text-sm rounded-lg transition-colors" style="color: var(--text-secondary);">camelCase</span>
+                        <span class="px-3 py-2 text-sm rounded-lg transition-colors" style="color: var(--text-secondary);">snake_case</span>
                     </div>
                 </div>
             </div>

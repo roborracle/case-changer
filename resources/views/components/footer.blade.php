@@ -246,7 +246,7 @@ $allCategories = [
             @foreach(array_slice($allCategories, 5, 5) as $catSlug => $category)
             <div>
                 <h4 class="text-sm font-semibold mb-3">
-                    <a href="{{ route('conversions.category', $catSlug) }}" class="transition-colors" style="color: var(--text-primary);" onmouseover="this.style.color = 'var(--accent-primary)';" onmouseout="this.style.color = 'var(--text-primary)';">
+                    <a href="{{ route('conversions.category', $catSlug) }}" class="transition-colors" style="color: var(--text-primary);" onmouseover="this.style.color = 'var(--accent-primary)';" ononmouseout="this.style.color = 'var(--text-primary)';">
                         {{ $category['title'] }}
                     </a>
                 </h4>

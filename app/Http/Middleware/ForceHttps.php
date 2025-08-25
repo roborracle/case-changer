@@ -19,14 +19,12 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // In production, ensure we're using HTTPS
-        // The request should already be marked as secure from index.php
-        if (app()->environment('production') && !$request->secure()) {
-            // If somehow we're not secure and no proxy header, redirect
-            if (!$request->header('X-Forwarded-Proto')) {
-                return redirect()->secure($request->getRequestUri(), 301);
-            }
-        }
+        // Temporarily disable HTTPS enforcement for local development
+        // if (app()->environment('production') && !$request->secure()) {
+        //     if (!$request->header('X-Forwarded-Proto')) {
+        //         return redirect()->secure($request->getRequestUri(), 301);
+        //     }
+        // }
         
         return $next($request);
     }

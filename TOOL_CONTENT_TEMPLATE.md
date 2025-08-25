@@ -1,8 +1,8 @@
-# Tool Page Content & Schema Template
+# Tool Page Content & Schema Template - Post Architectural Rebuild
 
 ## Standardized Tool Page Structure
 
-Every tool page must include the following components to ensure consistency, SEO optimization, and proper Schema.org markup:
+Every tool page must include the following components to ensure consistency, SEO optimization, and proper Schema.org markup, adapted for the new stateless, server-rendered PHP architecture:
 
 ## 1. Tool Service Method Template
 ```php
@@ -26,16 +26,15 @@ public function to[ToolName](string $text, array $options = []): string
 ```php
 // routes/web.php
 
-Route::get('/tools/[category-slug]/[tool-slug]', function() {
-    return view('tools.[category].[tool]', [
-        'schemaData' => app(SchemaService::class)->getToolSchema('[tool-name]')
-    ]);
-})->name('tools.[category].[tool]');
+// Note: Individual tool routes are now handled by the main homepage form.
+// This template is for reference if specific tool pages were to be re-introduced
+// with their own dedicated routes, which is not the current architecture.
+Route::get('/conversions/[category-slug]/[tool-slug]', [ConversionController::class, 'tool'])->name('conversions.tool');
 ```
 
-## 3. Blade View Template
+## 3. Blade View Template (Adapted for Universal Converter)
 ```blade
-{{-- resources/views/tools/[category]/[tool].blade.php --}}
+{{-- resources/views/home.blade.php (Universal Converter) --}}
 
 @extends('conversions.layout')
 
@@ -57,8 +56,37 @@ Route::get('/tools/[category-slug]/[tool-slug]', function() {
             </p>
         </div>
 
-        {{-- Tool Component --}}
-        <livewire:tool-component tool="[tool-identifier]" />
+        {{-- Universal Converter Form (replaces individual tool components) --}}
+        <form action="{{ route('transform') }}" method="POST">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="input" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Your Text</label>
+                    <textarea name="input" id="input" rows="10" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);" required>{{ $input ?? '' }}</textarea>
+                </div>
+                <div>
+                    <label for="output" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Result</label>
+                    <textarea id="output" rows="10" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);" readonly>{{ $output ?? '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label for="transformation" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Select Transformation</label>
+                <select name="transformation" id="transformation" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);">
+                    @foreach($transformations as $key => $name)
+                        <option value="{{ $key }}" @if(isset($selectedTransformation) && $selectedTransformation === $key) selected @endif>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="px-8 py-3 rounded-lg font-bold text-lg transition-all" style="background-color: var(--accent-primary); color: var(--bg-primary);"
+                        onmouseover="this.style.backgroundColor = 'var(--accent-secondary)';"
+                        onmouseout="this.style.backgroundColor = 'var(--accent-primary)';">
+                    Transform Text
+                </button>
+            </div>
+        </form>
 
         {{-- Features Section --}}
         <div class="mt-12 grid md:grid-cols-3 gap-6">
@@ -171,10 +199,13 @@ Route::get('/tools/[category-slug]/[tool-slug]', function() {
 @endsection
 ```
 
-## 4. Schema.org Service Method Template
+## 4. Schema.org Service Method Template (Adapted for Universal Converter)
 ```php
 // app/Services/SchemaService.php
 
+// Note: The SchemaService is still available for generating structured data,
+// but its direct integration with individual tool pages is no longer applicable
+// in the same way, as the primary interaction is now through the universal converter.
 public function getToolSchema(string $toolName): array
 {
     $baseUrl = config('app.url');
@@ -184,7 +215,7 @@ public function getToolSchema(string $toolName): array
         '@type' => 'WebApplication',
         'name' => '[Tool Name] - Case Changer Pro',
         'description' => '[Tool description for schema]',
-        'url' => $baseUrl . '/tools/[category]/[tool]',
+        'url' => $baseUrl . '/', // Points to the universal converter
         'applicationCategory' => 'UtilitiesApplication',
         'operatingSystem' => 'Any',
         'permissions' => 'browser',
@@ -224,14 +255,8 @@ public function getToolSchema(string $toolName): array
                 [
                     '@type' => 'ListItem',
                     'position' => 2,
-                    'name' => '[Category Name]',
-                    'item' => $baseUrl . '/tools/[category]'
-                ],
-                [
-                    '@type' => 'ListItem',
-                    'position' => 3,
-                    'name' => '[Tool Name]',
-                    'item' => $baseUrl . '/tools/[category]/[tool]'
+                    'name' => 'Universal Converter',
+                    'item' => $baseUrl
                 ]
             ]
         ],
@@ -327,31 +352,16 @@ $toolContent = [
 ```php
 // app/Console/Commands/GenerateToolPage.php
 
+// Note: This script would need significant refactoring to align with the new architecture,
+// as individual tool pages are no longer generated in the same way.
 class GenerateToolPage extends Command
 {
     protected $signature = 'make:tool {name} {category}';
     
     public function handle()
     {
-        $name = $this->argument('name');
-        $category = $this->argument('category');
-        
-        // Generate service method
-        $this->generateServiceMethod($name);
-        
-        // Generate route
-        $this->generateRoute($name, $category);
-        
-        // Generate view from template
-        $this->generateView($name, $category);
-        
-        // Update schema service
-        $this->updateSchemaService($name, $category);
-        
-        // Add to sitemap
-        $this->updateSitemap($name, $category);
-        
-        $this->info("Tool page generated for: $name");
+        $this->warn("This command is deprecated in the new architecture. Tools are now integrated into the universal converter.");
+        $this->info("Please update the TransformationService directly.");
     }
 }
 ```
@@ -375,9 +385,9 @@ Before deploying any tool page:
 - [ ] Images optimized
 
 ### Functionality QA
-- [ ] Tool works correctly
-- [ ] Copy button works
-- [ ] Download works
+- [ ] Tool works correctly (via universal converter)
+- [ ] Copy button works (if implemented in UI)
+- [ ] Download works (if implemented in UI)
 - [ ] Error handling works
 - [ ] Character limits respected
 

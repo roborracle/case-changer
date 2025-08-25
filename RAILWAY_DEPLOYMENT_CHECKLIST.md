@@ -1,4 +1,6 @@
-# Railway Deployment Checklist for Case Changer Pro
+# Railway Deployment Checklist for Case Changer Pro - Post Architectural Rebuild
+
+This document outlines the deployment procedures and verification steps for the rebuilt Case Changer Pro application, which now runs on a stateless, server-rendered PHP architecture with its original UI restored.
 
 ## Pre-Deployment Verification
 
@@ -22,7 +24,7 @@ SESSION_SAME_SITE=lax
 
 CACHE_STORE=array
 
-# Database (In-memory only for framework)
+# Database (No database used in this stateless application)
 DB_CONNECTION=sqlite
 DB_DATABASE=:memory:
 
@@ -30,38 +32,36 @@ DB_DATABASE=:memory:
 LOG_CHANNEL=stderr
 LOG_LEVEL=error
 
-# Filesystem (Disabled)
+# Filesystem (Disabled - no file persistence)
 FILESYSTEM_DISK=null
 
-# Broadcasting & Queue
+# Broadcasting & Queue (Not used in this stateless application)
 BROADCAST_CONNECTION=null
 QUEUE_CONNECTION=sync
 ```
 
 ### 2. Build Configuration (nixpacks.toml)
-Verify nixpacks.toml contains:
-- ✅ NPM build command for Vite assets
-- ✅ Composer install with --optimize-autoloader
+Verify `nixpacks.toml` contains:
+- ✅ NPM build command for Vite assets (`npm run build`)
+- ✅ Composer install with `--optimize-autoloader`
 - ✅ Laravel cache commands (config, routes, views)
-- ✅ NO database migrations (no database!)
+- ✅ NO database migrations (as there is no persistent database)
 
 ### 3. Code Verification
 
-#### Livewire Components
-All Livewire components MUST use getter methods for services:
-- ❌ WRONG: `protected TransformationService $service;`
-- ✅ RIGHT: `protected function getTransformationService(): TransformationService`
+#### Core Architecture
+- ✅ `TransformationService.php`: Contains all 172 transformation methods, is stateless, and pure.
+- ✅ `TransformationController.php`: Handles HTTP requests, delegates to `TransformationService`, and renders views.
+- ✅ `home.blade.php`: Uses a standard HTML form to submit to `TransformationController::transform`.
+- ✅ `resources/js/app.js`: Contains only essential JavaScript (e.g., `bootstrap.js`), with no Alpine.js or other reactive framework imports.
+- ✅ `app/Providers/AppServiceProvider.php`: `\URL::forceScheme('https')` is enabled for `production` environment.
+- ✅ `public/index.php`: Railway proxy detection is enabled for `production` environment.
 
 #### File Operations
-- ✅ HistoryService: Persistence disabled in production (line 68)
-- ✅ Logging: Using stderr, not file-based
-- ✅ Sessions: Using cookies, not files
-- ✅ Cache: Using array driver, not files
-
-### 4. Proxy Configuration
-- ✅ public/index.php: Railway proxy detection before Request::capture()
-- ✅ bootstrap/app.php: Trust all proxies with `$middleware->trustProxies(at: '*')`
-- ✅ ForceHttps middleware: Handles X-Forwarded-Proto header
+- ✅ No file write attempts in application logic.
+- ✅ Logging: Using `stderr`, not file-based.
+- ✅ Sessions: Using `cookie` driver, not files.
+- ✅ Cache: Using `array` driver, not files.
 
 ## Deployment Steps
 
@@ -76,36 +76,38 @@ php artisan view:clear
 # Build assets
 npm run build
 
-# Test with production-like settings
-APP_ENV=production php artisan serve
+# Start server for local testing (use an available port, e.g., 8000)
+php artisan serve --port=8000
 ```
 
 ### 2. Git Commit
 ```bash
 git add .
-git commit -m "Railway deployment configuration - stateless, no database"
-git push origin production
+git commit -m "Architectural Rebuild: Replaced Livewire/Alpine with stateless PHP backend, restored original UI, and migrated all 172 transformations. Updated documentation."
+git push origin main # Or your deployment branch
 ```
 
 ### 3. Railway Deployment
-1. Push to production branch triggers deployment
+1. Push to your deployment branch (e.g., `main`) triggers deployment.
 2. Monitor build logs for:
    - NPM build success
    - Composer install success
    - Cache generation success
-3. Check runtime logs for any 500 errors
+3. Check runtime logs for any 500 errors.
 
 ### 4. Post-Deployment Verification
 
 #### Test Core Functionality
-1. **Homepage Load**: Should display without 500 error
-2. **Universal Converter**: Should auto-convert text as you type
-3. **All Case Tools**: Should work without debounce delay
-4. **Category Pages**: Should load and convert properly
-5. **No Persistence Tests**: 
-   - History should NOT persist between page reloads
-   - Preferences should NOT persist
-   - All state should be request-scoped
+1.  **Homepage Load**: Access `https://[YOUR_RAILWAY_DOMAIN]` (or `http://127.0.0.1:8000` locally). Should display without 500 errors.
+2.  **Universal Converter**:
+    *   Input text into the "Your Text" area.
+    *   Select various transformations from the "Select Transformation" dropdown.
+    *   Click "Transform Text".
+    *   Verify the "Result" area displays the correctly transformed text for each selected transformation.
+3.  **All 172 Tools**: Ensure all tools are listed in the dropdown and function correctly.
+4.  **No Persistence Tests**:
+    *   History should NOT persist between page reloads.
+    *   All state should be request-scoped.
 
 #### Monitor Logs
 Check Railway logs for:
@@ -113,60 +115,50 @@ Check Railway logs for:
 - ❌ Database connection errors
 - ❌ Session file errors
 - ❌ Cache file errors
-- ✅ Clean stderr output only
+- ✅ Clean `stderr` output only
 
 ## Common Issues & Solutions
 
 ### Issue: 500 Error on Homepage
-**Cause**: Livewire serialization failure
-**Solution**: Ensure all components use getter methods for services
+**Cause**: Missing dependencies, incorrect configuration, or PHP errors.
+**Solution**: Check Railway build and runtime logs for specific error messages. Ensure `APP_KEY` is set.
 
-### Issue: Text Not Auto-Converting
-**Cause**: Debounce delay or wire:model configuration
-**Solution**: Remove `.debounce` modifier from wire:model
-
-### Issue: Session Errors
-**Cause**: File-based sessions on ephemeral filesystem
-**Solution**: Use SESSION_DRIVER=cookie
-
-### Issue: Cache Errors
-**Cause**: File-based cache on ephemeral filesystem
-**Solution**: Use CACHE_STORE=array
-
-### Issue: HTTPS Redirect Loop
-**Cause**: Proxy configuration issue
-**Solution**: Check public/index.php proxy detection
+### Issue: "This site can't be reached" or SSL errors locally
+**Cause**: Browser HSTS caching for `localhost` or `127.0.0.1`.
+**Solution**: Clear browser HSTS cache for `localhost` or use `127.0.0.1` in an incognito window. The server is confirmed to serve HTTP.
 
 ## Production Principles
 
 ### What This App IS:
 - ✅ A stateless text converter
-- ✅ A single-page tool
+- ✅ A single-page tool (in terms of core interaction)
 - ✅ Request-scoped processing
-- ✅ Client-side state only
+- ✅ Server-rendered UI with minimal client-side JavaScript
 
 ### What This App IS NOT:
 - ❌ A database-driven application
 - ❌ A user account system
 - ❌ A data persistence platform
 - ❌ A file storage service
+- ❌ A client-side reactive application (Livewire/Alpine.js removed)
 
 ## Emergency Rollback
 
 If deployment fails:
-1. Revert to previous deployment in Railway dashboard
-2. Check environment variables haven't changed
-3. Verify nixpacks.toml is present
-4. Ensure git branch is clean
+1. Revert to previous deployment in Railway dashboard.
+2. Check environment variables haven't changed.
+3. Verify `nixpacks.toml` is present.
+4. Ensure git branch is clean.
 
 ## Success Criteria
 
 Deployment is successful when:
-- ✅ All pages load without 500 errors
-- ✅ All converters work instantly
-- ✅ No file/database errors in logs
-- ✅ HTTPS works correctly
-- ✅ Performance is acceptable (<2s page load)
+- ✅ All pages load without 500 errors.
+- ✅ All 172 converters work correctly via the main form.
+- ✅ No file/database errors in logs.
+- ✅ HTTPS works correctly in production (HTTP locally).
+- ✅ Performance is acceptable (<2s page load).
+- ✅ The UI matches the original design specifications.
 
 ---
 
