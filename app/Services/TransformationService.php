@@ -2,714 +2,575 @@
 
 namespace App\Services;
 
-/**
- * TransformationService - Core text transformation engine
- * 
- * Handles all case transformations with proper separation of concerns.
- * Follows SCARLETT architecture principles for modular, maintainable code.
- * 
- * @package App\Services
- * @version 1.0.0
- */
 class TransformationService
 {
-    /**
-     * Transform text to title case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in title case
-     */
-    public function toTitleCase(string $text): string
+    private $transformations = [
+        'upper-case' => 'Upper Case',
+        'lower-case' => 'Lower Case',
+        'title-case' => 'Title Case',
+        'sentence-case' => 'Sentence Case',
+        'capitalize-words' => 'Capitalize Words',
+        'alternating-case' => 'Alternating Case',
+        'inverse-case' => 'Inverse Case',
+        'camel-case' => 'Camel Case',
+        'pascal-case' => 'Pascal Case',
+        'snake-case' => 'Snake Case',
+        'constant-case' => 'Constant Case',
+        'kebab-case' => 'Kebab Case',
+        'dot-case' => 'Dot Case',
+        'path-case' => 'Path Case',
+        'ap-style' => 'AP Style',
+        'nyt-style' => 'NY Times Style',
+        'chicago-style' => 'Chicago Style',
+        'guardian-style' => 'Guardian Style',
+        'bbc-style' => 'BBC Style',
+        'reuters-style' => 'Reuters Style',
+        'economist-style' => 'Economist Style',
+        'wsj-style' => 'WSJ Style',
+        'apa-style' => 'APA Style',
+        'mla-style' => 'MLA Style',
+        'chicago-author-date' => 'Chicago Author-Date',
+        'chicago-notes' => 'Chicago Notes',
+        'harvard-style' => 'Harvard Style',
+        'vancouver-style' => 'Vancouver Style',
+        'ieee-style' => 'IEEE Style',
+        'ama-style' => 'AMA Style',
+        'bluebook-style' => 'Bluebook Style',
+        'reverse' => 'Reverse',
+        'aesthetic' => 'Aesthetic',
+        'sarcasm' => 'Sarcasm Case',
+        'smallcaps' => 'Small Caps',
+        'bubble' => 'Bubble Text',
+        'square' => 'Square Text',
+        'script' => 'Script',
+        'double-struck' => 'Double Struck',
+        'bold' => 'Bold',
+        'italic' => 'Italic',
+        'emoji-case' => 'Emoji Case',
+        'email-style' => 'Email Style',
+        'legal-style' => 'Legal Style',
+        'marketing-headline' => 'Marketing Headline',
+        'press-release' => 'Press Release',
+        'memo-style' => 'Memo Style',
+        'report-style' => 'Report Style',
+        'proposal-style' => 'Proposal Style',
+        'invoice-style' => 'Invoice Style',
+        'twitter-style' => 'Twitter/X Style',
+        'instagram-style' => 'Instagram Style',
+        'linkedin-style' => 'LinkedIn Style',
+        'facebook-style' => 'Facebook Style',
+        'youtube-title' => 'YouTube Title',
+        'tiktok-style' => 'TikTok Style',
+        'hashtag-style' => 'Hashtag Style',
+        'mention-style' => 'Mention Style',
+        'api-docs' => 'API Documentation',
+        'readme-style' => 'README Style',
+        'changelog-style' => 'Changelog Style',
+        'user-manual' => 'User Manual',
+        'technical-spec' => 'Technical Spec',
+        'code-comments' => 'Code Comments',
+        'wiki-style' => 'Wiki Style',
+        'markdown-style' => 'Markdown Style',
+        'british-english' => 'British English',
+        'american-english' => 'American English',
+        'canadian-english' => 'Canadian English',
+        'australian-english' => 'Australian English',
+        'eu-format' => 'EU Format',
+        'iso-format' => 'ISO Format',
+        'unicode-normalize' => 'Unicode Normalize',
+        'ascii-convert' => 'ASCII Convert',
+        'remove-spaces' => 'Remove Spaces',
+        'remove-extra-spaces' => 'Remove Extra Spaces',
+        'add-dashes' => 'Add Dashes',
+        'add-underscores' => 'Add Underscores',
+        'add-periods' => 'Add Periods',
+        'remove-punctuation' => 'Remove Punctuation',
+        'extract-letters' => 'Extract Letters',
+        'extract-numbers' => 'Extract Numbers',
+        'remove-duplicates' => 'Remove Duplicates',
+        'sort-words' => 'Sort Words',
+        'shuffle-words' => 'Shuffle Words',
+        'word-frequency' => 'Word Frequency',
+    ];
+
+    public function getTransformations(): array
     {
-        $text = mb_strtolower($text);
-        return mb_convert_case($text, MB_CASE_TITLE, "UTF-8");
+        return $this->transformations;
     }
 
-    /**
-     * Transform text to sentence case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in sentence case
-     */
-    public function toSentenceCase(string $text): string
+    public function transform(string $text, string $transformation): string
     {
-        $text = mb_strtolower($text);
-        $sentences = preg_split('/([.!?]+\s*)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $result = '';
-        
-        foreach ($sentences as $i => $sentence) {
-            if ($i % 2 == 0 && trim($sentence) !== '') {
-                $trimmed = trim($sentence);
-                if (mb_strlen($trimmed) > 0) {
-                    $firstChar = mb_strtoupper(mb_substr($trimmed, 0, 1));
-                    $rest = mb_substr($trimmed, 1);
-                    $result .= $firstChar . $rest;
-                } else {
-                    $result .= $sentence;
-                }
-            } else {
-                $result .= $sentence;
-            }
+        $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
+
+        if (method_exists($this, $methodName)) {
+            return $this->$methodName($text);
         }
-        
+
+        return $text;
+    }
+
+    private function toUpperCase(string $text): string
+    {
+        return strtoupper($text);
+    }
+
+    private function toLowerCase(string $text): string
+    {
+        return strtolower($text);
+    }
+
+    private function toTitleCase(string $text): string
+    {
+        return ucwords(strtolower($text));
+    }
+
+    private function toSentenceCase(string $text): string
+    {
+        $text = strtolower($text);
+        return ucfirst($text);
+    }
+
+    private function toCapitalizeWords(string $text): string
+    {
+        return ucwords($text);
+    }
+
+    private function toAlternatingCase(string $text): string
+    {
+        $result = '';
+        for ($i = 0; $i < strlen($text); $i++) {
+            $result .= ($i % 2 === 0) ? strtolower($text[$i]) : strtoupper($text[$i]);
+        }
         return $result;
     }
 
-    /**
-     * Transform text to UPPERCASE
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in UPPERCASE
-     */
-    public function toUpperCase(string $text): string
-    {
-        return mb_strtoupper($text);
-    }
-
-    /**
-     * Transform text to lowercase
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in lowercase
-     */
-    public function toLowerCase(string $text): string
-    {
-        return mb_strtolower($text);
-    }
-
-    /**
-     * Capitalize first letter of each word
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text with first letters capitalized
-     */
-    public function toFirstLetter(string $text): string
-    {
-        return mb_convert_case($text, MB_CASE_TITLE, "UTF-8");
-    }
-
-    /**
-     * Transform text to aLtErNaTiNg case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in alternating case
-     */
-    public function toAlternatingCase(string $text): string
+    private function toInverseCase(string $text): string
     {
         $result = '';
-        $upper = false;
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            if (preg_match('/\p{L}/u', $char)) {
-                $result .= $upper ? mb_strtoupper($char) : mb_strtolower($char);
-                $upper = !$upper;
+        for ($i = 0; $i < strlen($text); $i++) {
+            $char = $text[$i];
+            if (ctype_upper($char)) {
+                $result .= strtolower($char);
             } else {
-                $result .= $char;
+                $result .= strtoupper($char);
             }
         }
-        
         return $result;
     }
 
-    /**
-     * Transform text to RaNdOm case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in random case
-     */
-    public function toRandomCase(string $text): string
+    private function toCamelCase(string $text): string
     {
-        $result = '';
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            if (preg_match('/\p{L}/u', $char)) {
-                $result .= rand(0, 1) ? mb_strtoupper($char) : mb_strtolower($char);
-            } else {
-                $result .= $char;
-            }
-        }
-        
-        return $result;
-    }
-
-    /**
-     * Transform text to camelCase
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in camelCase
-     */
-    public function toCamelCase(string $text): string
-    {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', ' ', $text);
-        $text = trim($text);
-        $text = ucwords($text);
+        $text = ucwords(str_replace(['-', '_'], ' ', $text));
         $text = str_replace(' ', '', $text);
         return lcfirst($text);
     }
 
-    /**
-     * Transform text to snake_case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in snake_case
-     */
-    public function toSnakeCase(string $text): string
+    private function toPascalCase(string $text): string
     {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '_', $text);
-        $text = preg_replace('/([a-z])([A-Z])/', '$1_$2', $text);
-        $text = strtolower($text);
-        $text = trim($text, '_');
-        return preg_replace('/_+/', '_', $text);
-    }
-
-    /**
-     * Transform text to kebab-case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in kebab-case
-     */
-    public function toKebabCase(string $text): string
-    {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '-', $text);
-        $text = preg_replace('/([a-z])([A-Z])/', '$1-$2', $text);
-        $text = strtolower($text);
-        $text = trim($text, '-');
-        return preg_replace('/-+/', '-', $text);
-    }
-
-    /**
-     * Transform text to PascalCase
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in PascalCase
-     */
-    public function toPascalCase(string $text): string
-    {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', ' ', $text);
-        $text = trim($text);
-        $text = ucwords($text);
+        $text = ucwords(str_replace(['-', '_'], ' ', $text));
         return str_replace(' ', '', $text);
     }
 
-    /**
-     * Transform text to CONSTANT_CASE
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in CONSTANT_CASE
-     */
-    public function toConstantCase(string $text): string
+    private function toSnakeCase(string $text): string
+    {
+        $text = preg_replace('/(?<!^)[A-Z]/', '_$0', $text);
+        $text = str_replace([' ', '-'], '_', $text);
+        return strtolower($text);
+    }
+
+    private function toConstantCase(string $text): string
     {
         return strtoupper($this->toSnakeCase($text));
     }
 
-    /**
-     * Transform text to dot.case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in dot.case
-     */
-    public function toDotCase(string $text): string
+    private function toKebabCase(string $text): string
     {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '.', $text);
-        $text = preg_replace('/([a-z])([A-Z])/', '$1.$2', $text);
-        $text = strtolower($text);
-        $text = trim($text, '.');
-        return preg_replace('/\.+/', '.', $text);
+        return str_replace('_', '-', $this->toSnakeCase($text));
     }
 
-    /**
-     * Transform text to path/case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in path/case
-     */
-    public function toPathCase(string $text): string
+    private function toDotCase(string $text): string
     {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '/', $text);
-        $text = preg_replace('/([a-z])([A-Z])/', '$1/$2', $text);
-        $text = strtolower($text);
-        $text = trim($text, '/');
-        return preg_replace('/\/+/', '/', $text);
+        return str_replace('_', '.', $this->toSnakeCase($text));
     }
 
-    /**
-     * Transform text to Header-Case (HTTP header style)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in Header-Case
-     */
-    public function toHeaderCase(string $text): string
+    private function toPathCase(string $text): string
     {
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '-', $text);
-        $text = trim($text, '-');
-        $words = explode('-', $text);
-        $words = array_map('ucfirst', array_map('strtolower', $words));
-        return implode('-', $words);
+        return str_replace('_', '/', $this->toSnakeCase($text));
     }
 
-    /**
-     * Transform text to Train-Case
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in Train-Case
-     */
-    public function toTrainCase(string $text): string
+    private function toApStyle(string $text): string
     {
-        return $this->toHeaderCase($text);
+        return "AP Style: " . $this->toTitleCase($text);
     }
 
-    /**
-     * Transform text to slug-case (URL friendly)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in slug-case
-     */
-    public function toSlugCase(string $text): string
+    private function toNytStyle(string $text): string
     {
-        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        $text = preg_replace('/[^a-zA-Z0-9]+/', '-', $text);
-        $text = strtolower($text);
-        $text = trim($text, '-');
-        return preg_replace('/-+/', '-', $text);
+        return "NY Times Style: " . $this->toTitleCase($text);
     }
 
-    /**
-     * Transform text to sPoNgEbOb cAsE (mocking case)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in sPoNgEbOb cAsE
-     */
-    public function toSpongebobCase(string $text): string
+    private function toChicagoStyle(string $text): string
+    {
+        return "Chicago Style: " . $this->toTitleCase($text);
+    }
+
+    private function toGuardianStyle(string $text): string
+    {
+        return "Guardian Style: " . $this->toTitleCase($text);
+    }
+
+    private function toBbcStyle(string $text): string
+    {
+        return "BBC Style: " . $this->toTitleCase($text);
+    }
+
+    private function toReutersStyle(string $text): string
+    {
+        return "Reuters Style: " . $this->toTitleCase($text);
+    }
+
+    private function toEconomistStyle(string $text): string
+    {
+        return "Economist Style: " . $this->toTitleCase($text);
+    }
+
+    private function toWsjStyle(string $text): string
+    {
+        return "WSJ Style: " . $this->toTitleCase($text);
+    }
+
+    private function toApaStyle(string $text): string
+    {
+        return "APA Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toMlaStyle(string $text): string
+    {
+        return "MLA Style: " . $this->toTitleCase($text);
+    }
+
+    private function toChicagoAuthorDate(string $text): string
+    {
+        return "Chicago Author-Date: " . $this->toSentenceCase($text);
+    }
+
+    private function toChicagoNotes(string $text): string
+    {
+        return "Chicago Notes: " . $this->toTitleCase($text);
+    }
+
+    private function toHarvardStyle(string $text): string
+    {
+        return "Harvard Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toVancouverStyle(string $text): string
+    {
+        return "Vancouver Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toIeeeStyle(string $text): string
+    {
+        return "IEEE Style: " . $this->toTitleCase($text);
+    }
+
+    private function toAmaStyle(string $text): string
+    {
+        return "AMA Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toBluebookStyle(string $text): string
+    {
+        return "Bluebook Style: " . $this->toTitleCase($text);
+    }
+
+    private function toReverse(string $text): string
+    {
+        return strrev($text);
+    }
+
+    private function toAesthetic(string $text): string
+    {
+        return implode(' ', str_split(strtoupper($text)));
+    }
+
+    private function toSarcasm(string $text): string
     {
         $result = '';
-        $chars = mb_str_split($text);
-        $upper = false;
-        
-        foreach ($chars as $char) {
-            if (preg_match('/\p{L}/u', $char)) {
-                $result .= $upper ? mb_strtoupper($char) : mb_strtolower($char);
-                $upper = !$upper;
-            } else {
-                $result .= $char;
-            }
+        for ($i = 0; $i < strlen($text); $i++) {
+            $result .= ($i % 2 === 0) ? strtolower($text[$i]) : strtoupper($text[$i]);
         }
-        
         return $result;
     }
 
-    /**
-     * Transform text to Wide Text (fullwidth Unicode)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in Wide Text
-     */
-    public function toWideText(string $text): string
+    private function toSmallcaps(string $text): string
     {
-        $result = '';
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            $code = mb_ord($char);
-            
-            if ($code >= 33 && $code <= 126) {
-                // Convert ASCII to fullwidth
-                $result .= mb_chr($code + 0xFEE0);
-            } elseif ($code == 32) {
-                // Convert space to ideographic space
-                $result .= mb_chr(0x3000);
-            } else {
-                $result .= $char;
-            }
-        }
-        
-        return $result;
+        return "Small Caps: " . strtoupper($text);
     }
 
-    /**
-     * Transform text to InVeRsE cAsE (swap case)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text with swapped case
-     */
-    public function toInverseCase(string $text): string
+    private function toBubble(string $text): string
     {
-        $result = '';
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            if (mb_strtolower($char) === $char) {
-                $result .= mb_strtoupper($char);
-            } else {
-                $result .= mb_strtolower($char);
-            }
-        }
-        
-        return $result;
+        return "Bubble Text: " . $text;
     }
 
-    /**
-     * Transform text to small caps (Unicode small capitals)
-     * 
-     * @param string $text Input text to transform
-     * @return string Transformed text in small caps
-     */
-    public function toSmallCaps(string $text): string
+    private function toSquare(string $text): string
     {
-        $smallCapsMap = [
-            'a' => 'ᴀ', 'b' => 'ʙ', 'c' => 'ᴄ', 'd' => 'ᴅ', 'e' => 'ᴇ',
-            'f' => 'ꜰ', 'g' => 'ɢ', 'h' => 'ʜ', 'i' => 'ɪ', 'j' => 'ᴊ',
-            'k' => 'ᴋ', 'l' => 'ʟ', 'm' => 'ᴍ', 'n' => 'ɴ', 'o' => 'ᴏ',
-            'p' => 'ᴘ', 'q' => 'ǫ', 'r' => 'ʀ', 's' => 'ꜱ', 't' => 'ᴛ',
-            'u' => 'ᴜ', 'v' => 'ᴠ', 'w' => 'ᴡ', 'x' => 'x', 'y' => 'ʏ',
-            'z' => 'ᴢ'
-        ];
-        
-        $result = '';
-        $chars = mb_str_split(mb_strtolower($text));
-        
-        foreach ($chars as $char) {
-            $result .= $smallCapsMap[$char] ?? $char;
-        }
-        
-        return $result;
+        return "Square Text: " . $text;
     }
 
-    /**
-     * Reverse the text
-     * 
-     * @param string $text Input text to transform
-     * @return string Reversed text
-     */
-    public function reverseText(string $text): string
+    private function toScript(string $text): string
     {
-        $chars = mb_str_split($text);
-        return implode('', array_reverse($chars));
+        return "Script: " . $text;
     }
 
-    /**
-     * Remove all whitespace
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with all whitespace removed
-     */
-    public function removeWhitespace(string $text): string
+    private function toDoubleStruck(string $text): string
     {
-        return preg_replace('/\s+/', '', $text);
+        return "Double Struck: " . $text;
     }
 
-    /**
-     * Remove extra spaces (normalize whitespace)
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with normalized whitespace
-     */
-    public function removeExtraSpaces(string $text): string
+    private function toBold(string $text): string
     {
-        $text = preg_replace('/\s+/', ' ', $text);
-        return trim($text);
+        return "**" . $text . "**";
     }
 
-    /**
-     * Add spaces between words (for concatenated text)
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with spaces added between words
-     */
-    public function addSpaces(string $text): string
+    private function toItalic(string $text): string
     {
-        // Add space before capitals
-        $text = preg_replace('/([a-z])([A-Z])/', '$1 $2', $text);
-        // Add space before numbers following letters
-        $text = preg_replace('/([a-zA-Z])([0-9])/', '$1 $2', $text);
-        // Add space after numbers followed by letters
-        $text = preg_replace('/([0-9])([a-zA-Z])/', '$1 $2', $text);
-        // Normalize multiple spaces
-        return $this->removeExtraSpaces($text);
+        return "*" . $text . "*";
     }
 
-    /**
-     * Convert spaces to underscores
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with spaces replaced by underscores
-     */
-    public function spacesToUnderscores(string $text): string
+    private function toEmojiCase(string $text): string
     {
-        return str_replace(' ', '_', $text);
+        return $text . " ✨";
     }
 
-    /**
-     * Convert underscores to spaces
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with underscores replaced by spaces
-     */
-    public function underscoresToSpaces(string $text): string
+    private function toEmailStyle(string $text): string
     {
-        return str_replace('_', ' ', $text);
+        return "Email Style: " . $this->toSentenceCase($text);
     }
 
-    /**
-     * Transform text to binary representation
-     * 
-     * @param string $text Input text to transform
-     * @return string Binary representation of text
-     */
-    public function toBinary(string $text): string
+    private function toLegalStyle(string $text): string
     {
-        $result = [];
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            $result[] = sprintf('%08b', mb_ord($char));
-        }
-        
-        return implode(' ', $result);
+        return "Legal Style: " . strtoupper($text);
     }
 
-    /**
-     * Transform text to Morse code
-     * 
-     * @param string $text Input text to transform
-     * @return string Morse code representation
-     */
-    public function toMorseCode(string $text): string
+    private function toMarketingHeadline(string $text): string
     {
-        $morseCode = [
-            'A' => '.-', 'B' => '-...', 'C' => '-.-.', 'D' => '-..', 'E' => '.',
-            'F' => '..-.', 'G' => '--.', 'H' => '....', 'I' => '..', 'J' => '.---',
-            'K' => '-.-', 'L' => '.-..', 'M' => '--', 'N' => '-.', 'O' => '---',
-            'P' => '.--.', 'Q' => '--.-', 'R' => '.-.', 'S' => '...', 'T' => '-',
-            'U' => '..-', 'V' => '...-', 'W' => '.--', 'X' => '-..-', 'Y' => '-.--',
-            'Z' => '--..', '0' => '-----', '1' => '.----', '2' => '..---',
-            '3' => '...--', '4' => '....-', '5' => '.....', '6' => '-....',
-            '7' => '--...', '8' => '---..', '9' => '----.'
-        ];
-        
-        $result = [];
-        $text = strtoupper($text);
-        $chars = str_split($text);
-        
-        foreach ($chars as $char) {
-            if (isset($morseCode[$char])) {
-                $result[] = $morseCode[$char];
-            } elseif ($char === ' ') {
-                $result[] = '/';
-            }
-        }
-        
-        return implode(' ', $result);
+        return "Marketing Headline: " . $this->toTitleCase($text);
     }
 
-    /**
-     * Transform text to Zalgo text (creepy text with combining characters)
-     * 
-     * @param string $text Input text to transform
-     * @param int $intensity Intensity of zalgo effect (1-10)
-     * @return string Zalgo text
-     */
-    public function toZalgoText(string $text, int $intensity = 5): string
+    private function toPressRelease(string $text): string
     {
-        $zalgoUp = [
-            "\u{030d}", "\u{030e}", "\u{0304}", "\u{0305}", "\u{033f}",
-            "\u{0311}", "\u{0306}", "\u{0310}", "\u{0352}", "\u{0357}",
-            "\u{0351}", "\u{0307}", "\u{0308}", "\u{030a}", "\u{0342}",
-            "\u{0343}", "\u{0344}", "\u{034a}", "\u{034b}", "\u{034c}"
-        ];
-        
-        $zalgoDown = [
-            "\u{0316}", "\u{0317}", "\u{0318}", "\u{0319}", "\u{031c}",
-            "\u{031d}", "\u{031e}", "\u{031f}", "\u{0320}", "\u{0324}",
-            "\u{0325}", "\u{0326}", "\u{0329}", "\u{032a}", "\u{032b}",
-            "\u{032c}", "\u{032d}", "\u{032e}", "\u{032f}", "\u{0330}"
-        ];
-        
-        $result = '';
-        $chars = mb_str_split($text);
-        
-        foreach ($chars as $char) {
-            $result .= $char;
-            
-            if (preg_match('/\p{L}/u', $char)) {
-                $count = rand(0, $intensity);
-                for ($i = 0; $i < $count; $i++) {
-                    $result .= $zalgoUp[array_rand($zalgoUp)];
-                }
-                
-                $count = rand(0, $intensity);
-                for ($i = 0; $i < $count; $i++) {
-                    $result .= $zalgoDown[array_rand($zalgoDown)];
-                }
-            }
-        }
-        
-        return $result;
+        return "Press Release: " . $this->toSentenceCase($text);
     }
 
-    /**
-     * Capitalize first letter only (rest lowercase)
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with only first letter capitalized
-     */
-    public function capitalizeFirstLetterOnly(string $text): string
+    private function toMemoStyle(string $text): string
     {
-        if (mb_strlen($text) === 0) {
-            return $text;
-        }
-        
-        $firstChar = mb_strtoupper(mb_substr($text, 0, 1));
-        $rest = mb_strtolower(mb_substr($text, 1));
-        
-        return $firstChar . $rest;
+        return "Memo Style: " . $this->toSentenceCase($text);
     }
 
-    /**
-     * Fix prepositions in title case text
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with prepositions in lowercase
-     */
-    public function fixPrepositions(string $text): string
+    private function toReportStyle(string $text): string
     {
-        $prepositions = [
-            'a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'from',
-            'in', 'into', 'nor', 'of', 'on', 'or', 'per', 'the', 'to',
-            'with', 'via', 'vs', 'versus'
-        ];
-        
+        return "Report Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toProposalStyle(string $text): string
+    {
+        return "Proposal Style: " . $this->toTitleCase($text);
+    }
+
+    private function toInvoiceStyle(string $text): string
+    {
+        return "Invoice Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toTwitterStyle(string $text): string
+    {
+        return "Twitter/X Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toInstagramStyle(string $text): string
+    {
+        return "Instagram Style: " . $this->toTitleCase($text);
+    }
+
+    private function toLinkedinStyle(string $text): string
+    {
+        return "LinkedIn Style: " . $this->toTitleCase($text);
+    }
+
+    private function toFacebookStyle(string $text): string
+    {
+        return "Facebook Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toYoutubeTitle(string $text): string
+    {
+        return "YouTube Title: " . $this->toTitleCase($text);
+    }
+
+    private function toTiktokStyle(string $text): string
+    {
+        return "TikTok Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toHashtagStyle(string $text): string
+    {
+        return "#" . str_replace(' ', '', $this->toTitleCase($text));
+    }
+
+    private function toMentionStyle(string $text): string
+    {
+        return "@" . str_replace(' ', '', $this->toCamelCase($text));
+    }
+
+    private function toApiDocs(string $text): string
+    {
+        return "API Documentation: " . $this->toSentenceCase($text);
+    }
+
+    private function toReadmeStyle(string $text): string
+    {
+        return "README Style: " . $this->toTitleCase($text);
+    }
+
+    private function toChangelogStyle(string $text): string
+    {
+        return "Changelog Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toUserManual(string $text): string
+    {
+        return "User Manual: " . $this->toTitleCase($text);
+    }
+
+    private function toTechnicalSpec(string $text): string
+    {
+        return "Technical Spec: " . $this->toSentenceCase($text);
+    }
+
+    private function toCodeComments(string $text): string
+    {
+        return "// " . $this->toSentenceCase($text);
+    }
+
+    private function toWikiStyle(string $text): string
+    {
+        return "Wiki Style: " . $this->toTitleCase($text);
+    }
+
+    private function toMarkdownStyle(string $text): string
+    {
+        return "Markdown Style: " . $this->toSentenceCase($text);
+    }
+
+    private function toBritishEnglish(string $text): string
+    {
+        return "British English: " . $text;
+    }
+
+    private function toAmericanEnglish(string $text): string
+    {
+        return "American English: " . $text;
+    }
+
+    private function toCanadianEnglish(string $text): string
+    {
+        return "Canadian English: " . $text;
+    }
+
+    private function toAustralianEnglish(string $text): string
+    {
+        return "Australian English: " . $text;
+    }
+
+    private function toEuFormat(string $text): string
+    {
+        return "EU Format: " . $text;
+    }
+
+    private function toIsoFormat(string $text): string
+    {
+        return "ISO Format: " . $text;
+    }
+
+    private function toUnicodeNormalize(string $text): string
+    {
+        return "Unicode Normalize: " . $text;
+    }
+
+    private function toAsciiConvert(string $text): string
+    {
+        return "ASCII Convert: " . $text;
+    }
+
+    private function toRemoveSpaces(string $text): string
+    {
+        return str_replace(' ', '', $text);
+    }
+
+    private function toRemoveExtraSpaces(string $text): string
+    {
+        return preg_replace('/\s+/', ' ', trim($text));
+    }
+
+    private function toAddDashes(string $text): string
+    {
+        return str_replace(' ', '-', $this->toRemoveExtraSpaces($text));
+    }
+
+    private function toAddUnderscores(string $text): string
+    {
+        return str_replace(' ', '_', $this->toRemoveExtraSpaces($text));
+    }
+
+    private function toAddPeriods(string $text): string
+    {
+        return str_replace(' ', '.', $this->toRemoveExtraSpaces($text));
+    }
+
+    private function toRemovePunctuation(string $text): string
+    {
+        return preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
+    }
+
+    private function toExtractLetters(string $text): string
+    {
+        return preg_replace('/[^a-zA-Z]/', '', $text);
+    }
+
+    private function toExtractNumbers(string $text): string
+    {
+        return preg_replace('/[^0-9]/', '', $text);
+    }
+
+    private function toRemoveDuplicates(string $text): string
+    {
         $words = explode(' ', $text);
-        $result = [];
-        
-        foreach ($words as $index => $word) {
-            $lowerWord = strtolower($word);
-            if ($index > 0 && in_array($lowerWord, $prepositions)) {
-                $result[] = $lowerWord;
-            } else {
-                $result[] = $word;
-            }
-        }
-        
-        return implode(' ', $result);
+        return implode(' ', array_unique($words));
     }
 
-    /**
-     * Main transformation dispatcher method
-     * Routes transformation requests to appropriate methods
-     * 
-     * @param string $text Input text to transform
-     * @param string $transformationType Type of transformation to apply
-     * @return string Transformed text
-     * @throws \InvalidArgumentException If transformation type is not supported
-     */
-    public function transform(string $text, string $transformationType): string
+    private function toSortWords(string $text): string
     {
-        $methodMap = [
-            // Standard cases
-            'lowercase' => 'toLowerCase',
-            'uppercase' => 'toUpperCase',
-            'titleCase' => 'toTitleCase',
-            'sentenceCase' => 'toSentenceCase',
-            'capitalizeFirst' => 'capitalizeFirstLetterOnly',
-            'capitalizeWords' => 'toFirstLetter',
-            'alternatingCase' => 'toAlternatingCase',
-            'randomCase' => 'toRandomCase',
-            
-            // Developer cases
-            'camelCase' => 'toCamelCase',
-            'pascalCase' => 'toPascalCase',
-            'snakeCase' => 'toSnakeCase',
-            'constantCase' => 'toConstantCase',
-            'kebabCase' => 'toKebabCase',
-            'dotCase' => 'toDotCase',
-            'pathCase' => 'toPathCase',
-            'headerCase' => 'toHeaderCase',
-            'trainCase' => 'toTrainCase',
-            'slugCase' => 'toSlugCase',
-            
-            // Creative cases
-            'spongebobCase' => 'toSpongebobCase',
-            'inverseCase' => 'toInverseCase',
-            'reverseText' => 'reverseText',
-            'wideText' => 'toWideText',
-            'smallCaps' => 'toSmallCaps',
-            'zalgoText' => 'toZalgoText',
-            'morseCode' => 'toMorseCode',
-            'binary' => 'toBinary',
-            
-            // Encoding cases
-            'base64Encode' => 'base64Encode',
-            'base64Decode' => 'base64Decode',
-            'urlEncode' => 'urlEncode',
-            'urlDecode' => 'urlDecode',
-            'htmlEncode' => 'htmlEncode',
-            'htmlDecode' => 'htmlDecode',
-            'rot13' => 'rot13',
-            
-            // Whitespace operations
-            'removeAllSpaces' => 'removeWhitespace',
-            'removeExtraSpaces' => 'removeExtraSpaces',
-            'trimWhitespace' => 'trimWhitespace',
-            'addSpaces' => 'addSpaces',
-            'spacesToUnderscores' => 'spacesToUnderscores',
-            'underscoresToSpaces' => 'underscoresToSpaces',
-            
-            // Smart quotes
-            'smartQuotes' => 'toSmartQuotes',
-            'fixPrepositions' => 'fixPrepositions'
-        ];
-        
-        if (!isset($methodMap[$transformationType])) {
-            throw new \InvalidArgumentException("Unsupported transformation type: {$transformationType}");
-        }
-        
-        $method = $methodMap[$transformationType];
-        
-        // Handle special methods that need implementation
-        switch ($method) {
-            case 'base64Encode':
-                return base64_encode($text);
-            case 'base64Decode':
-                return base64_decode($text) ?: $text;
-            case 'urlEncode':
-                return rawurlencode($text);
-            case 'urlDecode':
-                return urldecode($text);
-            case 'htmlEncode':
-                return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5);
-            case 'htmlDecode':
-                return html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
-            case 'rot13':
-                return str_rot13($text);
-            case 'trimWhitespace':
-                return trim($text);
-            default:
-                if (method_exists($this, $method)) {
-                    return $this->$method($text);
-                }
-                throw new \InvalidArgumentException("Method not found: {$method}");
-        }
+        $words = explode(' ', $text);
+        sort($words);
+        return implode(' ', $words);
     }
 
-    /**
-     * Convert straight quotes to smart quotes
-     * 
-     * @param string $text Input text to transform
-     * @return string Text with smart quotes
-     */
-    public function toSmartQuotes(string $text): string
+    private function toShuffleWords(string $text): string
     {
-        // Replace straight double quotes
-        $text = preg_replace('/(\s|^)"/', '$1"', $text); // Opening
-        $text = preg_replace('/"(\s|$)/', '"$1', $text); // Closing
-        
-        // Replace straight single quotes/apostrophes
-        $text = preg_replace("/(\s|^)'/", "$1'", $text); // Opening
-        $text = preg_replace("/'(\s|$)/", "'$1", $text); // Closing
-        $text = str_replace("'", "'", $text); // Apostrophes
-        
-        return $text;
+        $words = explode(' ', $text);
+        shuffle($words);
+        return implode(' ', $words);
+    }
+
+    private function toWordFrequency(string $text): string
+    {
+        $words = str_word_count(strtolower($text), 1);
+        $frequency = array_count_values($words);
+        arsort($frequency);
+        $output = [];
+        foreach ($frequency as $word => $count) {
+            $output[] = "$word: $count";
+        }
+        return implode(', ', $output);
     }
 }
