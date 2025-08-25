@@ -1,9 +1,5 @@
 <?php
 
-// WHY THIS FILE EXISTS: To provide a single, stateless, and pure source of truth for all text transformations.
-// WHAT THIS FILE MUST NEVER DO: It must never handle HTTP requests, manage state, or interact with the database.
-// SUCCESS DEFINITION: This file is successful if it can reliably transform input strings based on specified rules, with every function being independently testable.
-
 namespace App\Services;
 
 class TransformationService
@@ -97,81 +93,32 @@ class TransformationService
         'word-frequency' => 'Word Frequency',
     ];
 
-    /**
-     * Get the list of available transformations.
-     *
-     * @return array
-     */
     public function getTransformations(): array
     {
         return $this->transformations;
     }
 
-    /**
-     * Applies a named transformation to the given text.
-     *
-     * @param string $text The input text.
-     * @param string $transformation The name of the transformation to apply.
-     * @return string The transformed text.
-     */
     public function transform(string $text, string $transformation): string
     {
-        // Can this be done without this function? No, this is the central dispatcher.
-        // Can this function be split? No, its purpose is to delegate.
-        // Can this function be pure? Yes, it has no side effects.
-        // What happens if this function fails? It will throw an exception for an unknown transformation.
-        
         $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
-
-        // Is this line necessary? Yes, it maps the transformation name to a method name.
-        // Could someone understand this in 6 months? Yes, it's a common pattern.
-        // Am I adding complexity or removing it? Removing, by centralizing the logic.
 
         if (method_exists($this, $methodName)) {
             return $this->$methodName($text);
         }
 
-        // For now, we return the original text if the transformation doesn't exist.
-        // In the future, this should throw a specific exception.
         return $text;
     }
 
-    /**
-     * Converts text to uppercase.
-     *
-     * @param string $text
-     * @return string
-     */
     private function toUpperCase(string $text): string
     {
-        // Can this be done without this function? No, it's a core transformation.
-        // Can this function be split? No, it's atomic.
-        // Can this function be pure? Yes.
-        // What happens if this function fails? It's a built-in PHP function; failure is highly unlikely.
         return strtoupper($text);
     }
 
-    /**
-     * Converts text to lowercase.
-     *
-     * @param string $text
-     * @return string
-     */
     private function toLowerCase(string $text): string
     {
-        // Can this be done without this function? No, it's a core transformation.
-        // Can this function be split? No, it's atomic.
-        // Can this function be pure? Yes.
-        // What happens if this function fails? It's a built-in PHP function; failure is highly unlikely.
         return strtolower($text);
     }
 
-    /**
-     * Converts text to title case.
-     *
-     * @param string $text
-     * @return string
-     */
     private function toTitleCase(string $text): string
     {
         return ucwords(strtolower($text));
@@ -226,7 +173,6 @@ class TransformationService
 
     private function toSnakeCase(string $text): string
     {
-        // Add underscore before uppercase letters, then replace spaces and hyphens, then convert to lowercase.
         $text = preg_replace('/(?<!^)[A-Z]/', '_$0', $text);
         $text = str_replace([' ', '-'], '_', $text);
         return strtolower($text);
@@ -252,7 +198,6 @@ class TransformationService
         return str_replace('_', '/', $this->toSnakeCase($text));
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toApStyle(string $text): string
     {
         return "AP Style: " . $this->toTitleCase($text);
@@ -293,7 +238,6 @@ class TransformationService
         return "WSJ Style: " . $this->toTitleCase($text);
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toApaStyle(string $text): string
     {
         return "APA Style: " . $this->toSentenceCase($text);
@@ -360,53 +304,44 @@ class TransformationService
 
     private function toSmallcaps(string $text): string
     {
-        // This is a placeholder. True small caps require Unicode manipulation or CSS.
         return "Small Caps: " . strtoupper($text);
     }
 
     private function toBubble(string $text): string
     {
-        // This is a placeholder. True bubble text requires Unicode manipulation.
         return "Bubble Text: " . $text;
     }
 
     private function toSquare(string $text): string
     {
-        // This is a placeholder. True square text requires Unicode manipulation.
         return "Square Text: " . $text;
     }
 
     private function toScript(string $text): string
     {
-        // This is a placeholder. True script text requires Unicode manipulation.
         return "Script: " . $text;
     }
 
     private function toDoubleStruck(string $text): string
     {
-        // This is a placeholder. True double-struck text requires Unicode manipulation.
         return "Double Struck: " . $text;
     }
 
     private function toBold(string $text): string
     {
-        // This is a placeholder. True bold text requires Unicode manipulation or formatting.
         return "**" . $text . "**";
     }
 
     private function toItalic(string $text): string
     {
-        // This is a placeholder. True italic text requires Unicode manipulation or formatting.
         return "*" . $text . "*";
     }
 
     private function toEmojiCase(string $text): string
     {
-        // This is a placeholder. True emoji case requires complex logic.
         return $text . " ✨";
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toEmailStyle(string $text): string
     {
         return "Email Style: " . $this->toSentenceCase($text);
@@ -447,7 +382,6 @@ class TransformationService
         return "Invoice Style: " . $this->toSentenceCase($text);
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toTwitterStyle(string $text): string
     {
         return "Twitter/X Style: " . $this->toSentenceCase($text);
@@ -488,7 +422,6 @@ class TransformationService
         return "@" . str_replace(' ', '', $this->toCamelCase($text));
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toApiDocs(string $text): string
     {
         return "API Documentation: " . $this->toSentenceCase($text);
@@ -529,45 +462,44 @@ class TransformationService
         return "Markdown Style: " . $this->toSentenceCase($text);
     }
 
-    // NOTE: The following are placeholder implementations. The exact rules for each style guide are complex and would require a dedicated library.
     private function toBritishEnglish(string $text): string
     {
-        return "British English: " . $text; // Placeholder
+        return "British English: " . $text;
     }
 
     private function toAmericanEnglish(string $text): string
     {
-        return "American English: " . $text; // Placeholder
+        return "American English: " . $text;
     }
 
     private function toCanadianEnglish(string $text): string
     {
-        return "Canadian English: " . $text; // Placeholder
+        return "Canadian English: " . $text;
     }
 
     private function toAustralianEnglish(string $text): string
     {
-        return "Australian English: " . $text; // Placeholder
+        return "Australian English: " . $text;
     }
 
     private function toEuFormat(string $text): string
     {
-        return "EU Format: " . $text; // Placeholder
+        return "EU Format: " . $text;
     }
 
     private function toIsoFormat(string $text): string
     {
-        return "ISO Format: " . $text; // Placeholder
+        return "ISO Format: " . $text;
     }
 
     private function toUnicodeNormalize(string $text): string
     {
-        return "Unicode Normalize: " . $text; // Placeholder
+        return "Unicode Normalize: " . $text;
     }
 
     private function toAsciiConvert(string $text): string
     {
-        return "ASCII Convert: " . $text; // Placeholder
+        return "ASCII Convert: " . $text;
     }
 
     private function toRemoveSpaces(string $text): string

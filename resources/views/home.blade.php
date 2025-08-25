@@ -1,7 +1,7 @@
 @extends('conversions.layout')
 
 @section('title', 'Case Changer Pro - Universal Text Converter & Transformation Tools')
-@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 167+ more formats. Free, fast, and professional.')
+@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 86+ more formats. Free, fast, and professional.')
 @section('keywords', 'case converter, text transformer, case changer, uppercase, lowercase, camelCase, snake_case, title case, sentence case, AP style, APA format, text conversion, developer tools, writing tools')
 
 @section('content')
@@ -16,7 +16,7 @@
                 The Ultimate Text Transformation Tool
             </p>
             <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-tertiary);">
-                Convert text to any format instantly. 172 conversion styles including case formats, 
+                Convert text to any format instantly. 86+ conversion styles including case formats, 
                 developer conventions, and professional style guides.
             </p>
         </div>
@@ -24,37 +24,8 @@
         <!-- Universal Converter Tool - Main Feature -->
         <div class="mb-16 rounded-xl p-8 shadow-lg" style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border: 1px solid var(--border-primary);">
             <h2 class="text-3xl font-bold mb-4 text-center" style="color: var(--text-primary);">Universal Text Converter</h2>
-            <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 172 conversion formats</p>
-            <form action="{{ route('transform') }}" method="POST">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="input" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Your Text</label>
-                        <textarea name="input" id="input" rows="10" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);" required>{{ $input ?? '' }}</textarea>
-                    </div>
-                    <div>
-                        <label for="output" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Result</label>
-                        <textarea id="output" rows="10" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);" readonly>{{ $output ?? '' }}</textarea>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label for="transformation" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Select Transformation</label>
-                    <select name="transformation" id="transformation" class="w-full rounded-lg p-4" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-primary);">
-                        @foreach($transformations as $key => $name)
-                            <option value="{{ $key }}" @if(isset($selectedTransformation) && $selectedTransformation === $key) selected @endif>{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="px-8 py-3 rounded-lg font-bold text-lg transition-all" style="background-color: var(--accent-primary); color: var(--bg-primary);"
-                            onmouseover="this.style.backgroundColor = 'var(--accent-secondary)';"
-                            onmouseout="this.style.backgroundColor = 'var(--accent-primary)';">
-                        Transform Text
-                    </button>
-                </div>
-            </form>
+            <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 86+ conversion formats</p>
+            @livewire('universal-converter')
         </div>
 
         <!-- Categories Grid -->
@@ -286,12 +257,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
-                                @break
-                            @case('tool')
-                                <svg class="w-6 h-6" style="color: var(--accent-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 011-1V4z"></path>
-                                </svg>
-                                @break
                         @endswitch
                     </div>
                     <span class="text-xs px-2 py-1 rounded" style="background-color: var(--bg-tertiary); color: var(--text-tertiary);">
