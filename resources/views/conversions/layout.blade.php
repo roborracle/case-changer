@@ -14,7 +14,6 @@
     <meta property="og:url" content="{{ url()->current() }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
     
     @if(isset($schemaData))
     <script type="application/ld+json">
@@ -63,7 +62,6 @@
     <!-- Footer -->
     @include('components.footer')
 
-    @livewireScripts
     @stack('scripts')
 </body>
 </html>

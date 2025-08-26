@@ -64,7 +64,58 @@
         <div class="mb-12">
             <h2 class="text-2xl font-bold mb-4 text-center" style="color: var(--text-primary);">{{ $categoryData['title'] }} Converter</h2>
             <p class="text-center mb-6" style="color: var(--text-secondary);">Convert text using any {{ $categoryData['title'] }} format</p>
-            @livewire('category-converter', ['category' => $category, 'categoryData' => $categoryData])
+            <div x-data="categoryConverter('{{ $category }}', {{ json_encode(array_map(function($tool) { return $tool['name']; }, $categoryData['tools'])) }})" class="rounded-xl p-6" style="background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input Section -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Input Text</label>
+                        <textarea 
+                            x-model="inputText"
+                            @input="transform"
+                            rows="10" 
+                            class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                            placeholder="Enter or paste your text here..."></textarea>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Result</label>
+                        <textarea 
+                            x-model="outputText"
+                            rows="10" 
+                            class="w-full p-4 rounded-lg border"
+                            style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                            readonly></textarea>
+                    </div>
+                </div>
+
+                <!-- Tool Selection -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Select Format</label>
+                    <select 
+                        x-model="selectedTool"
+                        @change="transform"
+                        class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500"
+                        style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);">
+                        <template x-for="(toolName, toolKey) in tools" :key="toolKey">
+                            <option :value="toolKey" x-text="toolName"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <div class="mt-4 flex gap-2">
+                    <button 
+                        @click="copyToClipboard"
+                        :disabled="!outputText"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        Copy Result
+                    </button>
+                </div>
+
+                <!-- Error Message -->
+                <div x-show="error" x-text="error" class="mt-4 p-3 bg-red-50 text-red-600 rounded-lg"></div>
+            </div>
         </div>
 
         <!-- Tools Grid -->

@@ -82,11 +82,68 @@
     @endif
 
     <!-- Conversion Tool Component -->
-    @livewire('conversion-tool', [
-        'category' => $category,
-        'tool' => $tool,
-        'toolData' => $toolData
-    ])
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="toolConverter('{{ $tool }}')">
+        <div class="rounded-xl p-6" style="background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Input Section -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium" style="color: var(--text-primary);">Input Text</label>
+                        <div class="text-sm" style="color: var(--text-secondary);">
+                            <span x-text="charCount"></span> chars • <span x-text="wordCount"></span> words
+                        </div>
+                    </div>
+                    <textarea 
+                        x-model="inputText"
+                        rows="12" 
+                        class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                        placeholder="Enter or paste your text here..."></textarea>
+                    <div class="mt-2 flex gap-2">
+                        <button 
+                            @click="clearText"
+                            class="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50 transition-colors"
+                            style="border-color: var(--border-primary); color: var(--text-secondary);">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium" style="color: var(--text-primary);">{{ $toolData['name'] }} Result</label>
+                        <div x-show="isLoading" class="text-sm" style="color: var(--text-secondary);">Converting...</div>
+                    </div>
+                    <textarea 
+                        x-model="outputText"
+                        rows="12" 
+                        class="w-full p-4 rounded-lg border"
+                        style="background-color: var(--bg-primary); border-color: var(--border-primary); color: var(--text-primary);"
+                        readonly></textarea>
+                    <div class="mt-2 flex gap-2">
+                        <button 
+                            @click="copyToClipboard"
+                            :disabled="!outputText"
+                            class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            <span x-show="!showCopySuccess">Copy to Clipboard</span>
+                            <span x-show="showCopySuccess">✓ Copied!</span>
+                        </button>
+                        <button 
+                            @click="downloadResult"
+                            :disabled="!outputText"
+                            class="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            style="border-color: var(--border-primary); color: var(--text-secondary);">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div x-show="error" x-text="error" class="mt-4 p-3 bg-red-50 text-red-600 rounded-lg"></div>
+        </div>
+    </div>
 
     <!-- Information Section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

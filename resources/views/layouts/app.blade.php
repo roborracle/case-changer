@@ -16,9 +16,6 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Livewire Styles -->
-    @livewireStyles
-    
     @if(isset($schemaData))
     <script type="application/ld+json">
     {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
@@ -32,8 +29,6 @@
         {{ $slot }}
     </main>
 
-    <!-- Livewire Scripts -->
-    @livewireScripts
     
     <!-- Functional JavaScript -->
     {{-- Removed non-existent whimsical-delights.js reference --}}

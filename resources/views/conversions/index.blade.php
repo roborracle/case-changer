@@ -25,7 +25,66 @@
         <div class="mb-16 rounded-xl p-8 shadow-lg" style="background: linear-gradient(90deg, var(--bg-secondary), var(--bg-tertiary));">
             <h2 class="text-3xl font-bold mb-4 text-center" style="color: var(--text-primary);">Universal Text Converter</h2>
             <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 172 conversion formats</p>
-            @livewire('universal-converter')
+            <div x-data="universalConverter()" class="rounded-lg p-6" style="background-color: var(--bg-primary); border: 1px solid var(--border-primary);">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input Section -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Your Text</label>
+                        <textarea 
+                            x-model="inputText"
+                            @input="transform"
+                            rows="10" 
+                            class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            style="background-color: var(--bg-secondary); border-color: var(--border-primary); color: var(--text-primary);"
+                            placeholder="Enter or paste your text here..."></textarea>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Result</label>
+                        <textarea 
+                            x-model="outputText"
+                            rows="10" 
+                            class="w-full p-4 rounded-lg border"
+                            style="background-color: var(--bg-secondary); border-color: var(--border-primary); color: var(--text-primary);"
+                            readonly></textarea>
+                    </div>
+                </div>
+
+                <!-- Transformation Selection -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Select Transformation</label>
+                    <div class="flex gap-4">
+                        <select 
+                            x-model="selectedTransformation"
+                            @change="transform"
+                            class="flex-1 p-3 rounded-lg border focus:ring-2 focus:ring-blue-500"
+                            style="background-color: var(--bg-secondary); border-color: var(--border-primary); color: var(--text-primary);">
+                            <template x-for="(label, value) in transformations" :key="value">
+                                <option :value="value" x-text="label"></option>
+                            </template>
+                        </select>
+                        <button 
+                            @click="copyToClipboard"
+                            :disabled="!outputText"
+                            class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+                            <span x-show="!showCopySuccess">Copy Result</span>
+                            <span x-show="showCopySuccess">✓ Copied!</span>
+                        </button>
+                        <button 
+                            @click="downloadResult"
+                            :disabled="!outputText"
+                            class="px-6 py-3 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            style="border-color: var(--border-primary); color: var(--text-secondary);">
+                            Download
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading & Error States -->
+                <div x-show="isLoading" class="mt-4 text-center" style="color: var(--text-secondary);">Converting...</div>
+                <div x-show="error" x-text="error" class="mt-4 p-3 bg-red-50 text-red-600 rounded-lg"></div>
+            </div>
         </div>
 
         <!-- Categories Grid -->
