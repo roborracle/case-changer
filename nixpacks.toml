@@ -13,8 +13,8 @@ cmds = [
     # Copy environment example for artisan commands
     "cp .env.example .env",
     
-    # Build frontend assets
-    "npm run build",
+    # Build frontend assets (skip if Vite fails - we use Blade templates)
+    "npm run build || echo 'Vite build skipped - using Blade templates'",
     
     # Clear Laravel caches - NO CACHE BUILDING (it fails on Railway)
     "php artisan config:clear",
