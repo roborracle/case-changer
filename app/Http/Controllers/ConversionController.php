@@ -342,7 +342,7 @@ class ConversionController extends Controller
             abort(404);
         }
 
-        $schemaData = $this->schemaService->generateCategoryPageSchema($category, $this->categories[$category]);
+        $schemaData = $this->schemaService->getCategorySchemas($category, $this->categories[$category]);
 
         return view('conversions.category', [
             'category' => $category,
