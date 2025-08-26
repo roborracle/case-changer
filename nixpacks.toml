@@ -10,17 +10,12 @@ cmds = [
 
 [phases.build] 
 cmds = [
-    # Copy environment example for artisan commands
-    "cp .env.example .env",
+    # DO NOT create .env file - use Railway's environment variables directly!
     
     # Build frontend assets (skip if Vite fails - we use Blade templates)
     "npm run build || echo 'Vite build skipped - using Blade templates'",
     
-    # Clear Laravel caches - NO CACHE BUILDING (it fails on Railway)
-    "php artisan config:clear",
-    "php artisan cache:clear", 
-    "php artisan view:clear",
-    "php artisan route:clear",
+    # Skip artisan commands during build - they need env vars that aren't available yet
     
     # Create ONLY the directories we actually need
     "mkdir -p storage/logs",
