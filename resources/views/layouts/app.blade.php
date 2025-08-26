@@ -36,7 +36,7 @@
     @livewireScripts
     
     <!-- Functional JavaScript -->
-    <script src="{{ asset('js/whimsical-delights.js') }}"></script>
+    {{-- Removed non-existent whimsical-delights.js reference --}}
     
     <!-- Additional Scripts -->
     @stack('scripts')

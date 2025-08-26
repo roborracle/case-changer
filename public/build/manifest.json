@@ -1,0 +1,32 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DSvyihY5.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/glassmorphism.css": {
+    "file": "assets/glassmorphism-v5Ttm3ci.css",
+    "src": "resources/css/glassmorphism.css",
+    "isEntry": true,
+    "names": [
+      "glassmorphism.css"
+    ]
+  },
+  "resources/css/revolutionary-ui.css": {
+    "file": "assets/revolutionary-ui-L73qel1Q.css",
+    "src": "resources/css/revolutionary-ui.css",
+    "isEntry": true,
+    "names": [
+      "revolutionary-ui.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C0G0cght.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
