@@ -16,9 +16,6 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Livewire Styles -->
-    @livewireStyles
-    
     @if(isset($schemaData))
     <script type="application/ld+json">
     {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
@@ -89,82 +86,6 @@
         </div>
     </footer>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" 
-         class="fixed bottom-4 right-4 z-50 space-y-2"
-         x-data="{ toasts: [] }"
-         @toast.window="
-            toasts.push($event.detail);
-            setTimeout(() => toasts.shift(), 5000);
-         ">
-        <template x-for="(toast, index) in toasts" :key="index">
-            <div x-transition:enter="transform ease-out duration-300 transition"
-                 x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                 x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                 x-transition:leave="transition ease-in duration-100"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
-                <div class="p-4">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <template x-if="toast.type === 'success'">
-                                <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </template>
-                            <template x-if="toast.type === 'error'">
-                                <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </template>
-                        </div>
-                        <div class="ml-3 w-0 flex-1 pt-0.5">
-                            <p class="text-sm font-medium text-gray-900" x-text="toast.message"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </div>
-
-    <!-- Livewire Scripts -->
-    @livewireScripts
-    
-    <!-- Copy to clipboard functionality -->
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('copy-to-clipboard', (event) => {
-                if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(event.text).then(() => {
-                        console.log('Text copied to clipboard');
-                    }).catch(err => {
-                        console.error('Failed to copy text: ', err);
-                    });
-                } else {
-                    // Fallback for older browsers
-                    const textArea = document.createElement('textarea');
-                    textArea.value = event.text;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    try {
-                        document.execCommand('copy');
-                        console.log('Text copied to clipboard (fallback)');
-                    } catch (err) {
-                        console.error('Failed to copy text (fallback): ', err);
-                    }
-                    document.body.removeChild(textArea);
-                }
-            });
-            
-            Livewire.on('reset-copied', () => {
-                setTimeout(() => {
-                    Livewire.dispatch('reset-copied-state');
-                }, 2000);
-            });
-        });
-    </script>
-    
     <!-- Additional Scripts -->
     @stack('scripts')
 </body>
