@@ -5,6 +5,16 @@ use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransformationController;
 
+// Health check for Railway monitoring
+Route::get('/up', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toIso8601String(),
+        'version' => '3.0.0',
+        'environment' => config('app.env')
+    ]);
+})->name('health');
+
 // Homepage - Universal Converter (One Tool to Rule Them All)
 Route::get('/', [TransformationController::class, 'transform'])->name('home');
 Route::post('/', [TransformationController::class, 'transform'])->name('transform');

@@ -25,19 +25,23 @@ class TransformationController extends Controller
      */
     public function transform(Request $request): View
     {
-        $inputText = $request->input('input', '');
-        $transformation = $request->input('transformation', 'upper-case'); // Default to a safe value
-
+        $inputText = '';
         $outputText = '';
+        $transformation = 'upper-case'; // Default transformation
+
+        // Only process if it's a POST request with input
         if ($request->isMethod('post')) {
             $validated = $request->validate([
                 'input' => 'required|string|max:10000',
-                'transformation' => 'required|string', // Validation will be more robust later
+                'transformation' => 'required|string',
             ]);
-            $outputText = $this->transformationService->transform($validated['input'], $validated['transformation']);
+            
+            $inputText = $validated['input'];
+            $transformation = $validated['transformation'];
+            $outputText = $this->transformationService->transform($inputText, $transformation);
         }
 
-        // We return the 'home' view, passing all the necessary data to render the form and the result.
+        // Return the view with all necessary data
         return view('home', [
             'input' => $inputText,
             'output' => $outputText,
