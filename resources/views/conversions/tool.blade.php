@@ -82,12 +82,11 @@
     @endif
 
     <!-- Conversion Tool Component -->
-    {{-- Livewire component disabled - needs implementation --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <p class="text-yellow-800">The conversion tool is temporarily unavailable. Please check back later.</p>
-        </div>
-    </div>
+    @livewire('conversion-tool', [
+        'category' => $category,
+        'tool' => $tool,
+        'toolData' => $toolData
+    ])
 
     <!-- Information Section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

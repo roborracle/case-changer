@@ -64,10 +64,7 @@
         <div class="mb-12">
             <h2 class="text-2xl font-bold mb-4 text-center" style="color: var(--text-primary);">{{ $categoryData['title'] }} Converter</h2>
             <p class="text-center mb-6" style="color: var(--text-secondary);">Convert text using any {{ $categoryData['title'] }} format</p>
-            {{-- Livewire component disabled - needs implementation --}}
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                <p class="text-yellow-800">The category converter is temporarily unavailable. Please check back later.</p>
-            </div>
+            @livewire('category-converter', ['category' => $category, 'categoryData' => $categoryData])
         </div>
 
         <!-- Tools Grid -->

@@ -25,10 +25,7 @@
         <div class="mb-16 rounded-xl p-8 shadow-lg" style="background: linear-gradient(90deg, var(--bg-secondary), var(--bg-tertiary));">
             <h2 class="text-3xl font-bold mb-4 text-center" style="color: var(--text-primary);">Universal Text Converter</h2>
             <p class="text-center mb-6 text-lg" style="color: var(--text-secondary);">One tool to rule them all - select from 172 conversion formats</p>
-            {{-- Livewire component disabled - needs implementation --}}
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                <p class="text-yellow-800">The universal converter is temporarily unavailable. Please check back later.</p>
-            </div>
+            @livewire('universal-converter')
         </div>
 
         <!-- Categories Grid -->
