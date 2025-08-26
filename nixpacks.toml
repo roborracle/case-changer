@@ -1,12 +1,25 @@
 [phases.setup]
-nixPkgs = ["...", "php82", "php82Extensions.pdo_sqlite", "nodejs_18", "npm-9_x"]
+nixPkgs = ["php82", "php82Extensions.pdo_sqlite", "nodejs_18", "npm-9_x", "php82Packages.composer"]
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader",
+    "npm ci"
+]
 
 [phases.build]
 cmds = [
-    "npm ci",
-    "npm run build",
-    "composer install --no-dev --optimize-autoloader"
+    "cp .env.production .env",
+    "npm run build || true",
+    "mkdir -p storage/framework/{sessions,views,cache}",
+    "mkdir -p storage/logs",
+    "mkdir -p bootstrap/cache",
+    "chmod -R 775 storage bootstrap/cache"
 ]
 
-[phases.start]
-cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+
+[variables]
+APP_ENV = "production"
+LOG_CHANNEL = "stderr"
