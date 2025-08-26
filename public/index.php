@@ -13,9 +13,6 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 // Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
 
-// Force-load Railway environment variables into $_SERVER for Laravel
-require __DIR__.'/../bootstrap/railway-env.php';
-
 // CRITICAL: Fix Railway proxy BEFORE Laravel captures the request
 // This must happen before Request::capture() to properly handle HTTPS
 if (($_ENV['APP_ENV'] ?? 'local') === 'production') {

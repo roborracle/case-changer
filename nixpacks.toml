@@ -1,29 +1,12 @@
-# MINIMAL BUILD - NO UNNECESSARY SHIT
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-9_x"]
+nixPkgs = ["...", "php82", "php82Extensions.pdo_sqlite", "nodejs_18", "npm-9_x"]
 
-[phases.install]
+[phases.build]
 cmds = [
-    "composer install --no-dev --optimize-autoloader --no-scripts",
-    "npm ci --production=false",
+    "npm ci",
+    "npm run build",
+    "composer install --no-dev --optimize-autoloader"
 ]
 
-[phases.build] 
-cmds = [
-    # DO NOT create .env file - use Railway's environment variables directly!
-    
-    # Build frontend assets (skip if Vite fails - we use Blade templates)
-    "npm run build || echo 'Vite build skipped - using Blade templates'",
-    
-    # Skip artisan commands during build - they need env vars that aren't available yet
-    
-    # Create ONLY the directories we actually need
-    "mkdir -p storage/logs",
-    "mkdir -p bootstrap/cache",
-    
-    # Minimal permissions
-    "chmod -R 775 storage bootstrap/cache",
-]
-
-[start]
-cmd = "bash start.sh"
+[phases.start]
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
