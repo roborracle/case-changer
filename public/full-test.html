@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FULL SYSTEM TEST - Case Changer Pro</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 1400px; margin: 0 auto; }
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin: 30px 0; }
+        .test-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; }
+        .pass { color: #10b981; font-weight: bold; }
+        .fail { color: #ef4444; font-weight: bold; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        h2 { border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
+        .iframe-container { width: 100%; height: 600px; border: 2px solid #3b82f6; border-radius: 8px; margin: 20px 0; }
+        pre { background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 FULL SYSTEM TEST REPORT</h1>
+    <p id="timestamp"></p>
+    
+    <div class="test-grid">
+        <div class="test-card">
+            <h3>✅ CLEAN DESIGN VERIFICATION</h3>
+            <div id="design-test"></div>
+        </div>
+        
+        <div class="test-card">
+            <h3>🎨 CSS STATUS</h3>
+            <div id="css-status"></div>
+        </div>
+        
+        <div class="test-card">
+            <h3>⚙️ FUNCTIONALITY TEST</h3>
+            <div id="function-test"></div>
+        </div>
+        
+        <div class="test-card">
+            <h3>📱 RESPONSIVE TEST</h3>
+            <div id="responsive-test"></div>
+        </div>
+    </div>
+    
+    <h2>PAGE TESTS</h2>
+    <div id="page-tests"></div>
+    
+    <h2>LIVE PREVIEW</h2>
+    <iframe src="http://127.0.0.1:8002" class="iframe-container"></iframe>
+    
+    <script>
+        document.getElementById('timestamp').textContent = 'Test Run: ' + new Date().toLocaleString();
+        
+        async function runTests() {
+            // Design Test
+            const response = await fetch('http://127.0.0.1:8002/build/assets/glassmorphism-MlQxs_i2.css');
+            const css = await response.text();
+            
+            let designHtml = '';
+            const noPurple = !css.includes('#667eea') && !css.includes('#764ba2');
+            const cleanBackground = css.includes('linear-gradient(to bottom,#fff,#f8fafc)');
+            const orbsHidden = css.includes('.orb,.orb-1,.orb-2,.orb-3,.orb-4{display:none!important}');
+            const darkText = css.includes('rgba(30, 41, 59');
+            
+            designHtml += '<p>' + (noPurple ? '✅' : '❌') + ' NO purple gradient</p>';
+            designHtml += '<p>' + (cleanBackground ? '✅' : '❌') + ' Clean white background</p>';
+            designHtml += '<p>' + (orbsHidden ? '✅' : '❌') + ' Floating orbs removed</p>';
+            designHtml += '<p>' + (darkText ? '✅' : '❌') + ' Dark text for readability</p>';
+            
+            document.getElementById('design-test').innerHTML = designHtml;
+            
+            // CSS Status
+            const html = await fetch('http://127.0.0.1:8002').then(r => r.text());
+            let cssHtml = '';
+            
+            cssHtml += '<p>' + (html.includes('glassmorphism-MlQxs_i2.css') ? '✅' : '❌') + ' Clean glassmorphism CSS</p>';
+            cssHtml += '<p>' + (html.includes('app-CWxI2Fxz.css') ? '✅' : '❌') + ' App CSS loaded</p>';
+            cssHtml += '<p>' + (html.includes('revolutionary-ui-pWuX7qlM.css') ? '✅' : '❌') + ' UI CSS loaded</p>';
+            cssHtml += '<p>' + (html.includes('app-DxVVJDOu.js') ? '✅' : '❌') + ' JavaScript loaded</p>';
+            
+            document.getElementById('css-status').innerHTML = cssHtml;
+            
+            // Function Test
+            let funcHtml = '';
+            funcHtml += '<p>' + (html.includes('themeManager') ? '✅' : '❌') + ' Theme system</p>';
+            funcHtml += '<p>' + (html.includes('navigationDropdown') ? '✅' : '❌') + ' Dropdown menus</p>';
+            funcHtml += '<p>' + (html.includes('mobileMenu') ? '✅' : '❌') + ' Mobile menu</p>';
+            funcHtml += '<p>' + (html.includes('searchModal') ? '✅' : '❌') + ' Search modal</p>';
+            funcHtml += '<p>' + (html.includes('universalConverter') ? '✅' : '❌') + ' Text converter</p>';
+            
+            document.getElementById('function-test').innerHTML = funcHtml;
+            
+            // Responsive Test
+            let respHtml = '';
+            respHtml += '<p>' + (html.includes('md:hidden') ? '✅' : '❌') + ' Mobile breakpoints</p>';
+            respHtml += '<p>' + (html.includes('lg:grid-cols') ? '✅' : '❌') + ' Desktop layouts</p>';
+            respHtml += '<p>' + (html.includes('dark:') ? '✅' : '❌') + ' Dark mode support</p>';
+            
+            document.getElementById('responsive-test').innerHTML = respHtml;
+            
+            // Page Tests
+            const pages = [
+                { url: '/', name: 'Homepage' },
+                { url: '/test', name: 'Test Page' },
+                { url: '/up', name: 'Health Check' },
+                { url: '/privacy', name: 'Privacy Policy' },
+                { url: '/terms', name: 'Terms of Service' },
+                { url: '/about', name: 'About Page' }
+            ];
+            
+            let pageHtml = '<table style="width: 100%; border-collapse: collapse;">';
+            pageHtml += '<tr><th>Page</th><th>Status</th><th>CSP</th><th>Clean CSS</th></tr>';
+            
+            for (const page of pages) {
+                try {
+                    const resp = await fetch('http://127.0.0.1:8002' + page.url);
+                    const status = resp.status;
+                    const csp = resp.headers.get('Content-Security-Policy');
+                    const pageContent = await resp.text();
+                    const hasCleanCSS = pageContent.includes('glassmorphism-MlQxs_i2.css') || page.url === '/up';
+                    
+                    pageHtml += '<tr>';
+                    pageHtml += '<td>' + page.name + '</td>';
+                    pageHtml += '<td class="' + (status === 200 ? 'pass' : 'fail') + '">' + status + '</td>';
+                    pageHtml += '<td class="' + (csp ? 'pass' : 'fail') + '">' + (csp ? 'Yes' : 'No') + '</td>';
+                    pageHtml += '<td class="' + (hasCleanCSS ? 'pass' : 'fail') + '">' + (hasCleanCSS ? 'Yes' : 'N/A') + '</td>';
+                    pageHtml += '</tr>';
+                } catch (e) {
+                    pageHtml += '<tr><td>' + page.name + '</td><td colspan="3" class="fail">Error: ' + e.message + '</td></tr>';
+                }
+            }
+            
+            pageHtml += '</table>';
+            document.getElementById('page-tests').innerHTML = pageHtml;
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

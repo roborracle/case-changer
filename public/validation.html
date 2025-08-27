@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Validation Test - Case Changer Pro</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .section { margin: 30px 0; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; }
+        .pass { background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; }
+        .fail { background: #ef4444; color: white; padding: 2px 8px; border-radius: 4px; }
+        .warning { background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; }
+        .test-item { margin: 10px 0; padding: 10px; background: #f9fafb; border-radius: 4px; }
+        pre { background: #1f2937; color: #f3f4f6; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Case Changer Pro - Full Validation Report</h1>
+    <p id="timestamp"></p>
+    
+    <div class="section">
+        <h2>1. CSP (Content Security Policy) Test</h2>
+        <div id="csp-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>2. CSS Loading Test</h2>
+        <div id="css-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>3. JavaScript & Alpine.js Test</h2>
+        <div id="js-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Theme System Test</h2>
+        <div id="theme-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Interactive Features Test</h2>
+        <div id="features-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>6. Glassmorphism Styles Test</h2>
+        <div id="glass-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>7. Railway Deployment Readiness</h2>
+        <div id="railway-test" class="test-item">Testing...</div>
+    </div>
+    
+    <div class="section">
+        <h2>8. Visual Inspection Links</h2>
+        <div class="test-item">
+            <p>Open these pages to visually inspect styling:</p>
+            <ul>
+                <li><a href="http://127.0.0.1:8002" target="_blank">Homepage</a> - Main converter with glassmorphism</li>
+                <li><a href="http://127.0.0.1:8002/test" target="_blank">Test Page</a> - Debug test page</li>
+                <li><a href="http://127.0.0.1:8002/style-test.html" target="_blank">Style Test</a> - Isolated style test</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = 'Generated: ' + new Date().toLocaleString();
+        
+        async function runTests() {
+            // 1. CSP Test
+            try {
+                const response = await fetch('http://127.0.0.1:8002', { method: 'HEAD' });
+                const csp = response.headers.get('Content-Security-Policy');
+                let cspHtml = '<h3>CSP Header Status</h3>';
+                
+                if (csp) {
+                    const hasUnsafeEval = csp.includes('unsafe-eval');
+                    const hasUnsafeInline = csp.includes('unsafe-inline');
+                    
+                    cspHtml += '<p><span class="' + (hasUnsafeEval ? 'warning' : 'fail') + '">unsafe-eval: ' + (hasUnsafeEval ? 'Enabled (Required for Alpine.js)' : 'Disabled') + '</span></p>';
+                    cspHtml += '<p><span class="' + (hasUnsafeInline ? 'warning' : 'fail') + '">unsafe-inline: ' + (hasUnsafeInline ? 'Enabled (Required for GA)' : 'Disabled') + '</span></p>';
+                    cspHtml += '<p>Full CSP:</p><pre>' + csp + '</pre>';
+                    cspHtml += '<p><span class="pass">✅ CSP is configured for Railway deployment</span></p>';
+                } else {
+                    cspHtml += '<p><span class="fail">❌ No CSP header found</span></p>';
+                }
+                
+                document.getElementById('csp-test').innerHTML = cspHtml;
+            } catch (e) {
+                document.getElementById('csp-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 2. CSS Test
+            try {
+                const html = await fetch('http://127.0.0.1:8002').then(r => r.text());
+                let cssHtml = '<h3>CSS Files Loading</h3>';
+                
+                const cssFiles = {
+                    'app-BWiu0TyI.css': 'Main application styles',
+                    'glassmorphism-DCFg2Lg4.css': 'Glassmorphism effects',
+                    'revolutionary-ui-pWuX7qlM.css': 'UI components'
+                };
+                
+                for (const [file, desc] of Object.entries(cssFiles)) {
+                    const loaded = html.includes(file);
+                    cssHtml += '<p>' + desc + ': <span class="' + (loaded ? 'pass' : 'fail') + '">' + (loaded ? '✅ Loaded' : '❌ Missing') + '</span></p>';
+                }
+                
+                // Check for glassmorphism classes
+                const hasGlassClasses = html.includes('glassmorphism-container') && html.includes('gradient-background');
+                cssHtml += '<p>Glassmorphism HTML classes: <span class="' + (hasGlassClasses ? 'pass' : 'fail') + '">' + (hasGlassClasses ? '✅ Present' : '❌ Missing') + '</span></p>';
+                
+                document.getElementById('css-test').innerHTML = cssHtml;
+            } catch (e) {
+                document.getElementById('css-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 3. JavaScript Test
+            try {
+                const html = await fetch('http://127.0.0.1:8002').then(r => r.text());
+                let jsHtml = '<h3>JavaScript Loading</h3>';
+                
+                const hasAppJs = html.includes('app-DxVVJDOu.js');
+                const hasAlpine = html.includes('x-data');
+                const hasXShow = html.includes('x-show');
+                
+                jsHtml += '<p>App JavaScript: <span class="' + (hasAppJs ? 'pass' : 'fail') + '">' + (hasAppJs ? '✅ Loaded' : '❌ Missing') + '</span></p>';
+                jsHtml += '<p>Alpine.js directives (x-data): <span class="' + (hasAlpine ? 'pass' : 'fail') + '">' + (hasAlpine ? '✅ Found' : '❌ Missing') + '</span></p>';
+                jsHtml += '<p>Alpine.js directives (x-show): <span class="' + (hasXShow ? 'pass' : 'fail') + '">' + (hasXShow ? '✅ Found' : '❌ Missing') + '</span></p>';
+                
+                document.getElementById('js-test').innerHTML = jsHtml;
+            } catch (e) {
+                document.getElementById('js-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 4. Theme Test
+            try {
+                const html = await fetch('http://127.0.0.1:8002').then(r => r.text());
+                let themeHtml = '<h3>Theme System</h3>';
+                
+                const hasThemeManager = html.includes('themeManager');
+                const hasCycleTheme = html.includes('cycleTheme');
+                const hasDarkClasses = html.includes('dark:');
+                
+                themeHtml += '<p>Theme Manager: <span class="' + (hasThemeManager ? 'pass' : 'fail') + '">' + (hasThemeManager ? '✅ Implemented' : '❌ Missing') + '</span></p>';
+                themeHtml += '<p>Theme Toggle Function: <span class="' + (hasCycleTheme ? 'pass' : 'fail') + '">' + (hasCycleTheme ? '✅ Present' : '❌ Missing') + '</span></p>';
+                themeHtml += '<p>Dark Mode Classes: <span class="' + (hasDarkClasses ? 'pass' : 'fail') + '">' + (hasDarkClasses ? '✅ Found' : '❌ Missing') + '</span></p>';
+                
+                document.getElementById('theme-test').innerHTML = themeHtml;
+            } catch (e) {
+                document.getElementById('theme-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 5. Features Test
+            try {
+                const html = await fetch('http://127.0.0.1:8002').then(r => r.text());
+                let featuresHtml = '<h3>Interactive Features</h3>';
+                
+                const features = {
+                    'navigationDropdown': 'Dropdown menus',
+                    'mobileMenu': 'Mobile navigation',
+                    'searchModal': 'Search modal',
+                    'universalConverter': 'Text converter',
+                    '@click': 'Click handlers',
+                    'x-transition': 'Transitions'
+                };
+                
+                for (const [feature, desc] of Object.entries(features)) {
+                    const hasFeature = html.includes(feature);
+                    featuresHtml += '<p>' + desc + ': <span class="' + (hasFeature ? 'pass' : 'fail') + '">' + (hasFeature ? '✅ Implemented' : '❌ Missing') + '</span></p>';
+                }
+                
+                document.getElementById('features-test').innerHTML = featuresHtml;
+            } catch (e) {
+                document.getElementById('features-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 6. Glassmorphism Test
+            try {
+                const cssResponse = await fetch('http://127.0.0.1:8002/build/assets/glassmorphism-DCFg2Lg4.css');
+                const css = await cssResponse.text();
+                let glassHtml = '<h3>Glassmorphism Styles</h3>';
+                
+                const glassElements = {
+                    '.glassmorphism-container': css.includes('.glassmorphism-container'),
+                    '.gradient-background': css.includes('.gradient-background'),
+                    '.floating-orbs': css.includes('.floating-orbs'),
+                    '.glass-primary': css.includes('.glass-primary'),
+                    '--gradient-primary': css.includes('--gradient-primary'),
+                    'backdrop-filter': css.includes('backdrop-filter'),
+                    '@keyframes gradientShift': css.includes('@keyframes gradientShift'),
+                    '@keyframes float': css.includes('@keyframes float')
+                };
+                
+                for (const [element, exists] of Object.entries(glassElements)) {
+                    glassHtml += '<p>' + element + ': <span class="' + (exists ? 'pass' : 'fail') + '">' + (exists ? '✅ Defined' : '❌ Missing') + '</span></p>';
+                }
+                
+                document.getElementById('glass-test').innerHTML = glassHtml;
+            } catch (e) {
+                document.getElementById('glass-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+            
+            // 7. Railway Test
+            try {
+                let railwayHtml = '<h3>Railway Deployment Checklist</h3>';
+                
+                // Check health endpoint
+                const healthResponse = await fetch('http://127.0.0.1:8002/up');
+                const healthData = await healthResponse.json();
+                railwayHtml += '<p>Health endpoint (/up): <span class="' + (healthData.status === 'healthy' ? 'pass' : 'fail') + '">' + (healthData.status === 'healthy' ? '✅ Working' : '❌ Failed') + '</span></p>';
+                
+                // CSP compatibility
+                const cspResponse = await fetch('http://127.0.0.1:8002', { method: 'HEAD' });
+                const csp = cspResponse.headers.get('Content-Security-Policy');
+                const cspReady = csp && csp.includes('unsafe-eval');
+                railwayHtml += '<p>CSP allows Alpine.js: <span class="' + (cspReady ? 'pass' : 'fail') + '">' + (cspReady ? '✅ Yes' : '❌ No') + '</span></p>';
+                
+                // Check for console errors
+                railwayHtml += '<p>⚠️ Manual Check Required: Open browser console and check for errors</p>';
+                railwayHtml += '<p>⚠️ Manual Check Required: Verify glassmorphism visual effects are showing</p>';
+                
+                document.getElementById('railway-test').innerHTML = railwayHtml;
+            } catch (e) {
+                document.getElementById('railway-test').innerHTML = '<span class="fail">Failed: ' + e.message + '</span>';
+            }
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>
