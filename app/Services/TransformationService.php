@@ -314,7 +314,7 @@ class TransformationService
     /**
      * Get list of transformations that can work with empty input (generators)
      */
-    private function getGeneratorTransformations(): array
+    public function getGeneratorTransformations(): array
     {
         return [
             'password-generator',
