@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\SemanticEntity;
+use App\Services\TopicalAuthorityService;
+
 class SchemaService
 {
     private string $baseUrl;
@@ -444,5 +447,327 @@ class SchemaService
             $this->generateToolSchema($category, $tool, $toolData),
             $breadcrumbs
         ];
+    }
+
+    /**
+     * Generate semantic entity schema from SemanticEntity model
+     */
+    public function generateSemanticEntitySchema(SemanticEntity $entity): array
+    {
+        return $entity->structured_data;
+    }
+
+    /**
+     * Generate semantic breadcrumb schema using TopicalAuthorityService
+     */
+    public function generateSemanticBreadcrumbSchema(string $toolSlug): array
+    {
+        $topicalService = new TopicalAuthorityService();
+        $breadcrumbs = $topicalService->generateSemanticBreadcrumbs($toolSlug);
+        
+        $breadcrumbList = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => []
+        ];
+        
+        foreach ($breadcrumbs as $breadcrumb) {
+            $breadcrumbList['itemListElement'][] = [
+                '@type' => 'ListItem',
+                'position' => $breadcrumb['position'],
+                'name' => $breadcrumb['name'],
+                'item' => $this->baseUrl . $breadcrumb['url']
+            ];
+        }
+        
+        return $breadcrumbList;
+    }
+
+    /**
+     * Generate semantic hub page schema for categories
+     */
+    public function generateSemanticHubSchema(string $categorySlug): array
+    {
+        $entity = SemanticEntity::where('slug', $categorySlug)
+            ->where('entity_type', 'SubTopic')
+            ->first();
+            
+        if (!$entity) {
+            return [];
+        }
+        
+        $tools = SemanticEntity::where('category_slug', $categorySlug)
+            ->where('entity_type', 'Tool')
+            ->active()
+            ->get();
+        
+        $hubSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            '@id' => $this->baseUrl . "/{$categorySlug}/#hub",
+            'name' => $entity->name,
+            'description' => $entity->description,
+            'url' => $entity->canonical_url,
+            'mainEntity' => [
+                '@type' => 'ItemList',
+                'numberOfItems' => $tools->count(),
+                'itemListElement' => []
+            ],
+            'breadcrumb' => $entity->getBreadcrumbData(),
+            'keywords' => implode(', ', $entity->semantic_keywords ?? []),
+            'about' => [
+                '@type' => 'Thing',
+                'name' => $entity->name,
+                'description' => $entity->description
+            ]
+        ];
+        
+        foreach ($tools as $index => $tool) {
+            $hubSchema['mainEntity']['itemListElement'][] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'item' => [
+                    '@type' => 'SoftwareApplication',
+                    'name' => $tool->name,
+                    'description' => $tool->description,
+                    'url' => $tool->canonical_url,
+                    'applicationCategory' => 'Text Processing Tool',
+                    'operatingSystem' => 'Any',
+                    'price' => '0',
+                    'priceCurrency' => 'USD'
+                ]
+            ];
+        }
+        
+        return $hubSchema;
+    }
+
+    /**
+     * Generate semantic tool page schema with entity relationships
+     */
+    public function generateSemanticToolSchema(string $toolSlug): array
+    {
+        $entity = SemanticEntity::where('slug', $toolSlug)
+            ->where('entity_type', 'Tool')
+            ->first();
+            
+        if (!$entity) {
+            return [];
+        }
+        
+        $relatedTools = $entity->relatedEntities()
+            ->where('entity_type', 'Tool')
+            ->take(5)
+            ->get();
+        
+        $toolSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'SoftwareApplication',
+            '@id' => $entity->canonical_url . '#tool',
+            'name' => $entity->meta_title,
+            'description' => $entity->meta_description,
+            'url' => $entity->canonical_url,
+            'applicationCategory' => 'Text Processing Tool',
+            'operatingSystem' => 'Any',
+            'browserRequirements' => 'Modern web browser with JavaScript support',
+            'permissions' => 'No special permissions required',
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'USD',
+                'availability' => 'https://schema.org/InStock'
+            ],
+            'keywords' => implode(', ', $entity->semantic_keywords ?? []),
+            'applicationSubCategory' => ucfirst(str_replace('-', ' ', $entity->category_slug)),
+            'featureList' => $entity->primary_use_cases ?? [],
+            'potentialAction' => [
+                '@type' => 'UseAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => $entity->canonical_url,
+                    'actionPlatform' => [
+                        'https://schema.org/DesktopWebPlatform',
+                        'https://schema.org/MobileWebPlatform'
+                    ]
+                ],
+                'object' => [
+                    '@type' => 'Text',
+                    'description' => 'Text to transform'
+                ],
+                'result' => [
+                    '@type' => 'Text',
+                    'description' => 'Transformed text output'
+                ]
+            ],
+            'breadcrumb' => $entity->getBreadcrumbData()
+        ];
+        
+        // Add related tools as mentions
+        if ($relatedTools->isNotEmpty()) {
+            $toolSchema['mentions'] = $relatedTools->map(function ($relatedTool) {
+                return [
+                    '@type' => 'SoftwareApplication',
+                    'name' => $relatedTool->name,
+                    'url' => $relatedTool->canonical_url
+                ];
+            })->toArray();
+        }
+        
+        // Add same-as URLs if available
+        if (!empty($entity->same_as_urls)) {
+            $toolSchema['sameAs'] = $entity->same_as_urls;
+        }
+        
+        return $toolSchema;
+    }
+
+    /**
+     * Generate FAQ schema for a semantic entity
+     */
+    public function generateSemanticFAQSchema(SemanticEntity $entity): array
+    {
+        return $entity->getFaqData();
+    }
+
+    /**
+     * Generate knowledge graph schema for the entire platform
+     */
+    public function generateKnowledgeGraphSchema(): array
+    {
+        $mainTopic = SemanticEntity::where('entity_type', 'MainTopic')->first();
+        $subtopics = SemanticEntity::where('entity_type', 'SubTopic')->active()->get();
+        $tools = SemanticEntity::where('entity_type', 'Tool')->active()->take(20)->get();
+        
+        $knowledgeGraph = [
+            '@context' => 'https://schema.org',
+            '@graph' => []
+        ];
+        
+        // Add main topic to knowledge graph
+        if ($mainTopic) {
+            $knowledgeGraph['@graph'][] = $mainTopic->structured_data;
+        }
+        
+        // Add subtopics to knowledge graph
+        foreach ($subtopics as $subtopic) {
+            $knowledgeGraph['@graph'][] = $subtopic->structured_data;
+        }
+        
+        // Add sample tools to knowledge graph
+        foreach ($tools as $tool) {
+            $knowledgeGraph['@graph'][] = $tool->structured_data;
+        }
+        
+        return $knowledgeGraph;
+    }
+
+    /**
+     * Generate semantic sitemap data
+     */
+    public function generateSemanticSitemapData(): array
+    {
+        $entities = SemanticEntity::active()->get();
+        $sitemapData = [];
+        
+        foreach ($entities as $entity) {
+            $sitemapData[] = [
+                'url' => $entity->canonical_url,
+                'lastmod' => $entity->updated_at->toIso8601String(),
+                'priority' => $this->calculateSitemapPriority($entity),
+                'changefreq' => $this->calculateChangeFrequency($entity),
+                'schema_type' => $entity->schema_type,
+                'entity_type' => $entity->entity_type
+            ];
+        }
+        
+        return $sitemapData;
+    }
+
+    /**
+     * Calculate sitemap priority based on entity importance
+     */
+    private function calculateSitemapPriority(SemanticEntity $entity): float
+    {
+        switch ($entity->entity_type) {
+            case 'MainTopic':
+                return 1.0;
+            case 'SubTopic':
+                return 0.9;
+            case 'Tool':
+                return 0.8 * $entity->topical_authority_score;
+            default:
+                return 0.5;
+        }
+    }
+
+    /**
+     * Calculate change frequency for sitemap
+     */
+    private function calculateChangeFrequency(SemanticEntity $entity): string
+    {
+        switch ($entity->entity_type) {
+            case 'MainTopic':
+                return 'weekly';
+            case 'SubTopic':
+                return 'monthly';
+            case 'Tool':
+                return 'monthly';
+            default:
+                return 'yearly';
+        }
+    }
+
+    /**
+     * Get complete semantic schemas for a tool page
+     */
+    public function getSemanticToolPageSchemas(string $toolSlug): array
+    {
+        $entity = SemanticEntity::where('slug', $toolSlug)
+            ->where('entity_type', 'Tool')
+            ->first();
+            
+        if (!$entity) {
+            return [];
+        }
+        
+        $schemas = [
+            $this->generateSemanticToolSchema($toolSlug),
+            $this->generateSemanticBreadcrumbSchema($toolSlug)
+        ];
+        
+        // Add FAQ schema if available
+        $faqSchema = $this->generateSemanticFAQSchema($entity);
+        if (!empty($faqSchema)) {
+            $schemas[] = $faqSchema;
+        }
+        
+        return array_filter($schemas);
+    }
+
+    /**
+     * Get complete semantic schemas for a hub page
+     */
+    public function getSemanticHubPageSchemas(string $categorySlug): array
+    {
+        $entity = SemanticEntity::where('slug', $categorySlug)
+            ->where('entity_type', 'SubTopic')
+            ->first();
+            
+        if (!$entity) {
+            return [];
+        }
+        
+        $schemas = [
+            $this->generateSemanticHubSchema($categorySlug),
+            $entity->getBreadcrumbData()
+        ];
+        
+        // Add FAQ schema if available
+        $faqSchema = $this->generateSemanticFAQSchema($entity);
+        if (!empty($faqSchema)) {
+            $schemas[] = $faqSchema;
+        }
+        
+        return array_filter($schemas);
     }
 }

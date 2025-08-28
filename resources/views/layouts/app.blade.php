@@ -64,10 +64,66 @@
             Skip to main content
         </a>
 
-        <!-- Main Content with Proper Landmark -->
-        <main id="main-content" class="min-h-screen" role="main">
-            {{ $slot }}
+        <!-- Header Section -->
+        @if(!isset($hideHeader) || !$hideHeader)
+        <header role="banner" class="bg-primary border-b border-gray-200">
+            <nav role="navigation" aria-label="Main navigation">
+                @include('partials.navigation')
+            </nav>
+        </header>
+        @endif
+
+        <!-- Main Content with Proper Semantic Structure -->
+        <main id="main-content" class="min-h-screen" role="main" aria-label="Main content">
+            <!-- Breadcrumb Navigation -->
+            @if(isset($breadcrumbs))
+            <nav aria-label="Breadcrumb" class="container mx-auto px-4 py-2">
+                <ol class="flex items-center space-x-2 text-sm">
+                    @foreach($breadcrumbs as $crumb)
+                    <li class="flex items-center">
+                        @if(!$loop->last)
+                        <a href="{{ $crumb['url'] }}" class="text-blue-600 hover:text-blue-800">{{ $crumb['name'] }}</a>
+                        <svg class="w-4 h-4 mx-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        @else
+                        <span class="text-gray-700" aria-current="page">{{ $crumb['name'] }}</span>
+                        @endif
+                    </li>
+                    @endforeach
+                </ol>
+            </nav>
+            @endif
+
+            <!-- Main Content Article -->
+            <article class="container mx-auto">
+                {{ $slot }}
+            </article>
+
+            <!-- Aside for Related Content -->
+            @if(isset($relatedContent))
+            <aside role="complementary" aria-label="Related tools and content" class="container mx-auto px-4 py-8">
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Related Tools</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        @foreach($relatedContent as $related)
+                        <a href="{{ $related['url'] }}" class="p-3 bg-white rounded-lg hover:shadow-lg transition-shadow">
+                            <h3 class="font-medium">{{ $related['name'] }}</h3>
+                            <p class="text-sm text-gray-600">{{ $related['description'] }}</p>
+                        </a>
+                        @endforeach
+                    </div>
+                </section>
+            </aside>
+            @endif
         </main>
+
+        <!-- Footer Section -->
+        @if(!isset($hideFooter) || !$hideFooter)
+        <footer role="contentinfo" class="bg-gray-900 text-white mt-auto">
+            @include('partials.footer')
+        </footer>
+        @endif
 
         <!-- Additional Scripts -->
         @stack('scripts')
