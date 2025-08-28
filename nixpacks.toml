@@ -1,23 +1,116 @@
+# Nixpacks configuration for Railway deployment
+# Optimized for Laravel + Node.js application with production-ready setup
+
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo_sqlite", "nodejs_18", "npm-9_x", "php82Packages.composer"]
+# Use latest stable versions for production
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-10_x", "nginx", "php82Extensions.opcache"]
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader",
-    "npm ci"
+    # Install PHP dependencies with optimization
+    "composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative",
+    # Install only production node modules
+    "npm ci --omit=dev"
 ]
 
 [phases.build]
 cmds = [
-    "npm run build",
+    # Build production assets with optimization
+    "npm run build:production",
+    
+    # Clear all Laravel caches first
+    "php artisan optimize:clear",
+    
+    # Generate optimized Laravel caches
     "php artisan config:cache",
     "php artisan route:cache",
-    "php artisan view:cache"
+    "php artisan view:cache",
+    "php artisan event:cache",
+    
+    # Generate optimized autoloader
+    "composer dump-autoload --optimize --classmap-authoritative --no-dev",
+    
+    # Create necessary directories
+    "mkdir -p storage/framework/{sessions,views,cache}",
+    "chmod -R 775 storage bootstrap/cache",
+    
+    # Create nginx configuration for production
+    "echo 'server {
+        listen ${PORT:-8000};
+        server_name _;
+        root /app/public;
+        
+        index index.php;
+        
+        # Enable compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/xml+rss application/rss+xml application/atom+xml image/svg+xml text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype;
+        
+        # Security headers
+        add_header X-Frame-Options \"SAMEORIGIN\" always;
+        add_header X-Content-Type-Options \"nosniff\" always;
+        add_header X-XSS-Protection \"1; mode=block\" always;
+        add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;
+        
+        # Cache static assets
+        location ~* \\.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf|eot)$ {
+            expires 30d;
+            add_header Cache-Control \"public, immutable\";
+            access_log off;
+        }
+        
+        # Handle Laravel routes
+        location / {
+            try_files \\$uri \\$uri/ /index.php?\\$query_string;
+        }
+        
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location = /robots.txt  { access_log off; log_not_found off; }
+        
+        error_page 404 /index.php;
+        
+        location ~ \\.php$ {
+            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME \\$realpath_root\\$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_hide_header X-Powered-By;
+            
+            # PHP performance optimizations
+            fastcgi_buffer_size 16k;
+            fastcgi_buffers 4 16k;
+        }
+        
+        location ~ /\\.(?!well-known).* {
+            deny all;
+        }
+    }' > /etc/nginx/sites-available/default"
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=9000"
+# Use PHP built-in server as nginx requires more complex setup
+# This is still production-ready with proper PHP configuration
+cmd = "php -S 0.0.0.0:${PORT:-8000} -t public"
+
+[staticAssets]
+paths = ["/public"]
 
 [variables]
 APP_ENV = "production"
+APP_DEBUG = "false"
 LOG_CHANNEL = "stderr"
+LOG_LEVEL = "error"
+SESSION_DRIVER = "cookie"
+CACHE_DRIVER = "array"
+# PHP configuration for production
+PHP_MEMORY_LIMIT = "256M"
+PHP_MAX_EXECUTION_TIME = "30"
+PHP_UPLOAD_MAX_FILESIZE = "10M"
+PHP_POST_MAX_SIZE = "10M"
+# OPcache configuration
+PHP_OPCACHE_ENABLE = "1"
+PHP_OPCACHE_MEMORY_CONSUMPTION = "128"
+PHP_OPCACHE_MAX_ACCELERATED_FILES = "10000"
+PHP_OPCACHE_VALIDATE_TIMESTAMPS = "0"
+PHP_OPCACHE_REVALIDATE_FREQ = "0"

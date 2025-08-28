@@ -1,0 +1,253 @@
+/**
+ * Navigation Layout Fixes
+ * Fixes alignment issues in header and navigation elements
+ */
+
+/* Fix navigation container alignment */
+nav .max-w-7xl {
+    display: flex;
+    align-items: center;
+}
+
+nav .flex.justify-between {
+    width: 100%;
+}
+
+/* Fix logo alignment */
+nav .flex-shrink-0 {
+    display: flex;
+    align-items: center;
+}
+
+/* Fix navigation items alignment */
+nav .md\\:flex.md\\:items-center {
+    height: 100%;
+    align-items: center;
+}
+
+/* Fix dropdown alignment */
+nav .relative > a {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Fix right side navigation items */
+nav .flex.items-center.space-x-2,
+nav .flex.items-center.space-x-4 {
+    height: 100%;
+    align-items: center;
+}
+
+/* Fix theme toggle button alignment */
+.theme-toggle-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 36px;
+    padding: 0.5rem;
+}
+
+/* Fix search button alignment */
+button[aria-label*="Search"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 36px;
+}
+
+/* Fix mobile menu button alignment */
+button[aria-label*="menu"],
+button[aria-controls*="mobile"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 36px;
+}
+
+/* Prevent icon and button overlap */
+nav button {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}
+
+nav button:last-child {
+    margin-right: 0;
+}
+
+/* Fix dark/light mode toggle dropdown position */
+.theme-toggle-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    z-index: 50;
+    min-width: 150px;
+}
+
+/* Ensure proper spacing between navigation elements */
+@media (min-width: 768px) {
+    nav .md\\:ml-10 {
+        margin-left: 2.5rem;
+    }
+    
+    nav .md\\:space-x-1 > * {
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+    }
+    
+    nav .md\\:space-x-1 > *:first-child {
+        margin-left: 0;
+    }
+    
+    nav .md\\:space-x-1 > *:last-child {
+        margin-right: 0;
+    }
+}
+
+/* Fix tool count display */
+.tool-count::after {
+    content: "172+";
+}
+
+/* Fix header sticky behavior */
+nav.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+/* Fix dropdown menu positioning */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.25rem;
+}
+
+/* Ensure icons are properly sized */
+nav svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Fix button hover states */
+nav button:hover,
+nav a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark nav button:hover,
+.dark nav a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Fix mobile menu alignment */
+@media (max-width: 767px) {
+    nav .flex.justify-between {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    nav .flex-shrink-0 {
+        flex: 1;
+    }
+    
+    nav button[aria-label*="menu"] {
+        margin-left: auto;
+    }
+}
+
+/* Fix navigation link active states */
+nav a.active,
+nav a[aria-current="page"] {
+    color: var(--color-primary);
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Ensure proper z-index stacking */
+nav {
+    z-index: 40;
+}
+
+nav .dropdown-menu,
+nav .theme-toggle-dropdown {
+    z-index: 50;
+}
+
+/* Fix search modal overlay */
+.search-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.search-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 61;
+}
+
+/* Fix button focus states */
+nav button:focus-visible,
+nav a:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Ensure proper text alignment */
+nav .text-center {
+    text-align: center;
+}
+
+nav .text-left {
+    text-align: left;
+}
+
+nav .text-right {
+    text-align: right;
+}
+
+/* Fix flex container issues */
+.flex {
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+/* Fix spacing utilities */
+.space-x-2 > * + * {
+    margin-left: 0.5rem;
+}
+
+.space-x-4 > * + * {
+    margin-left: 1rem;
+}
+
+.space-y-2 > * + * {
+    margin-top: 0.5rem;
+}
+
+.space-y-4 > * + * {
+    margin-top: 1rem;
+}

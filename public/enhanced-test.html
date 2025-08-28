@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Enhanced System Test - Case Changer Pro</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #f5f5f7; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #1d1d1f; margin-bottom: 20px; font-size: 32px; }
+        h2 { color: #1d1d1f; margin: 20px 0 10px 0; font-size: 24px; }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1d1d1f;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .pass { background: #34c759; color: white; }
+        .fail { background: #ff3b30; color: white; }
+        .warning { background: #ff9500; color: white; }
+        .info { background: #007aff; color: white; }
+        .pending { background: #8e8e93; color: white; }
+        button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        button:hover { background: #0051d5; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        .code {
+            background: #1d1d1f;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error { color: #ff3b30; font-weight: bold; }
+        .success { color: #34c759; font-weight: bold; }
+        .warning-text { color: #ff9500; font-weight: bold; }
+        .test-result {
+            padding: 8px;
+            margin: 5px 0;
+            border-left: 3px solid #e0e0e0;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .test-result.pass { border-left-color: #34c759; background: #f0fff4; }
+        .test-result.fail { border-left-color: #ff3b30; background: #fff3f3; }
+        .test-result.warning { border-left-color: #ff9500; background: #fff9f0; }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #d1d1d6;
+            border-radius: 8px;
+            background: white;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Enhanced Diagnostic Test Suite</h1>
+        
+        <!-- Quick Actions -->
+        <div class="test-card">
+            <h3>Quick Actions</h3>
+            <button onclick="runAllTests()">🚀 Run All Tests</button>
+            <button onclick="clearResults()">🗑️ Clear Results</button>
+            <button onclick="window.open('http://127.0.0.1:8002/', '_blank')">🏠 Open Homepage</button>
+            <button onclick="window.open('http://127.0.0.1:8002/conversions', '_blank')">🛠️ All Tools</button>
+            <button onclick="window.open('http://127.0.0.1:8002/conversions/case-conversions/uppercase', '_blank')">🔤 Test Tool</button>
+            <button onclick="downloadReport()">📥 Download Report</button>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="summary-card">
+            <h2>Test Summary</h2>
+            <div class="summary-stats">
+                <div class="stat">
+                    <div class="stat-value" id="total-tests">0</div>
+                    <div class="stat-label">Total Tests</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="passed-tests">0</div>
+                    <div class="stat-label">Passed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="failed-tests">0</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="warning-tests">0</div>
+                    <div class="stat-label">Warnings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Grid -->
+        <div class="test-grid">
+            <!-- Critical Tests -->
+            <div class="test-card">
+                <h3>1. Alpine.js Initialization</h3>
+                <div id="alpine-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>2. Alpine Store Access</h3>
+                <div id="store-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>3. Navigation Elements</h3>
+                <div id="nav-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>4. Tool Count Display</h3>
+                <div id="count-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>5. CSS Loading</h3>
+                <div id="css-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>6. JavaScript Errors</h3>
+                <div id="js-error-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>7. Theme Toggle</h3>
+                <div id="theme-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>8. API Endpoint</h3>
+                <div id="api-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>9. Form Functionality</h3>
+                <div id="form-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>10. Mobile Menu</h3>
+                <div id="mobile-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>11. Dropdowns</h3>
+                <div id="dropdown-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>12. Performance</h3>
+                <div id="perf-test" class="test-result">
+                    <span class="status pending">PENDING</span> Waiting...
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="test-card">
+            <h3>Console Output</h3>
+            <div class="code" id="console">Test output will appear here...</div>
+        </div>
+
+        <!-- Live Site Preview -->
+        <div class="test-card">
+            <h3>Live Site Preview (Console errors will be captured)</h3>
+            <iframe id="site-frame" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0
+        };
+
+        const log = (msg, type = 'info') => {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const typeClass = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning-text' : '';
+            console.innerHTML += `[${timestamp}] <span class="${typeClass}">${msg}</span>\n`;
+            console.scrollTop = console.scrollHeight;
+        };
+
+        const updateStats = () => {
+            document.getElementById('total-tests').textContent = testResults.total;
+            document.getElementById('passed-tests').textContent = testResults.passed;
+            document.getElementById('failed-tests').textContent = testResults.failed;
+            document.getElementById('warning-tests').textContent = testResults.warnings;
+        };
+
+        const setTestResult = (testId, status, message) => {
+            const element = document.getElementById(testId);
+            const statusClass = status === 'PASS' ? 'pass' : status === 'FAIL' ? 'fail' : 'warning';
+            const statusBadge = status === 'PASS' ? 'pass' : status === 'FAIL' ? 'fail' : 'warning';
+            
+            element.className = `test-result ${statusClass}`;
+            element.innerHTML = `<span class="status ${statusBadge}">${status}</span> ${message}`;
+            
+            testResults.total++;
+            if (status === 'PASS') testResults.passed++;
+            else if (status === 'FAIL') testResults.failed++;
+            else testResults.warnings++;
+            
+            updateStats();
+        };
+
+        const clearResults = () => {
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            updateStats();
+            document.getElementById('console').innerHTML = 'Test output cleared.\n';
+            document.querySelectorAll('.test-result').forEach(el => {
+                el.className = 'test-result';
+                el.innerHTML = '<span class="status pending">PENDING</span> Waiting...';
+            });
+        };
+
+        async function testAlpine() {
+            log('Testing Alpine.js initialization...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                // Check for Alpine in the JavaScript bundle
+                const hasAlpine = html.includes('Alpine') || html.includes('x-data');
+                const hasXData = html.includes('x-data');
+                const hasXShow = html.includes('x-show');
+                
+                if (hasAlpine && hasXData) {
+                    setTestResult('alpine-test', 'PASS', 'Alpine.js properly included');
+                    log('✅ Alpine.js detected with x-data directives', 'success');
+                } else {
+                    setTestResult('alpine-test', 'FAIL', 'Alpine.js not properly loaded');
+                    log('❌ Alpine.js not found or improperly loaded', 'error');
+                }
+            } catch (e) {
+                setTestResult('alpine-test', 'FAIL', 'Network error: ' + e.message);
+                log('❌ Alpine test failed: ' + e.message, 'error');
+            }
+        }
+
+        async function testStore() {
+            log('Testing Alpine.store functionality...');
+            try {
+                // Test in an iframe to get actual JavaScript context
+                const frame = document.getElementById('site-frame');
+                frame.src = 'http://127.0.0.1:8002/';
+                
+                await new Promise(resolve => {
+                    frame.onload = () => {
+                        setTimeout(() => {
+                            try {
+                                const hasAlpine = frame.contentWindow.Alpine !== undefined;
+                                const hasStore = hasAlpine && typeof frame.contentWindow.Alpine.store === 'function';
+                                
+                                if (hasStore) {
+                                    setTestResult('store-test', 'PASS', 'Alpine.store is accessible');
+                                    log('✅ Alpine.store function available', 'success');
+                                } else if (hasAlpine) {
+                                    setTestResult('store-test', 'FAIL', 'Alpine exists but store not available');
+                                    log('❌ Alpine.store is not a function', 'error');
+                                } else {
+                                    setTestResult('store-test', 'FAIL', 'Alpine not found in window');
+                                    log('❌ Alpine not available globally', 'error');
+                                }
+                            } catch (e) {
+                                setTestResult('store-test', 'WARNING', 'Cross-origin check blocked');
+                                log('⚠️ Cannot access iframe context (CORS)', 'warning');
+                            }
+                            resolve();
+                        }, 2000); // Wait for Alpine to initialize
+                    };
+                });
+            } catch (e) {
+                setTestResult('store-test', 'FAIL', 'Test failed: ' + e.message);
+                log('❌ Store test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testNavigation() {
+            log('Testing navigation structure...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                const hasNav = html.includes('<nav');
+                const hasLogo = html.includes('Case Changer Pro');
+                const hasDropdown = html.includes('dropdown') || html.includes('Dropdown');
+                const hasMobileMenu = html.includes('mobile') || html.includes('Mobile');
+                
+                if (hasNav && hasLogo) {
+                    setTestResult('nav-test', 'PASS', 'Navigation structure present');
+                    log('✅ Navigation elements found', 'success');
+                } else {
+                    setTestResult('nav-test', 'FAIL', 'Navigation missing elements');
+                    log('❌ Navigation incomplete', 'error');
+                }
+            } catch (e) {
+                setTestResult('nav-test', 'FAIL', 'Network error');
+                log('❌ Navigation test failed: ' + e.message, 'error');
+            }
+        }
+
+        async function testToolCount() {
+            log('Testing tool count display...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                // Check for 170+ (correct) vs 172+ (wrong)
+                const has170Plus = html.includes('170+') || html.includes('170 ');
+                const has172Plus = html.includes('172+') || html.includes('172 ');
+                
+                if (has170Plus && !has172Plus) {
+                    setTestResult('count-test', 'PASS', 'Shows 170+ tools (correct)');
+                    log('✅ Tool count correctly shows 170+', 'success');
+                } else if (has172Plus) {
+                    setTestResult('count-test', 'WARNING', 'Shows 172+ (should be 170+)');
+                    log('⚠️ Tool count shows 172+ instead of 170+', 'warning');
+                } else {
+                    setTestResult('count-test', 'FAIL', 'Tool count not found');
+                    log('❌ Tool count not displayed', 'error');
+                }
+            } catch (e) {
+                setTestResult('count-test', 'FAIL', 'Test failed');
+                log('❌ Tool count test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testCSS() {
+            log('Testing CSS loading...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                const cssFiles = html.match(/app-[a-zA-Z0-9]+\.css/g);
+                const hasViteCSS = html.includes('vite');
+                
+                if (cssFiles && cssFiles.length > 0) {
+                    setTestResult('css-test', 'PASS', `CSS loaded: ${cssFiles[0]}`);
+                    log(`✅ CSS file loaded: ${cssFiles[0]}`, 'success');
+                } else {
+                    setTestResult('css-test', 'FAIL', 'No CSS files detected');
+                    log('❌ CSS files not loading', 'error');
+                }
+            } catch (e) {
+                setTestResult('css-test', 'FAIL', 'Test failed');
+                log('❌ CSS test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testJSErrors() {
+            log('Checking for JavaScript errors...');
+            setTestResult('js-error-test', 'WARNING', 'Check browser console manually');
+            log('⚠️ Open browser DevTools to check for console errors', 'warning');
+        }
+
+        async function testTheme() {
+            log('Testing theme functionality...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                const hasThemeToggle = html.includes('theme') || html.includes('Theme');
+                const hasDarkMode = html.includes('dark:') || html.includes('dark ');
+                
+                if (hasThemeToggle && hasDarkMode) {
+                    setTestResult('theme-test', 'PASS', 'Theme system present');
+                    log('✅ Theme toggle functionality detected', 'success');
+                } else {
+                    setTestResult('theme-test', 'WARNING', 'Theme support partial');
+                    log('⚠️ Theme system may be incomplete', 'warning');
+                }
+            } catch (e) {
+                setTestResult('theme-test', 'FAIL', 'Test failed');
+                log('❌ Theme test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testAPI() {
+            log('Testing API endpoint...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/api/transform', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: 'test',
+                        type: 'uppercase'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.transformed === 'TEST') {
+                        setTestResult('api-test', 'PASS', 'API working correctly');
+                        log('✅ API transform endpoint working', 'success');
+                    } else {
+                        setTestResult('api-test', 'WARNING', 'Unexpected response');
+                        log('⚠️ API returned unexpected data', 'warning');
+                    }
+                } else {
+                    setTestResult('api-test', 'FAIL', `HTTP ${response.status}`);
+                    log(`❌ API returned status ${response.status}`, 'error');
+                }
+            } catch (e) {
+                setTestResult('api-test', 'FAIL', 'Network error');
+                log('❌ API test failed: ' + e.message, 'error');
+            }
+        }
+
+        async function testForm() {
+            log('Testing form functionality...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/conversions/case-conversions/uppercase');
+                const html = await response.text();
+                
+                const hasTextarea = html.includes('<textarea');
+                const hasForm = html.includes('x-model') || html.includes('form');
+                
+                if (hasTextarea && hasForm) {
+                    setTestResult('form-test', 'PASS', 'Form elements present');
+                    log('✅ Form structure correct', 'success');
+                } else {
+                    setTestResult('form-test', 'WARNING', 'Form may be incomplete');
+                    log('⚠️ Form elements may be missing', 'warning');
+                }
+            } catch (e) {
+                setTestResult('form-test', 'FAIL', 'Test failed');
+                log('❌ Form test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testMobileMenu() {
+            log('Testing mobile menu...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                const hasMobileMenu = html.includes('mobileMenu') || html.includes('mobile-menu');
+                const hasToggle = html.includes('toggleMobileMenu');
+                
+                if (hasMobileMenu) {
+                    setTestResult('mobile-test', 'PASS', 'Mobile menu present');
+                    log('✅ Mobile menu functionality detected', 'success');
+                } else {
+                    setTestResult('mobile-test', 'WARNING', 'Mobile menu not found');
+                    log('⚠️ Mobile menu may be missing', 'warning');
+                }
+            } catch (e) {
+                setTestResult('mobile-test', 'FAIL', 'Test failed');
+                log('❌ Mobile test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testDropdowns() {
+            log('Testing dropdown menus...');
+            try {
+                const response = await fetch('http://127.0.0.1:8002/');
+                const html = await response.text();
+                
+                const hasDropdown = html.includes('Dropdown') || html.includes('dropdown');
+                
+                if (hasDropdown) {
+                    setTestResult('dropdown-test', 'PASS', 'Dropdowns present');
+                    log('✅ Dropdown functionality detected', 'success');
+                } else {
+                    setTestResult('dropdown-test', 'WARNING', 'No dropdowns found');
+                    log('⚠️ Dropdown menus not detected', 'warning');
+                }
+            } catch (e) {
+                setTestResult('dropdown-test', 'FAIL', 'Test failed');
+                log('❌ Dropdown test error: ' + e.message, 'error');
+            }
+        }
+
+        async function testPerformance() {
+            log('Testing page performance...');
+            try {
+                const start = performance.now();
+                const response = await fetch('http://127.0.0.1:8002/');
+                const end = performance.now();
+                const loadTime = Math.round(end - start);
+                
+                if (loadTime < 500) {
+                    setTestResult('perf-test', 'PASS', `Load time: ${loadTime}ms`);
+                    log(`✅ Excellent performance: ${loadTime}ms`, 'success');
+                } else if (loadTime < 1000) {
+                    setTestResult('perf-test', 'WARNING', `Load time: ${loadTime}ms`);
+                    log(`⚠️ Moderate performance: ${loadTime}ms`, 'warning');
+                } else {
+                    setTestResult('perf-test', 'FAIL', `Slow: ${loadTime}ms`);
+                    log(`❌ Poor performance: ${loadTime}ms`, 'error');
+                }
+            } catch (e) {
+                setTestResult('perf-test', 'FAIL', 'Test failed');
+                log('❌ Performance test error: ' + e.message, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            log('🚀 Starting comprehensive test suite...', 'info');
+            
+            await testAlpine();
+            await testStore();
+            await testNavigation();
+            await testToolCount();
+            await testCSS();
+            await testJSErrors();
+            await testTheme();
+            await testAPI();
+            await testForm();
+            await testMobileMenu();
+            await testDropdowns();
+            await testPerformance();
+            
+            log(`\n📊 Test Complete: ${testResults.passed} passed, ${testResults.failed} failed, ${testResults.warnings} warnings`, 'info');
+        }
+
+        function downloadReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                results: testResults,
+                console: document.getElementById('console').textContent
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `test-report-${Date.now()}.json`;
+            a.click();
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+/* ZERO TOLERANCE COMPLIANCE - No inline styles allowed */
+/* All hover states must be defined in CSS */
+
+/* Link hover states */
+.hover-text-primary:hover {
+    color: var(--text-primary) !important;
+}
+
+.hover-text-secondary:hover {
+    color: var(--text-secondary) !important;
+}
+
+.hover-text-accent:hover {
+    color: var(--accent-primary) !important;
+}
+
+/* Background hover states */
+.hover-bg-secondary:hover {
+    background-color: var(--bg-secondary) !important;
+}
+
+.hover-bg-tertiary:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+.hover-bg-accent:hover {
+    background-color: var(--accent-tertiary) !important;
+}
+
+/* Border hover states */
+.hover-border-accent:hover {
+    border-color: var(--accent-primary) !important;
+}
+
+.hover-border-primary:hover {
+    border-color: var(--border-primary) !important;
+}
+
+/* Card hover states */
+.card-hover:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Tool card hover */
+.tool-card-hover {
+    transition: all 0.2s ease;
+}
+
+.tool-card-hover:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+/* Navigation link hover */
+.nav-link-hover {
+    transition: color 0.2s ease;
+}
+
+.nav-link-hover:hover {
+    color: var(--text-primary);
+}
+
+/* Button hover states */
+.btn-hover-primary:hover {
+    background-color: var(--accent-secondary);
+}
+
+.btn-hover-secondary:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Breadcrumb hover */
+.breadcrumb-hover {
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-hover:hover {
+    color: var(--text-primary);
+}

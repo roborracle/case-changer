@@ -14,6 +14,8 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         // Health check endpoint only
         '/up',
+        // API endpoints
+        '/api/*',
     ];
 
     /**

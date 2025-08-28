@@ -1,0 +1,178 @@
+/**
+ * Theme Variables for Glassmorphism Design System
+ * Centralized color and effect management
+ */
+
+:root {
+  /* Apple System Colors */
+  --apple-blue: #007AFF;
+  --apple-blue-dark: #0A84FF;
+  --apple-blue-darker: #0051D5;
+  --apple-cyan: #5AC8FA;
+  --apple-cyan-dark: #32ADE6;
+  --apple-red: #FF3B30;
+  --apple-green: #34C759;
+  --apple-yellow: #FFCC00;
+  --apple-orange: #FF9500;
+  
+  /* Light Theme Base Colors */
+  --color-bg-base: 248 250 252;      /* slate-50 */
+  --color-bg-surface: 255 255 255;   /* white */
+  --color-bg-elevated: 241 245 249;  /* slate-100 */
+  --color-text-primary: 15 23 42;    /* slate-900 */
+  --color-text-secondary: 71 85 105; /* slate-600 */
+  --color-text-tertiary: 148 163 184; /* slate-400 */
+  --color-border: 226 232 240;       /* slate-200 */
+  --color-border-strong: 203 213 225; /* slate-300 */
+  
+  /* Glass Effect Variables */
+  --glass-blur: 10px;
+  --glass-blur-strong: 20px;
+  --glass-blur-subtle: 5px;
+  --glass-saturation: 180%;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-strong: rgba(255, 255, 255, 0.15);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-border-subtle: rgba(255, 255, 255, 0.1);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glass-blue: 0 8px 32px rgba(0, 122, 255, 0.15);
+  
+  /* Animation Timing */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+}
+
+/* Dark Theme */
+.dark {
+  /* Dark Theme Base Colors */
+  --color-bg-base: 15 23 42;         /* slate-900 */
+  --color-bg-surface: 30 41 59;      /* slate-800 */
+  --color-bg-elevated: 51 65 85;     /* slate-700 */
+  --color-text-primary: 248 250 252; /* slate-50 */
+  --color-text-secondary: 203 213 225; /* slate-300 */
+  --color-text-tertiary: 148 163 184; /* slate-400 */
+  --color-border: 51 65 85;          /* slate-700 */
+  --color-border-strong: 71 85 105;  /* slate-600 */
+  
+  /* Dark Mode Glass Effects */
+  --glass-bg: rgba(0, 0, 0, 0.3);
+  --glass-bg-strong: rgba(0, 0, 0, 0.4);
+  --glass-bg-subtle: rgba(0, 0, 0, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-subtle: rgba(255, 255, 255, 0.05);
+  
+  /* Dark Mode Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --shadow-glass-blue: 0 8px 32px rgba(0, 122, 255, 0.25);
+}
+
+/* System Preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    /* Auto dark mode values */
+    --color-bg-base: 15 23 42;
+    --color-bg-surface: 30 41 59;
+    --color-bg-elevated: 51 65 85;
+    --color-text-primary: 248 250 252;
+    --color-text-secondary: 203 213 225;
+    --color-text-tertiary: 148 163 184;
+    --color-border: 51 65 85;
+    --color-border-strong: 71 85 105;
+    --glass-bg: rgba(0, 0, 0, 0.3);
+    --glass-bg-strong: rgba(0, 0, 0, 0.4);
+    --glass-bg-subtle: rgba(0, 0, 0, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border-subtle: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Contrast Preference */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-bg-strong: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(0, 0, 0, 0.5);
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dark {
+    --glass-bg: rgba(0, 0, 0, 0.9);
+    --glass-bg-strong: rgba(0, 0, 0, 0.95);
+    --glass-border: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+}
+
+/* Utility Classes using CSS Variables */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-panel-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-panel-subtle {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Transition utilities using variables */
+.transition-fast {
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-base {
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-slow {
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-spring {
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--spring);
+}

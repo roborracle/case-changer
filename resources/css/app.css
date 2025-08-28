@@ -2,6 +2,19 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Mobile responsiveness and browser compatibility fixes */
+@import './mobile-fixes.css';
+
+/* Navigation layout and alignment fixes */
+@import './navigation-fixes.css';
+
+/* Import theme and glassmorphism styles */
+@import './theme-variables.css';
+@import './glassmorphism.css';
+@import './glassmorphism-utilities.css';
+@import './accessibility.css';
+@import './hover-states.css';
+
 /* Hide Alpine elements before initialization */
 [x-cloak] { display: none !important; }
 
@@ -31,8 +44,8 @@
     --text-tertiary: #64748b;
     --border-primary: #e2e8f0;
     --border-secondary: #cbd5e1;
-    --accent-primary: #3b82f6;
-    --accent-secondary: #6366f1;
+    --accent-primary: #007AFF;
+    --accent-secondary: #0A84FF;
     --shadow-primary: rgba(0, 0, 0, 0.1);
     --shadow-secondary: rgba(0, 0, 0, 0.05);
     
@@ -55,8 +68,8 @@
     --text-tertiary: #94a3b8;
     --border-primary: #334155;
     --border-secondary: #475569;
-    --accent-primary: #3b82f6;
-    --accent-secondary: #6366f1;
+    --accent-primary: #007AFF;
+    --accent-secondary: #0A84FF;
     --shadow-primary: rgba(0, 0, 0, 0.3);
     --shadow-secondary: rgba(0, 0, 0, 0.2);
 }

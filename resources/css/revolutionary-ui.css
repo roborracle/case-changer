@@ -1,6 +1,6 @@
 /* Revolutionary UI Components for Case Changer Pro */
 
-@layer components {
+/* Remove @layer directive - these are custom components not Tailwind components */
   /* Revolutionary Magnetic Hierarchy System */
   .transformation-grid {
     display: grid;
@@ -260,9 +260,8 @@
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
-}
 
-@layer utilities {
+/* Utility classes - removed @layer directive */
   /* Revolutionary Animation System */
   @keyframes magneticFloat {
     0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -416,7 +415,6 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-}
 
 /* Responsive Breakpoints for Magnetic System */
 @media (min-width: 640px) {

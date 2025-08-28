@@ -12,6 +12,7 @@
         h2 { border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
         .iframe-container { width: 100%; height: 600px; border: 2px solid #3b82f6; border-radius: 8px; margin: 20px 0; }
         pre { background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .page-test-table { width: 100%; border-collapse: collapse; }
     </style>
 </head>
 <body>
@@ -106,7 +107,7 @@
                 { url: '/about', name: 'About Page' }
             ];
             
-            let pageHtml = '<table style="width: 100%; border-collapse: collapse;">';
+            let pageHtml = '<table class="page-test-table">';
             pageHtml += '<tr><th>Page</th><th>Status</th><th>CSP</th><th>Clean CSS</th></tr>';
             
             for (const page of pages) {

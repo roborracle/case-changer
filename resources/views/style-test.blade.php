@@ -1,1 +1,78 @@
-<!DOCTYPE html> <html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="theme"> <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Style Test</title> @vite(['resources/css/app.css', 'resources/css/glassmorphism.css', 'resources/css/revolutionary-ui.css', 'resources/js/app.js']) </head> <body class="bg-surface text-primary"> <div class="container mx-auto p-8"> <h1 class="text-4xl font-bold mb-8">Style Test Page</h1> <div class="mb-8"> <button @click="theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('theme', theme); document.documentElement.className = theme;" class="px-6 py-3 rounded-lg bg-blue-600 text-white"> Toggle Theme (Current: <span x-text="theme"></span>) </button> </div> <div class="grid grid-cols-2 gap-8"> <!-- Test CSS Variables --> <div class="p-6 rounded-lg bg-base border border-default"> <h2 class="text-2xl font-semibold mb-4 text-primary">CSS Variables Test</h2> <p class="text-secondary">Secondary text color</p> <p class="text-tertiary">Tertiary text color</p> <div class="mt-4 p-4 rounded bg-elevated"> Tertiary background </div> </div> <!-- Test Glassmorphism --> <div class="glassmorphism-card p-6"> <h2 class="text-2xl font-semibold mb-4">Glassmorphism Test</h2> <p>This should have glass effect</p> </div> <!-- Test Revolutionary UI --> <div class="revolutionary-card p-6"> <h2 class="text-2xl font-semibold mb-4">Revolutionary UI Test</h2> <p>This should have revolutionary effect</p> </div> <!-- Test Buttons --> <div class="p-6 rounded-lg bg-base"> <h2 class="text-2xl font-semibold mb-4">Button Tests</h2> <div class="space-y-4"> <button class="btn-apple-primary">Apple Primary</button> <button class="btn-apple-secondary">Apple Secondary</button> <button class="glass-button">Glass Button</button> </div> </div> </div> <!-- Color Palette --> <div class="mt-8 p-6 rounded-lg bg-base"> <h2 class="text-2xl font-semibold mb-4">Current Theme Colors</h2> <div class="grid grid-cols-6 gap-4"> <div class="p-4 rounded text-center bg-base border border-default">bg-primary</div> <div class="p-4 rounded text-center bg-surface">bg-secondary</div> <div class="p-4 rounded text-center bg-elevated">bg-tertiary</div> <div class="p-4 rounded text-center">accent-primary</div> <div class="p-4 rounded text-center">accent-secondary</div> <div class="p-4 rounded text-center">neutral-500</div> </div> </div> </div> <script> // Log CSS variable values for debugging const root = getComputedStyle(document.documentElement); console.log('CSS Variables Loaded:'); console.log('--bg-primary:', root.getPropertyValue('--bg-primary')); console.log('--bg-secondary:', root.getPropertyValue('--bg-secondary')); console.log('--text-primary:', root.getPropertyValue('--text-primary')); console.log('--accent-primary:', root.getPropertyValue('--accent-primary')); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="theme">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Style Test</title>
+        @vite(['resources/css/app.css', 'resources/css/glassmorphism.css', 'resources/css/revolutionary-ui.css', 'resources/js/app.js'])
+    </head>
+    <body class="bg-surface text-primary">
+        <div class="container mx-auto p-8">
+            <h1 class="text-4xl font-bold mb-8">Style Test Page</h1>
+
+            <div class="mb-8">
+                <button @click="theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('theme', theme); document.documentElement.className = theme;"
+                class="px-6 py-3 rounded-lg bg-blue-600 text-white">
+                Toggle Theme (Current: <span x-text="theme"></span>)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Test CSS Variables -->
+                <div class="p-6 rounded-lg bg-base border border-default">
+                    <h2 class="text-2xl font-semibold mb-4 text-primary">CSS Variables Test</h2>
+                    <p class="text-secondary">Secondary text color</p>
+                    <p class="text-tertiary">Tertiary text color</p>
+                    <div class="mt-4 p-4 rounded bg-elevated">
+                        Tertiary background
+                    </div>
+                </div>
+
+                <!-- Test Glassmorphism -->
+                <div class="glassmorphism-card p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Glassmorphism Test</h2>
+                    <p>This should have glass effect</p>
+                </div>
+
+                <!-- Test Revolutionary UI -->
+                <div class="revolutionary-card p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Revolutionary UI Test</h2>
+                    <p>This should have revolutionary effect</p>
+                </div>
+
+                <!-- Test Buttons -->
+                <div class="p-6 rounded-lg bg-base">
+                    <h2 class="text-2xl font-semibold mb-4">Button Tests</h2>
+                    <div class="space-y-4">
+                        <button class="btn-apple-primary">Apple Primary</button>
+                        <button class="btn-apple-secondary">Apple Secondary</button>
+                        <button class="glass-button">Glass Button</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="mt-8 p-6 rounded-lg bg-base">
+                <h2 class="text-2xl font-semibold mb-4">Current Theme Colors</h2>
+                <div class="grid grid-cols-6 gap-4">
+                    <div class="p-4 rounded text-center bg-base border border-default">bg-primary</div>
+                    <div class="p-4 rounded text-center bg-surface">bg-secondary</div>
+                    <div class="p-4 rounded text-center bg-elevated">bg-tertiary</div>
+                    <div class="p-4 rounded text-center">accent-primary</div>
+                    <div class="p-4 rounded text-center">accent-secondary</div>
+                    <div class="p-4 rounded text-center">neutral-500</div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Log CSS variable values for debugging
+            const root = getComputedStyle(document.documentElement);
+            console.log('CSS Variables Loaded:');
+            console.log('--bg-primary:', root.getPropertyValue('--bg-primary'));
+            console.log('--bg-secondary:', root.getPropertyValue('--bg-secondary'));
+            console.log('--text-primary:', root.getPropertyValue('--text-primary'));
+            console.log('--accent-primary:', root.getPropertyValue('--accent-primary'));
+        </script>
+    </body>
+</html>
