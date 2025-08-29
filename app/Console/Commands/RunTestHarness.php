@@ -45,53 +45,42 @@ class RunTestHarness extends Command
         $this->info('🔧 Starting Automated Test Harness');
         $this->info('=' . str_repeat('=', 50));
         
-        // Check if test harness is enabled
         if (!config('test-harness.enabled', true)) {
             $this->warn('Test harness is disabled in configuration');
             return Command::SUCCESS;
         }
         
-        // Initialize services
         $transformationService = new TransformationService();
         $this->validationService = new ValidationService($transformationService);
         $this->monitor = new TestHarnessMonitor();
         
-        // Check for concurrent runs
         if ($this->isAlreadyRunning()) {
             $this->error('Test harness is already running. Skipping this execution.');
             return Command::FAILURE;
         }
         
         try {
-            // Create run record
             if (!$this->option('dry-run')) {
                 $this->runId = $this->createRunRecord();
             }
             
-            // Lock to prevent concurrent runs
             $this->setRunningLock();
             
-            // Execute validation
             $this->info('Running validation on all 172 tools...');
             $results = $this->runValidation();
             
-            // Process results
             $this->processResults($results);
             
-            // Check for failures and send notifications
             if ($this->option('notify') && $results['failed'] > 0) {
                 $this->sendFailureNotifications($results);
             }
             
-            // Update run record
             if (!$this->option('dry-run')) {
                 $this->updateRunRecord($results, microtime(true) - $startTime);
             }
             
-            // Display summary
             $this->displaySummary($results);
             
-            // Clean up old results
             $this->cleanupOldResults();
             
         } catch (Exception $e) {
@@ -107,7 +96,6 @@ class RunTestHarness extends Command
             
             return Command::FAILURE;
         } finally {
-            // Release lock
             $this->releaseRunningLock();
         }
         
@@ -130,7 +118,6 @@ class RunTestHarness extends Command
      */
     private function setRunningLock(): void
     {
-        cache()->put('test_harness_running', true, 3600); // 1 hour timeout
     }
     
     /**
@@ -162,12 +149,9 @@ class RunTestHarness extends Command
      */
     private function runValidation(): array
     {
-        $timeout = config('test-harness.timeout', 1800); // 30 minutes default
         
-        // Set execution timeout
         set_time_limit($timeout);
         
-        // Run validation
         $results = $this->validationService->validateAllTools();
         
         return $results;
@@ -195,7 +179,6 @@ class RunTestHarness extends Command
                 'created_at' => Carbon::now()
             ]);
             
-            // Track failures for monitoring
             if ($toolResult['status'] === 'failed') {
                 $this->monitor->recordFailure($tool, $toolResult['errors'] ?? []);
             }
@@ -253,23 +236,19 @@ class RunTestHarness extends Command
     {
         $this->info('Sending failure notifications...');
         
-        // Check if we should send notifications based on threshold
         $threshold = config('test-harness.failure_threshold', 5);
         if ($results['failed'] < $threshold) {
             return;
         }
         
-        // Send email notification
         if ($email = config('test-harness.notification_email')) {
             $this->monitor->sendEmailAlert($email, $results);
         }
         
-        // Send Slack notification
         if ($webhook = config('test-harness.slack_webhook')) {
             $this->monitor->sendSlackAlert($webhook, $results);
         }
         
-        // Log critical failure
         Log::critical('Test harness detected failures', [
             'failed_count' => $results['failed'],
             'failed_tools' => $results['summary']['failed_tools'] ?? []
@@ -340,7 +319,6 @@ class RunTestHarness extends Command
         $retentionDays = config('test-harness.retention_days', 30);
         $cutoffDate = Carbon::now()->subDays($retentionDays);
         
-        // Get old run IDs
         $oldRunIds = DB::table('test_harness_runs')
             ->where('created_at', '<', $cutoffDate)
             ->pluck('id');
@@ -349,12 +327,10 @@ class RunTestHarness extends Command
             return;
         }
         
-        // Delete old results
         DB::table('test_harness_results')
             ->whereIn('run_id', $oldRunIds)
             ->delete();
         
-        // Delete old runs
         DB::table('test_harness_runs')
             ->whereIn('id', $oldRunIds)
             ->delete();

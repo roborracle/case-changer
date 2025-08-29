@@ -66,7 +66,6 @@
         </div>
 
         <script>
-            // Log CSS variable values for debugging
             const root = getComputedStyle(document.documentElement);
             console.log('CSS Variables Loaded:');
             console.log('--bg-primary:', root.getPropertyValue('--bg-primary'));

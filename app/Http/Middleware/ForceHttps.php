@@ -19,12 +19,6 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Temporarily disable HTTPS enforcement for local development
-        // if (app()->environment('production') && !$request->secure()) {
-        //     if (!$request->header('X-Forwarded-Proto')) {
-        //         return redirect()->secure($request->getRequestUri(), 301);
-        //     }
-        // }
         
         return $next($request);
     }

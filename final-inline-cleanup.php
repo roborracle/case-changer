@@ -12,11 +12,9 @@ $totalRemoved = 0;
 function removeAllInlineStyles($content) {
     global $totalRemoved;
     
-    // Count inline styles before
     preg_match_all('/style="[^"]*"/', $content, $matches);
     $before = count($matches[0]);
     
-    // Remove ALL style attributes - ZERO TOLERANCE
     $content = preg_replace('/\s*style="[^"]*"/', '', $content);
     
     $totalRemoved += $before;
@@ -28,10 +26,8 @@ function processFile($filePath) {
     $content = file_get_contents($filePath);
     $originalContent = $content;
     
-    // Remove all inline styles
     $content = removeAllInlineStyles($content);
     
-    // Only write if changed
     if ($content !== $originalContent) {
         file_put_contents($filePath, $content);
         echo "✓ Cleaned: " . basename($filePath) . "\n";
@@ -63,7 +59,6 @@ echo "=== FINAL INLINE STYLE CLEANUP - ZERO TOLERANCE ===\n\n";
 
 $filesProcessed = processDirectory($viewsPath);
 
-// Final verification
 $remaining = shell_exec("grep -r 'style=\"' $viewsPath --include='*.blade.php' 2>/dev/null | wc -l");
 $remaining = trim($remaining);
 

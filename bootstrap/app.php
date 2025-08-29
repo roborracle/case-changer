@@ -3,6 +3,9 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,23 +15,40 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Trust all proxies in production (Railway uses dynamic IPs)
-        // The HTTPS detection is now handled in public/index.php
         $middleware->trustProxies(at: '*');
+
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
+        RateLimiter::for('web', function (Request $request) {
+            return Limit::perMinute(100)->by($request->ip());
+        });
+
+        RateLimiter::for('transform', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
+        });
+
+        RateLimiter::for('search', function (Request $request) {
+            return Limit::perMinute(20)->by($request->ip());
+        });
         
-        // Web middleware stack
         $middleware->web(append: [
             \App\Http\Middleware\ForceHttps::class,
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\ApplyTheme::class,
             \App\Http\Middleware\RemoveCspHeader::class,
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
         
-        // Exclude theme cookie from encryption
         $middleware->encryptCookies(except: [
             'case-changer-theme'
         ]);
+
+        $middleware->alias([
+            'validate' => \App\Http\Middleware\ValidationMiddleware::class,
+            'ab.testing' => \App\Http\Middleware\ABTestingMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
     })->create();

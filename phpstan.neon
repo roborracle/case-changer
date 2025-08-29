@@ -1,0 +1,37 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    level: 8
+    
+    paths:
+        - app
+        - tests
+        
+    excludePaths:
+        - app/Console/Kernel.php
+        - app/Exceptions/Handler.php
+        
+    ignoreErrors:
+        # Ignore specific Laravel magic methods
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder#'
+        - '#Call to an undefined method Illuminate\\Support\\Collection#'
+        
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Laravel specific
+    universalObjectCratesClasses:
+        - Illuminate\Database\Eloquent\Model
+        - Illuminate\Http\Request
+        
+    # Treat certain classes as having specific properties
+    earlyTerminatingMethodCalls:
+        Illuminate\Support\Facades\Response:
+            - json
+            - view
+            
+    # Database migrations can have dynamic properties
+    dynamicConstantNames:
+        - DB_*
+        - CACHE_*

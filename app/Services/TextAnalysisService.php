@@ -388,11 +388,9 @@ class TextAnalysisService
             $lower = strtolower($word);
             $isCapitalized = ctype_upper($word[0]);
             
-            // Check if word starts with vowel
             if (preg_match('/^[aeiou]/i', $lower)) {
                 $pigLatin = $lower . 'way';
             } else {
-                // Move consonants to end
                 preg_match('/^([^aeiou]+)(.*)$/i', $lower, $matches);
                 $pigLatin = $matches[2] . $matches[1] . 'ay';
             }

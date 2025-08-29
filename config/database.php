@@ -37,11 +37,6 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => 30000, // 30 seconds timeout for busy connections
-            'journal_mode' => 'WAL', // Write-Ahead Logging for better concurrency
-            'synchronous' => 'NORMAL', // Balance between safety and performance
-            'cache_size' => 20000, // Increase cache size (in KB)
-            'temp_store' => 'MEMORY', // Use memory for temp tables
         ],
 
         'mysql' => [
@@ -110,8 +105,6 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
     ],

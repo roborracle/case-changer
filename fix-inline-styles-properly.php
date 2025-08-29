@@ -2,7 +2,6 @@
 
 $viewsPath = __DIR__ . '/resources/views';
 
-// Mapping of CSS variable styles to Tailwind classes
 $styleReplacements = [
     'style="color: var(--text-primary);"' => 'class="text-primary"',
     'style="color: var(--text-secondary);"' => 'class="text-secondary"',
@@ -13,18 +12,15 @@ $styleReplacements = [
     'style="border-color: var(--border-primary);"' => 'class="border-default"',
     'style="border-color: var(--border-secondary);"' => 'class="border-strong"',
     
-    // Combined styles
     'style="background-color: var(--bg-primary); border-color: var(--border-primary);"' => 'class="bg-base border-default"',
     'style="background-color: var(--bg-secondary); border-color: var(--border-primary);"' => 'class="bg-surface border-default"',
     'style="background-color: var(--bg-tertiary); color: var(--text-tertiary);"' => 'class="bg-elevated text-tertiary"',
     'style="background-color: var(--bg-tertiary); color: var(--text-secondary);"' => 'class="bg-elevated text-secondary"',
     
-    // Navigation specific
     'style="color: var(--accent-primary);"' => 'class="text-blue-500"',
     'style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));"' => 'class="hero-gradient"',
 ];
 
-// Function to process a file
 function processFile($filePath) {
     global $styleReplacements;
     
@@ -32,7 +28,6 @@ function processFile($filePath) {
     $originalContent = $content;
     $changes = 0;
     
-    // Replace simple inline styles
     foreach ($styleReplacements as $oldStyle => $newClass) {
         $count = 0;
         $content = str_replace($oldStyle, $newClass, $content, $count);
@@ -42,13 +37,10 @@ function processFile($filePath) {
         }
     }
     
-    // Handle cases where element already has a class attribute
     foreach ($styleReplacements as $oldStyle => $newClass) {
-        // Extract the class value from replacement
         if (preg_match('/class="([^"]+)"/', $newClass, $matches)) {
             $newClasses = $matches[1];
             
-            // Pattern to match element with existing class and the style to replace
             $pattern = '/(class="[^"]*")\s+' . preg_quote($oldStyle, '/') . '/';
             $replacement = function($matches) use ($newClasses) {
                 $existingClass = rtrim($matches[1], '"');
@@ -63,7 +55,6 @@ function processFile($filePath) {
         }
     }
     
-    // Remove onmouseover and onmouseout handlers - replace with Tailwind hover classes
     $content = preg_replace('/\s+onmouseover="[^"]*"/', '', $content);
     $content = preg_replace('/\s+onmouseout="[^"]*"/', '', $content);
     
@@ -76,7 +67,6 @@ function processFile($filePath) {
     return false;
 }
 
-// Process all blade files
 $iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($viewsPath)
 );

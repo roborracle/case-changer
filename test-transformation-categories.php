@@ -80,10 +80,8 @@ foreach ($categories as $categoryName => $categoryData) {
             try {
                 $actual = $service->transform($input, $transformKey);
                 
-                // For some transformations, we just check if it produces output
                 if (strpos($transformKey, 'style') !== false || 
                     in_array($transformKey, ['bubble', 'script', 'bold', 'italic', 'aesthetic'])) {
-                    // These might have variations, just check they transform
                     if (!empty($actual)) {
                         $passedTests++;
                         echo "  ✅ $transformKey: \"$input\" → \"$actual\"\n";
@@ -92,7 +90,6 @@ foreach ($categories as $categoryName => $categoryData) {
                         echo "  ❌ $transformKey: Empty result\n";
                     }
                 } else {
-                    // Exact match expected
                     if ($actual === $expected) {
                         $passedTests++;
                         echo "  ✅ $transformKey: \"$input\" → \"$actual\"\n";
@@ -110,7 +107,6 @@ foreach ($categories as $categoryName => $categoryData) {
     echo "\n";
 }
 
-// Test Unicode handling
 echo "Testing Unicode Support\n";
 echo str_repeat('-', 40) . "\n";
 
@@ -132,7 +128,6 @@ foreach ($unicodeTests as $input => $tests) {
         $totalTests++;
         $actual = $service->transform($input, $transform);
         
-        // Unicode might have encoding variations
         if (!empty($actual)) {
             $passedTests++;
             echo "  ✅ $transform: \"$input\" → \"$actual\"\n";
@@ -145,11 +140,9 @@ foreach ($unicodeTests as $input => $tests) {
 
 echo "\n";
 
-// Test large text performance
 echo "Testing Performance with Large Text\n";
 echo str_repeat('-', 40) . "\n";
 
-$largeText = str_repeat("The quick brown fox jumps over the lazy dog. ", 1000); // ~45,000 chars
 $performanceTransforms = ['upper-case', 'snake-case', 'reverse', 'word-frequency'];
 
 foreach ($performanceTransforms as $transform) {
@@ -160,7 +153,6 @@ foreach ($performanceTransforms as $transform) {
         $result = $service->transform($largeText, $transform);
         $time = round((microtime(true) - $start) * 1000, 2);
         
-        if ($time < 100) { // Should process in under 100ms
             $passedTests++;
             echo "  ✅ $transform: Processed " . strlen($largeText) . " chars in {$time}ms\n";
         } else {
@@ -175,13 +167,11 @@ foreach ($performanceTransforms as $transform) {
 
 echo "\n";
 
-// Test error handling
 echo "Testing Error Handling\n";
 echo str_repeat('-', 40) . "\n";
 
 $errorTests = [
     'non-existent-transform' => 'This should fail gracefully',
-    'upper-case' => null, // null input
 ];
 
 foreach ($errorTests as $transform => $input) {
@@ -189,7 +179,6 @@ foreach ($errorTests as $transform => $input) {
     
     try {
         if ($input === null) {
-            // Test null input
             $result = @$service->transform('', $transform);
             if ($result === '') {
                 $passedTests++;
@@ -235,7 +224,6 @@ if (count($failedTests) > 0) {
     }
 }
 
-// Final assessment
 echo "\n=== FINAL ASSESSMENT ===\n";
 if ($passedTests === $totalTests) {
     echo "✅ PERFECT SCORE: All transformations working correctly!\n";

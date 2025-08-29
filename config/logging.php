@@ -89,7 +89,6 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -99,7 +98,6 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
             'handler_with' => [
-                'stream' => 'php://stderr',
             ],
             'formatter' => env('LOG_STDERR_FORMATTER'),
             'processors' => [PsrLogMessageProcessor::class],
@@ -124,7 +122,67 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/emergency.log'),
+            'level' => 'emergency',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
+        'alert' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/alert.log'),
+            'level' => 'alert',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
+        'critical' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/critical.log'),
+            'level' => 'critical',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
+        'error' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/error.log'),
+            'level' => 'error',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
+        'warning' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/warning.log'),
+            'level' => 'warning',
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'notice' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/notice.log'),
+            'level' => 'notice',
+            'days' => 7,
+            'replace_placeholders' => true,
+        ],
+
+        'info' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/info.log'),
+            'level' => 'info',
+            'days' => 7,
+            'replace_placeholders' => true,
+        ],
+
+        'debug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/debug.log'),
+            'level' => 'debug',
+            'days' => 3,
+            'replace_placeholders' => true,
         ],
 
         'security' => [
@@ -148,6 +206,14 @@ return [
             'path' => storage_path('logs/audit.log'),
             'level' => 'info',
             'days' => 90,
+            'replace_placeholders' => true,
+        ],
+
+        'validation' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/validation.log'),
+            'level' => 'debug',
+            'days' => 7,
             'replace_placeholders' => true,
         ],
 

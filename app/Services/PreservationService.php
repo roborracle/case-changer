@@ -103,65 +103,53 @@ class PreservationService
         $this->preservedContent = [];
         $placeholderIndex = 0;
 
-        // Preserve code blocks first (they might contain other patterns)
         if ($this->settings['preserveCode']) {
             $text = $this->preservePattern($text, 'code_block', $placeholderIndex);
             $text = $this->preservePattern($text, 'code_inline', $placeholderIndex);
         }
 
-        // Preserve math expressions
         if ($this->settings['preserveMath']) {
             $text = $this->preservePattern($text, 'math_block', $placeholderIndex);
             $text = $this->preservePattern($text, 'math_inline', $placeholderIndex);
         }
 
-        // Preserve URLs
         if ($this->settings['preserveUrls']) {
             $text = $this->preservePattern($text, 'url', $placeholderIndex);
         }
 
-        // Preserve email addresses
         if ($this->settings['preserveEmails']) {
             $text = $this->preservePattern($text, 'email', $placeholderIndex);
         }
 
-        // Preserve brand names
         if ($this->settings['preserveBrands']) {
             $text = $this->preserveBrandNames($text, $placeholderIndex);
         }
 
-        // Preserve hashtags
         if ($this->settings['preserveHashtags']) {
             $text = $this->preservePattern($text, 'hashtag', $placeholderIndex);
         }
 
-        // Preserve mentions
         if ($this->settings['preserveMentions']) {
             $text = $this->preservePattern($text, 'mention', $placeholderIndex);
         }
 
-        // Preserve dates
         if ($this->settings['preserveDates']) {
             $text = $this->preservePattern($text, 'date_iso', $placeholderIndex);
         }
 
-        // Preserve file paths
         if ($this->settings['preserveFilePaths']) {
             $text = $this->preservePattern($text, 'file_path', $placeholderIndex);
         }
 
-        // Preserve currency
         if ($this->settings['preserveCurrency']) {
             $text = $this->preservePattern($text, 'currency', $placeholderIndex);
             $text = $this->preservePattern($text, 'percentage', $placeholderIndex);
         }
 
-        // Preserve custom patterns
         if ($this->settings['preserveCustom'] && !empty($this->customPatterns)) {
             $text = $this->preserveCustomPatterns($text, $placeholderIndex);
         }
 
-        // Return tuple of [text with placeholders, preserved items array]
         return [$text, $this->preservedContent];
     }
 
@@ -190,13 +178,10 @@ class PreservationService
      */
     public function transformWithPreservation(string $text, callable $transformer): string
     {
-        // Step 1: Preserve special content
         [$textWithPlaceholders, $preservedItems] = $this->preserveContent($text);
         
-        // Step 2: Apply transformation
         $transformedText = $transformer($textWithPlaceholders);
         
-        // Step 3: Restore preserved content
         return $this->restoreContent($transformedText, $preservedItems);
     }
 
@@ -387,7 +372,6 @@ class PreservationService
             }
         }
 
-        // Check for brand names
         $brandCount = 0;
         foreach ($this->brandNames as $brand) {
             $pattern = '/\b' . preg_quote($brand, '/') . '\b/i';

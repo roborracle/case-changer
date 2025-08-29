@@ -7,9 +7,7 @@
  * Task #16 - Mobile Audit
  */
 
-$baseUrl = 'http://localhost:8002';
 
-// Mobile viewport configurations
 $viewports = [
     'iPhone SE' => ['width' => 375, 'height' => 667],
     'iPhone 12' => ['width' => 390, 'height' => 844],
@@ -19,7 +17,6 @@ $viewports = [
     'iPad Pro' => ['width' => 1024, 'height' => 1366],
 ];
 
-// Tailwind CSS breakpoints
 $breakpoints = [
     'xs' => 0,
     'sm' => 640,
@@ -41,7 +38,6 @@ echo "=================================================\n";
 echo "MOBILE RESPONSIVENESS AUDIT - TASK #16\n";
 echo "=================================================\n\n";
 
-// Test 1: Check Meta Tags
 echo "1. Checking Viewport Meta Tags...\n";
 $pages = ['/', '/conversions', '/conversions/case-formats/uppercase'];
 foreach ($pages as $page) {
@@ -62,7 +58,6 @@ foreach ($pages as $page) {
     }
 }
 
-// Test 2: Analyze Responsive Classes
 echo "\n2. Analyzing Responsive Classes...\n";
 $homepage = @file_get_contents($baseUrl);
 if ($homepage) {
@@ -88,24 +83,19 @@ if ($homepage) {
     }
 }
 
-// Test 3: Content Analysis at Different Breakpoints
 echo "\n3. Testing Content at Mobile Breakpoints...\n";
 foreach ($viewports as $device => $viewport) {
     echo "   Testing $device ({$viewport['width']}x{$viewport['height']})...\n";
     
-    // Simulate viewport by checking content
     $html = @file_get_contents($baseUrl);
     if ($html) {
-        // Check for horizontal scroll indicators
         $hasOverflow = strpos($html, 'overflow-x-auto') !== false;
         $hasScrollbar = strpos($html, 'scrollbar') !== false;
         
-        // Check for mobile-specific elements
         $hasMobileMenu = strpos($html, 'mobile-menu') !== false || 
                          strpos($html, 'hamburger') !== false ||
                          strpos($html, 'lg:hidden') !== false;
         
-        // Check for touch targets
         $hasLargeButtons = strpos($html, 'p-4') !== false || 
                            strpos($html, 'py-3') !== false ||
                            strpos($html, 'h-12') !== false;
@@ -123,7 +113,6 @@ foreach ($viewports as $device => $viewport) {
     }
 }
 
-// Test 4: Check Text Readability
 echo "\n4. Checking Text Readability...\n";
 $html = @file_get_contents($baseUrl);
 if ($html) {
@@ -142,7 +131,6 @@ if ($html) {
         $count = substr_count($html, $pattern);
         $totalTextElements += $count;
         
-        // text-base and larger are considered readable on mobile
         if (in_array($pattern, ['text-base', 'text-lg', 'text-xl'])) {
             $readableTextElements += $count;
         }
@@ -160,7 +148,6 @@ if ($html) {
     }
 }
 
-// Test 5: Check Touch Target Sizes
 echo "\n5. Checking Touch Target Sizes...\n";
 $html = @file_get_contents($baseUrl);
 if ($html) {
@@ -206,7 +193,6 @@ if ($html) {
     }
 }
 
-// Test 6: Check Grid Layouts
 echo "\n6. Checking Grid Responsiveness...\n";
 $html = @file_get_contents($baseUrl);
 if ($html) {
@@ -232,7 +218,6 @@ if ($html) {
     }
 }
 
-// Calculate Overall Score
 echo "\n=================================================\n";
 echo "MOBILE RESPONSIVENESS SUMMARY\n";
 echo "=================================================\n\n";
@@ -240,7 +225,6 @@ echo "=================================================\n\n";
 $score = 100;
 $deductions = [];
 
-// Score deductions
 if (!empty($results['issues'])) {
     foreach ($results['issues'] as $issue) {
         $score -= 10;
@@ -248,7 +232,6 @@ if (!empty($results['issues'])) {
     }
 }
 
-// Check meta tags
 $metaTagsPassed = 0;
 foreach ($results['meta_tags'] as $page => $tags) {
     if ($tags['status'] === 'PASS') {
@@ -260,7 +243,6 @@ if ($metaTagsPassed < count($results['meta_tags'])) {
     $deductions[] = "-20: Missing viewport meta tags";
 }
 
-// Check responsive classes
 if (array_sum($results['responsive_classes']) < 10) {
     $score -= 15;
     $deductions[] = "-15: Insufficient responsive classes";
@@ -279,7 +261,6 @@ if (!empty($deductions)) {
     echo "\n";
 }
 
-// Recommendations
 echo "Recommendations:\n";
 
 if ($score >= 90) {
@@ -297,7 +278,6 @@ if ($score >= 90) {
     echo "   - Add mobile navigation menu\n";
 }
 
-// Device-specific results
 echo "\nDevice Compatibility:\n";
 foreach ($viewports as $device => $viewport) {
     if (isset($results['page_tests'][$device])) {

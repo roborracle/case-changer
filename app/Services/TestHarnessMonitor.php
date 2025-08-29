@@ -19,10 +19,8 @@ class TestHarnessMonitor
      */
     public function recordFailure(string $tool, array $errors): void
     {
-        // Track consecutive failures
         $this->incrementFailureCount($tool);
         
-        // Log failure details
         Log::warning('Tool validation failed', [
             'tool' => $tool,
             'errors' => $errors,
@@ -30,7 +28,6 @@ class TestHarnessMonitor
             'timestamp' => Carbon::now()->toIso8601String()
         ]);
         
-        // Store in database
         DB::table('test_harness_failures')->insert([
             'tool_name' => $tool,
             'error_details' => json_encode($errors),
@@ -47,12 +44,10 @@ class TestHarnessMonitor
         $baseline = $this->getPerformanceBaseline($tool);
         
         if (!$baseline) {
-            // No baseline yet, establish it
             $this->setPerformanceBaseline($tool, $executionTime);
             return false;
         }
         
-        // Check if execution time is >20% slower than baseline
         $threshold = $baseline * 1.2;
         $isDegraded = $executionTime > $threshold;
         
@@ -73,7 +68,6 @@ class TestHarnessMonitor
      */
     public function detectMemoryLeak(int $runId): bool
     {
-        // Get last 5 runs
         $recentRuns = DB::table('test_harness_runs')
             ->where('id', '<=', $runId)
             ->orderBy('id', 'desc')
@@ -82,10 +76,8 @@ class TestHarnessMonitor
             ->toArray();
         
         if (count($recentRuns) < 5) {
-            return false; // Not enough data
         }
         
-        // Check for consistent increase in memory usage
         $increases = 0;
         for ($i = 1; $i < count($recentRuns); $i++) {
             if ($recentRuns[$i] > $recentRuns[$i - 1]) {
@@ -93,7 +85,6 @@ class TestHarnessMonitor
             }
         }
         
-        // If memory increased in 4 out of 5 runs, potential leak
         $hasLeak = $increases >= 4;
         
         if ($hasLeak) {
@@ -120,16 +111,12 @@ class TestHarnessMonitor
                 'success_rate' => $results['success_rate'] ?? 0
             ];
             
-            // Use Laravel Mail facade (you would need to create the Mailable class)
-            // For now, we'll just log that we would send an email
             Log::info('Email alert would be sent', [
                 'to' => $email,
                 'subject' => 'Test Harness Alert: ' . count($results['summary']['failed_tools'] ?? []) . ' tools failed',
                 'data' => $data
             ]);
             
-            // In production, you would use:
-            // Mail::to($email)->send(new TestHarnessAlert($data));
             
         } catch (Exception $e) {
             Log::error('Failed to send email alert', [
@@ -193,7 +180,6 @@ class TestHarnessMonitor
         } catch (Exception $e) {
             Log::error('Failed to send Slack alert', [
                 'error' => $e->getMessage(),
-                'webhook' => substr($webhook, 0, 50) . '...' // Don't log full webhook URL
             ]);
         }
     }
@@ -210,14 +196,12 @@ class TestHarnessMonitor
             ->first();
         
         if (!$lastSuccess) {
-            // Never succeeded, count all failures
             return DB::table('test_harness_results')
                 ->where('tool_name', $tool)
                 ->where('status', 'failed')
                 ->count();
         }
         
-        // Count failures since last success
         return DB::table('test_harness_results')
             ->where('tool_name', $tool)
             ->where('status', 'failed')
@@ -241,13 +225,11 @@ class TestHarnessMonitor
      */
     private function getPerformanceBaseline(string $tool): ?float
     {
-        // Try cache first
         $cached = cache()->get("test_harness_baseline_{$tool}");
         if ($cached) {
             return $cached;
         }
         
-        // Get average of last 10 successful runs
         $baseline = DB::table('test_harness_results')
             ->where('tool_name', $tool)
             ->where('status', 'passed')
@@ -256,7 +238,6 @@ class TestHarnessMonitor
             ->avg('execution_time');
         
         if ($baseline) {
-            // Cache for 24 hours
             cache()->put("test_harness_baseline_{$tool}", $baseline, 86400);
         }
         
@@ -290,7 +271,6 @@ class TestHarnessMonitor
         
         $hoursSinceLastRun = Carbon::parse($lastRun->created_at)->diffInHours();
         
-        // Determine health based on last run and timing
         $health = 'healthy';
         $message = 'System operating normally';
         
@@ -336,11 +316,9 @@ class TestHarnessMonitor
             return Carbon::now()->addHours(6)->toIso8601String();
         }
         
-        // Calculate next 6-hour interval
         $lastRunTime = Carbon::parse($lastRun);
         $nextRun = $lastRunTime->copy()->addHours(6);
         
-        // If next run is in the past, calculate from now
         if ($nextRun->isPast()) {
             $hoursToAdd = 6 - (Carbon::now()->diffInHours($lastRunTime) % 6);
             $nextRun = Carbon::now()->addHours($hoursToAdd);

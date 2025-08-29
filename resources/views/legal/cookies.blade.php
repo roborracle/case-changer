@@ -51,7 +51,6 @@
                         <p>You have several options for managing cookies:</p>
                         <ul class="list-disc pl-6 space-y-2">
                             <li><strong>Browser Settings:</strong> Most browsers allow you to block or delete cookies through their settings menu.</li>
-                            <li><strong>Opt-Out of Analytics:</strong> You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Google Analytics Opt-out Browser Add-on</a>.</li>
                             <li><strong>Theme Preference:</strong> You can change your theme preference at any time using the toggle in the navigation bar.</li>
                         </ul>
                     </section>

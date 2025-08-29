@@ -9,13 +9,11 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        @if(isset($schemaData))
-        <script type="application/ld+json">
-            {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-        </script>
-        @endif
     </head>
     <body class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-sky-900">
+        <script type="application/ld+json">
+            {!! $schemaData !!}
+        </script>
         <div class="min-h-screen flex items-center justify-center p-8">
             <div class="max-w-4xl w-full">
                 <div class="text-center mb-12">

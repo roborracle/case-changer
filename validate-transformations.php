@@ -35,7 +35,6 @@ $results = [
 echo "=== CASE CHANGER PRO - TRANSFORMATION VALIDATION ===\n";
 echo "Testing " . count($transformations) . " transformation methods\n\n";
 
-// Test each transformation
 foreach ($transformations as $key => $name) {
     $transformResults = [];
     $hasError = false;
@@ -47,16 +46,12 @@ foreach ($transformations as $key => $name) {
             $result = $service->transform($testText, $key);
             $transformResults[$caseType] = $result;
             
-            // Basic validation - should return a string
             if (!is_string($result)) {
                 $hasError = true;
                 $results['errors'][] = "$key returned non-string for $caseType";
             }
             
-            // Empty input should generally return empty output
             if ($caseType === 'edge_empty' && $result !== '') {
-                // Some transformations might add formatting even to empty strings
-                // This is not necessarily an error
             }
             
         } catch (Exception $e) {
@@ -74,7 +69,6 @@ foreach ($transformations as $key => $name) {
         echo "  ✅ PASSED\n";
     }
     
-    // Store results for reporting
     $results['transformations'][$key] = [
         'name' => $name,
         'results' => $transformResults,
@@ -84,7 +78,6 @@ foreach ($transformations as $key => $name) {
 
 echo "\n=== DETAILED TRANSFORMATION RESULTS ===\n\n";
 
-// Show sample outputs for key transformations
 $sampleTransforms = [
     'upper-case', 'lower-case', 'title-case', 'camel-case', 'snake-case',
     'ap-style', 'reverse', 'aesthetic', 'bubble', 'british-english'
@@ -104,10 +97,8 @@ foreach ($sampleTransforms as $transform) {
     }
 }
 
-// Test specific edge cases
 echo "\n=== EDGE CASE TESTING ===\n\n";
 
-// Test 1: Empty string handling
 echo "1. Empty String Handling:\n";
 $emptyTests = ['upper-case', 'title-case', 'reverse', 'remove-spaces'];
 foreach ($emptyTests as $transform) {
@@ -115,7 +106,6 @@ foreach ($emptyTests as $transform) {
     echo "  $transform: " . ($result === '' ? 'Empty (✓)' : "\"$result\"") . "\n";
 }
 
-// Test 2: Unicode preservation
 echo "\n2. Unicode Preservation:\n";
 $unicodeText = "Café Zürich 北京";
 $unicodeTests = ['upper-case', 'lower-case', 'reverse'];
@@ -124,7 +114,6 @@ foreach ($unicodeTests as $transform) {
     echo "  $transform: $result\n";
 }
 
-// Test 3: Number handling
 echo "\n3. Number Handling:\n";
 $numberText = "Item 123 costs $45.67";
 $numberTests = ['upper-case', 'snake-case', 'extract-numbers'];
@@ -133,10 +122,8 @@ foreach ($numberTests as $transform) {
     echo "  $transform: $result\n";
 }
 
-// Test API endpoints
 echo "\n=== API ENDPOINT TESTING ===\n\n";
 
-$baseUrl = 'http://localhost:8000';
 $apiTests = [
     ['text' => 'Test API Text', 'transformation' => 'upper-case'],
     ['text' => 'Convert This to Snake', 'transformation' => 'snake-case'],
@@ -174,7 +161,6 @@ foreach ($apiTests as $test) {
     }
 }
 
-// Performance testing
 echo "\n=== PERFORMANCE TESTING ===\n\n";
 
 $largeText = str_repeat("The quick brown fox jumps over the lazy dog. ", 100);
@@ -194,7 +180,6 @@ foreach ($performanceTests as $transform) {
     );
 }
 
-// Summary
 echo "\n=== VALIDATION SUMMARY ===\n";
 echo "Total Transformations: " . count($transformations) . "\n";
 echo "Passed: {$results['passed']}\n";
@@ -211,9 +196,7 @@ if (count($results['errors']) > 0) {
     }
 }
 
-// Check for missing transformations
 echo "\n=== TRANSFORMATION COVERAGE ===\n";
-$expectedCount = 87; // Based on the service file
 $actualCount = count($transformations);
 
 if ($actualCount === $expectedCount) {
@@ -222,7 +205,6 @@ if ($actualCount === $expectedCount) {
     echo "⚠️  Expected $expectedCount transformations, found $actualCount\n";
 }
 
-// Final verdict
 echo "\n=== FINAL VERDICT ===\n";
 if ($results['passed'] === count($transformations) && count($results['errors']) === 0) {
     echo "✅ ALL TRANSFORMATIONS VALIDATED SUCCESSFULLY!\n";

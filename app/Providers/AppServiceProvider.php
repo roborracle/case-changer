@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Services\SecurityService;
 use App\Services\CacheService;
+use App\Contracts\ValidationLoggerInterface;
+use App\Services\ValidationLogger;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,15 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Register SecurityService as singleton
         $this->app->singleton(SecurityService::class, function ($app) {
             return new SecurityService();
         });
         
-        // Register CacheService as singleton
         $this->app->singleton(CacheService::class, function ($app) {
             return new CacheService();
         });
+
+        $this->app->bind(ValidationLoggerInterface::class, ValidationLogger::class);
     }
 
     /**
@@ -29,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS in production for asset URLs
         if ($this->app->environment('production')) {
             \URL::forceScheme('https');
         }

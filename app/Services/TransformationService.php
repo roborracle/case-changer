@@ -6,10 +6,21 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Transformation;
 use Exception;
 use InvalidArgumentException;
+use App\Services\CacheService;
+use App\Services\SecurityService;
 
 class TransformationService
 {
-        private $transformations = [
+    private $cacheService;
+    private $securityService;
+
+    public function __construct(CacheService $cacheService, SecurityService $securityService)
+    {
+        $this->cacheService = $cacheService;
+        $this->securityService = $securityService;
+    }
+
+    private $transformations = [
         'upper-case' => 'Upper Case',
         'lower-case' => 'Lower Case',
         'title-case' => 'Title Case',
@@ -189,72 +200,44 @@ class TransformationService
         return $this->transformations;
     }
 
-    /**
-     * Transform text using the specified transformation with comprehensive error handling
-     */
     public function transform(string $text, string $transformation): string
     {
         try {
-            // Input validation
+            $text = $this->securityService->sanitize($text);
+
             if (empty($text) && !in_array($transformation, $this->getGeneratorTransformations())) {
-                Log::warning('Empty input provided for transformation', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text)
-                ]);
                 return 'Error: Please provide text to transform.';
             }
 
             if (strlen($text) > 50000) {
-                Log::warning('Input text too long', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text)
-                ]);
                 return 'Error: Text is too long. Please limit to 50,000 characters.';
             }
 
             if (!array_key_exists($transformation, $this->transformations)) {
-                Log::error('Invalid transformation requested', [
-                    'transformation' => $transformation,
-                    'available_transformations' => array_keys($this->transformations)
-                ]);
                 return 'Error: Invalid transformation type.';
             }
 
-            $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
+            $className = 'App\\Transformations\\' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation))) . 'Transformation';
 
-            if (!method_exists($this, $methodName)) {
-                Log::error('Transformation method not found', [
-                    'transformation' => $transformation,
-                    'method' => $methodName
-                ]);
-                return 'Error: Transformation method not implemented.';
+            if (!class_exists($className)) {
+                return 'Error: Transformation not implemented.';
             }
 
-            // Execute transformation with error handling
-            $result = $this->executeTransformation($methodName, $text, $transformation);
-            
-            // Log successful transformation (optional, can be disabled in production)
-            if (config('app.debug')) {
-                Log::info('Transformation completed successfully', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text),
-                    'output_length' => strlen($result)
-                ]);
-            }
-            
-            // Store transformation in database for analytics
+            $cacheKey = "transformation:{$transformation}:" . md5($text);
+            $result = $this->cacheService->remember($cacheKey, 3600, function () use ($className, $text) {
+                $transformer = new $className();
+                return $transformer->transform($text);
+            });
+
             $this->storeTransformation($transformation, $text, $result);
-            
-            return $result;
 
+            return $result;
         } catch (Exception $e) {
-            Log::error('Transformation failed with exception', [
+            Log::error('Transformation failed', [
                 'transformation' => $transformation,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'input_length' => strlen($text ?? '')
             ]);
-            return 'Error: Transformation failed. Please try again.';
+            return 'Error: An unexpected error occurred.';
         }
     }
 
@@ -266,12 +249,10 @@ class TransformationService
         try {
             $result = $this->$methodName($text);
             
-            // Validate result
             if ($result === null || $result === false) {
                 throw new Exception('Transformation returned invalid result');
             }
             
-            // Convert result to string if needed
             if (!is_string($result)) {
                 $result = (string) $result;
             }
@@ -297,13 +278,11 @@ class TransformationService
         try {
             Transformation::create([
                 'transformation_type' => $transformationType,
-                'input_text' => substr($inputText, 0, 10000), // Limit stored text length
                 'output_text' => substr($outputText, 0, 10000),
                 'user_ip' => request()?->ip(),
                 'user_agent' => substr(request()?->userAgent() ?? '', 0, 500)
             ]);
         } catch (Exception $e) {
-            // Don't fail transformation if storage fails
             Log::error('Failed to store transformation', [
                 'transformation_type' => $transformationType,
                 'error' => $e->getMessage()
@@ -332,18 +311,6 @@ class TransformationService
         ];
     }
 
-    private function toUpperCase(string $text): string
-    {
-        try {
-            if (empty($text)) {
-                return '';
-            }
-            return mb_strtoupper($text, 'UTF-8');
-        } catch (Exception $e) {
-            Log::error('Upper case transformation failed', ['error' => $e->getMessage()]);
-            throw new Exception('Failed to convert to upper case');
-        }
-    }
 
     private function toLowerCase(string $text): string
     {
@@ -378,9 +345,7 @@ class TransformationService
                 return '';
             }
             $text = mb_strtolower($text, 'UTF-8');
-            // Capitalize first letter
             $text = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($text, 1, null, 'UTF-8');
-            // Capitalize after periods, exclamation marks, and question marks
             $text = preg_replace_callback('/([.!?]\s+)([a-z])/u', function($matches) {
                 return $matches[1] . mb_strtoupper($matches[2], 'UTF-8');
             }, $text);
@@ -451,13 +416,9 @@ class TransformationService
 
     private function toSnakeCase(string $text): string
     {
-        // First handle camelCase and PascalCase
         $text = preg_replace('/(?<!^)[A-Z]/', '_$0', $text);
-        // Replace spaces and hyphens with underscores
         $text = str_replace([' ', '-'], '_', $text);
-        // Remove multiple underscores
         $text = preg_replace('/_+/', '_', $text);
-        // Convert to lowercase and trim underscores
         return mb_strtolower(trim($text, '_'), 'UTF-8');
     }
 
@@ -732,7 +693,6 @@ class TransformationService
 
     private function toCodeComments(string $text): string
     {
-        return "// " . $this->toSentenceCase($text);
     }
 
     private function toWikiStyle(string $text): string
@@ -745,7 +705,6 @@ class TransformationService
         return "Markdown Style: " . $this->toSentenceCase($text);
     }
 
-    // ================== INTERNATIONAL & REGIONAL FORMATS ==================
     
     private function toBritishEnglish(string $text): string
     {
@@ -787,16 +746,13 @@ class TransformationService
     
     private function toEUFormat(string $text): string
     {
-        // EU date format: DD/MM/YYYY
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$2/$1/$3', $text);
-        // EU decimal separator
         $text = preg_replace('/\b(\d+)\.(\d+)\b/', '$1,$2', $text);
         return $text;
     }
     
     private function toISOFormat(string $text): string
     {
-        // ISO 8601 date format
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$3-$1-$2', $text);
         return $text;
     }
@@ -811,10 +767,8 @@ class TransformationService
     
     private function toASCIIConvert(string $text): string
     {
-        return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
     }
     
-    // ================== UTILITY TRANSFORMATIONS ==================
     
     private function toRemoveSpaces(string $text): string
     {
@@ -876,7 +830,6 @@ class TransformationService
         return implode(' ', $words);
     }
     
-    // ================== TEXT EFFECTS ==================
     
     private function toBoldText(string $text): string
     {
@@ -958,11 +911,8 @@ class TransformationService
     
     private function toInvisibleText(string $text): string
     {
-        // Zero-width characters
-        return preg_replace('/(.)/u', '$1​', $text); // Zero-width space U+200B
     }
     
-    // ================== GENERATORS ==================
     
     private function toPasswordGenerator(string $text): string
     {
@@ -1070,7 +1020,6 @@ class TransformationService
         return sprintf('(%03d) %03d-%04d', rand(200, 999), rand(200, 999), rand(1000, 9999));
     }
     
-    // ================== CODE & DATA TOOLS ==================
     
     private function toBinaryTranslator(string $text): string
     {
@@ -1142,7 +1091,6 @@ class TransformationService
         if (json_last_error() === JSON_ERROR_NONE) {
             return json_encode($decoded, JSON_PRETTY_PRINT);
         }
-        // If not valid JSON, convert to JSON
         return json_encode($text);
     }
     
@@ -1167,7 +1115,6 @@ class TransformationService
     
     private function toCSSFormatter(string $text): string
     {
-        // Basic CSS formatting
         $text = preg_replace('/\s*{\s*/', ' {\n  ', $text);
         $text = preg_replace('/;\s*/', ';\n  ', $text);
         $text = preg_replace('/\s*}\s*/', '\n}\n', $text);
@@ -1176,14 +1123,12 @@ class TransformationService
     
     private function toHTMLFormatter(string $text): string
     {
-        // Basic HTML formatting
         $text = preg_replace('/></', '>\n<', $text);
         return $text;
     }
     
     private function toJavaScriptFormatter(string $text): string
     {
-        // Basic JS formatting
         $text = preg_replace('/;\s*/', ';\n', $text);
         $text = preg_replace('/\{\s*/', ' {\n  ', $text);
         $text = preg_replace('/\}\s*/', '\n}\n', $text);
@@ -1201,7 +1146,6 @@ class TransformationService
     
     private function toYAMLFormatter(string $text): string
     {
-        // Basic YAML formatting
         $lines = explode("\n", $text);
         $formatted = [];
         foreach ($lines as $line) {
@@ -1231,14 +1175,12 @@ class TransformationService
     private function toSlugifyGenerator(string $text): string
     {
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
         $text = preg_replace('~[^-\w]+~', '', $text);
         $text = trim($text, '-');
         $text = preg_replace('~-+~', '-', $text);
         return strtolower($text);
     }
     
-    // ================== TEXT ANALYSIS & CLEANUP ==================
     
     private function toSentenceCounter(string $text): string
     {
@@ -1267,7 +1209,6 @@ class TransformationService
     
     private function toTextReplacer(string $text): string
     {
-        // Default example: replace "old" with "new"
         return str_replace('old', 'new', $text);
     }
     
@@ -1340,11 +1281,9 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    // ================== SOCIAL MEDIA GENERATORS ==================
     
     private function toDiscordFont(string $text): string
     {
-        return '**' . $text . '**'; // Bold for Discord
     }
     
     private function toFacebookFont(string $text): string
@@ -1387,7 +1326,6 @@ class TransformationService
         return strtr(strtolower($text), $normal, $wingdings);
     }
     
-    // ================== MISCELLANEOUS ==================
     
     private function toNATOPhonetic(string $text): string
     {
@@ -1410,7 +1348,6 @@ class TransformationService
     
     private function toRomanNumerals(string $text): string
     {
-        // Convert numbers to Roman numerals
         if (!is_numeric($text)) {
             return $text;
         }
@@ -1429,7 +1366,6 @@ class TransformationService
         return $result;
     }
 
-    // Developer Tools Methods
     private function toSqlCase(string $text): string {
         try {
             if (empty($text)) {
@@ -1470,10 +1406,8 @@ class TransformationService
         return lcfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
-    // Text Analysis Methods
     private function toReadingTime($text) {
         $wordCount = str_word_count($text);
-        $minutes = ceil($wordCount / 200); // Average reading speed
         return "$minutes minute" . ($minutes > 1 ? "s" : "") . " read time";
     }
     
@@ -1523,7 +1457,6 @@ class TransformationService
         return "$unique unique words";
     }
     
-    // Advanced Format Methods
     private function toScientificNotation($text) {
         if (is_numeric($text)) {
             $num = (float)$text;
@@ -1554,7 +1487,6 @@ class TransformationService
             
             if ($fraction == 0) return "$whole";
             
-            // Simple fraction approximation
             $numerator = round($fraction * 100);
             $denominator = 100;
             $gcd = $this->gcd($numerator, $denominator);
@@ -1597,7 +1529,6 @@ class TransformationService
         return strtr($text, $numbers);
     }
     
-    // Helper methods
     private function countSyllables($text) {
         $text = strtolower($text);
         $syllables = 0;
@@ -1612,5 +1543,208 @@ class TransformationService
     
     private function gcd($a, $b) {
         return $b ? $this->gcd($b, $a % $b) : $a;
+    }
+    
+    /**
+     * Get the category for a specific tool
+     */
+    public function getToolCategory(string $toolId): string
+    {
+        $categories = [
+            'upper-case' => 'Case Conversion',
+            'lower-case' => 'Case Conversion',
+            'title-case' => 'Case Conversion',
+            'sentence-case' => 'Case Conversion',
+            'capitalize-words' => 'Case Conversion',
+            'alternating-case' => 'Case Conversion',
+            'inverse-case' => 'Case Conversion',
+            
+            'camel-case' => 'Programming Cases',
+            'pascal-case' => 'Programming Cases',
+            'snake-case' => 'Programming Cases',
+            'constant-case' => 'Programming Cases',
+            'kebab-case' => 'Programming Cases',
+            'dot-case' => 'Programming Cases',
+            'path-case' => 'Programming Cases',
+            'sql-case' => 'Programming Cases',
+            'python-case' => 'Programming Cases',
+            'java-case' => 'Programming Cases',
+            'php-case' => 'Programming Cases',
+            'ruby-case' => 'Programming Cases',
+            'go-case' => 'Programming Cases',
+            'rust-case' => 'Programming Cases',
+            'swift-case' => 'Programming Cases',
+            
+            'ap-style' => 'Style Guides',
+            'nyt-style' => 'Style Guides',
+            'chicago-style' => 'Style Guides',
+            'guardian-style' => 'Style Guides',
+            'bbc-style' => 'Style Guides',
+            'reuters-style' => 'Style Guides',
+            'economist-style' => 'Style Guides',
+            'wsj-style' => 'Style Guides',
+            'apa-style' => 'Style Guides',
+            'mla-style' => 'Style Guides',
+            'chicago-author-date' => 'Style Guides',
+            'chicago-notes' => 'Style Guides',
+            'harvard-style' => 'Style Guides',
+            'vancouver-style' => 'Style Guides',
+            'ieee-style' => 'Style Guides',
+            'ama-style' => 'Style Guides',
+            'bluebook-style' => 'Style Guides',
+            
+            'reverse' => 'Text Effects',
+            'aesthetic' => 'Text Effects',
+            'sarcasm' => 'Text Effects',
+            'smallcaps' => 'Text Effects',
+            'bubble' => 'Text Effects',
+            'square' => 'Text Effects',
+            'script' => 'Text Effects',
+            'double-struck' => 'Text Effects',
+            'bold' => 'Text Effects',
+            'italic' => 'Text Effects',
+            'emoji-case' => 'Text Effects',
+            'upside-down' => 'Text Effects',
+            'mirror-text' => 'Text Effects',
+            'zalgo-text' => 'Text Effects',
+            'cursed-text' => 'Text Effects',
+            'invisible-text' => 'Text Effects',
+            'wingdings' => 'Text Effects',
+            'big-text' => 'Text Effects',
+            'slash-text' => 'Text Effects',
+            'stacked-text' => 'Text Effects',
+            
+            'email-style' => 'Business & Professional',
+            'legal-style' => 'Business & Professional',
+            'marketing-headline' => 'Business & Professional',
+            'press-release' => 'Business & Professional',
+            'memo-style' => 'Business & Professional',
+            'report-style' => 'Business & Professional',
+            'proposal-style' => 'Business & Professional',
+            'invoice-style' => 'Business & Professional',
+            
+            'twitter-style' => 'Social Media',
+            'instagram-style' => 'Social Media',
+            'linkedin-style' => 'Social Media',
+            'facebook-style' => 'Social Media',
+            'youtube-title' => 'Social Media',
+            'tiktok-style' => 'Social Media',
+            'hashtag-style' => 'Social Media',
+            'mention-style' => 'Social Media',
+            'twitter-font' => 'Social Media',
+            'facebook-font' => 'Social Media',
+            'instagram-font' => 'Social Media',
+            'discord-font' => 'Social Media',
+            
+            'api-docs' => 'Documentation',
+            'readme-style' => 'Documentation',
+            'changelog-style' => 'Documentation',
+            'user-manual' => 'Documentation',
+            'technical-spec' => 'Documentation',
+            'code-comments' => 'Documentation',
+            'wiki-style' => 'Documentation',
+            'markdown-style' => 'Documentation',
+            
+            'british-english' => 'Localization',
+            'american-english' => 'Localization',
+            'canadian-english' => 'Localization',
+            'australian-english' => 'Localization',
+            'eu-format' => 'Localization',
+            'iso-format' => 'Localization',
+            
+            'unicode-normalize' => 'Text Processing',
+            'ascii-convert' => 'Text Processing',
+            'remove-spaces' => 'Text Processing',
+            'remove-extra-spaces' => 'Text Processing',
+            'add-dashes' => 'Text Processing',
+            'add-underscores' => 'Text Processing',
+            'add-periods' => 'Text Processing',
+            'remove-punctuation' => 'Text Processing',
+            'extract-letters' => 'Text Processing',
+            'extract-numbers' => 'Text Processing',
+            'remove-duplicates' => 'Text Processing',
+            'sort-words' => 'Text Processing',
+            'shuffle-words' => 'Text Processing',
+            'word-frequency' => 'Text Processing',
+            'duplicate-finder' => 'Text Processing',
+            'duplicate-remover' => 'Text Processing',
+            'text-replacer' => 'Text Processing',
+            'line-break-remover' => 'Text Processing',
+            'plain-text-converter' => 'Text Processing',
+            'remove-formatting' => 'Text Processing',
+            'remove-letters' => 'Text Processing',
+            'remove-underscores' => 'Text Processing',
+            'whitespace-remover' => 'Text Processing',
+            'repeat-text' => 'Text Processing',
+            
+            'bold-text' => 'Text Formatting',
+            'italic-text' => 'Text Formatting',
+            'strikethrough-text' => 'Text Formatting',
+            'underline-text' => 'Text Formatting',
+            'superscript' => 'Text Formatting',
+            'subscript' => 'Text Formatting',
+            'wide-text' => 'Text Formatting',
+            'json-formatter' => 'Text Formatting',
+            'csv-to-json' => 'Text Formatting',
+            'css-formatter' => 'Text Formatting',
+            'html-formatter' => 'Text Formatting',
+            'javascript-formatter' => 'Text Formatting',
+            'xml-formatter' => 'Text Formatting',
+            'yaml-formatter' => 'Text Formatting',
+            
+            'password-generator' => 'Text Generators',
+            'uuid-generator' => 'Text Generators',
+            'random-number' => 'Text Generators',
+            'random-letter' => 'Text Generators',
+            'random-date' => 'Text Generators',
+            'random-month' => 'Text Generators',
+            'random-ip' => 'Text Generators',
+            'random-choice' => 'Text Generators',
+            'lorem-ipsum' => 'Text Generators',
+            'username-generator' => 'Text Generators',
+            'email-generator' => 'Text Generators',
+            'hex-color' => 'Text Generators',
+            'phone-number' => 'Text Generators',
+            
+            'base64-encode' => 'Encoding & Decoding',
+            'base64-decode' => 'Encoding & Decoding',
+            'url-encode' => 'Encoding & Decoding',
+            'url-decode' => 'Encoding & Decoding',
+            'html-encode' => 'Encoding & Decoding',
+            'html-decode' => 'Encoding & Decoding',
+            'binary-translator' => 'Encoding & Decoding',
+            'hex-converter' => 'Encoding & Decoding',
+            'morse-code' => 'Encoding & Decoding',
+            'caesar-cipher' => 'Encoding & Decoding',
+            'md5-hash' => 'Encoding & Decoding',
+            'sha256-hash' => 'Encoding & Decoding',
+            'utf8-converter' => 'Encoding & Decoding',
+            
+            'reading-time' => 'Text Analysis',
+            'flesch-score' => 'Text Analysis',
+            'sentiment-analysis' => 'Text Analysis',
+            'keyword-extractor' => 'Text Analysis',
+            'syllable-counter' => 'Text Analysis',
+            'paragraph-counter' => 'Text Analysis',
+            'sentence-counter' => 'Text Analysis',
+            'unique-words' => 'Text Analysis',
+            
+            'scientific-notation' => 'Number Formatting',
+            'engineering-notation' => 'Number Formatting',
+            'fraction-converter' => 'Number Formatting',
+            'percentage-format' => 'Number Formatting',
+            'currency-format' => 'Number Formatting',
+            'ordinal-numbers' => 'Number Formatting',
+            'spelled-numbers' => 'Number Formatting',
+            'roman-numerals' => 'Number Formatting',
+            
+            'phonetic-spelling' => 'Special Formats',
+            'pig-latin' => 'Special Formats',
+            'nato-phonetic' => 'Special Formats',
+            'utm-builder' => 'Special Formats',
+            'slugify-generator' => 'Special Formats'
+        ];
+        
+        return $categories[$toolId] ?? 'Other Tools';
     }
 }

@@ -5,7 +5,6 @@
  * Test Implementation - Validate all fixes are working
  */
 
-$baseUrl = 'http://localhost:8000';
 $results = [];
 $totalTests = 0;
 $passedTests = 0;
@@ -77,7 +76,6 @@ function testApi($endpoint, $data, $description) {
 
 echo "=== TESTING CASE CHANGER PRO IMPLEMENTATION ===\n\n";
 
-// Test 1: Check routes are accessible
 echo "1. TESTING ROUTES\n";
 echo "-----------------\n";
 testUrl('/', 'Home page');
@@ -87,7 +85,6 @@ testUrl('/conversions/case-conversions/uppercase', 'Uppercase tool');
 testUrl('/conversions/developer-formats/camel-case', 'CamelCase tool');
 echo "\n";
 
-// Test 2: Check for inline styles (should be ZERO)
 echo "2. CHECKING FOR INLINE STYLES\n";
 echo "-----------------------------\n";
 $html = testUrl('/conversions/case-conversions/uppercase', 'Loading page for style check');
@@ -103,7 +100,6 @@ if ($html) {
 }
 echo "\n";
 
-// Test 3: Check Alpine.js directives
 echo "3. TESTING ALPINE.JS IMPLEMENTATION\n";
 echo "-----------------------------------\n";
 if ($html) {
@@ -115,16 +111,13 @@ if ($html) {
 }
 echo "\n";
 
-// Test 4: Check glassmorphism classes
 echo "4. TESTING GLASSMORPHISM DESIGN\n";
 echo "-------------------------------\n";
 if ($html) {
     checkPattern($html, '/nav-glass/', 'Glass navigation', 1);
     checkPattern($html, '/dropdown-glass/', 'Glass dropdowns', 1);
     checkPattern($html, '/modal-overlay-glass/', 'Glass modal overlay', 1);
-    checkPattern($html, '/glass-card/', 'Glass card components', 0); // May not be on every page
     
-    // Check for blue colors (no purple)
     $totalTests++;
     $purpleCount = preg_match_all('/purple|violet/', $html, $matches);
     if ($purpleCount === 0) {
@@ -136,7 +129,6 @@ if ($html) {
 }
 echo "\n";
 
-// Test 5: Check navigation components
 echo "5. TESTING NAVIGATION COMPONENTS\n";
 echo "--------------------------------\n";
 if ($html) {
@@ -148,7 +140,6 @@ if ($html) {
 }
 echo "\n";
 
-// Test 6: Test API transformation
 echo "6. TESTING TRANSFORMATION API\n";
 echo "-----------------------------\n";
 testApi('/api/transform', 
@@ -165,17 +156,14 @@ testApi('/api/transform',
 );
 echo "\n";
 
-// Test 7: Check CSS/JS assets loading
 echo "7. TESTING ASSET LOADING\n";
 echo "-----------------------\n";
 if ($html) {
     checkPattern($html, '/build\/assets\/app-[a-zA-Z0-9]+\.css/', 'CSS bundle loading', 1);
     checkPattern($html, '/build\/assets\/app-[a-zA-Z0-9]+\.js/', 'JS bundle loading', 1);
-    checkPattern($html, '/Alpine\.start/', 'Alpine.js initialization', 0); // In external JS
 }
 echo "\n";
 
-// Test 8: Check responsive meta tags
 echo "8. TESTING RESPONSIVE & META\n";
 echo "---------------------------\n";
 if ($html) {
@@ -184,7 +172,6 @@ if ($html) {
 }
 echo "\n";
 
-// Summary
 echo "=== TEST SUMMARY ===\n";
 echo "Total Tests: $totalTests\n";
 echo "Passed: $passedTests\n";

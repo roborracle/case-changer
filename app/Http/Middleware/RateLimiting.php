@@ -16,7 +16,6 @@ class RateLimiting
     {
         $key = $this->resolveRequestSignature($request);
         
-        // Different limits for different routes
         $limits = [
             'default' => ['attempts' => 60, 'minutes' => 1],
             'api' => ['attempts' => 30, 'minutes' => 1],

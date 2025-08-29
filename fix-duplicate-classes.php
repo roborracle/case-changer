@@ -2,9 +2,7 @@
 
 $viewsPath = __DIR__ . '/resources/views';
 
-// Function to merge duplicate class attributes
 function mergeDuplicateClasses($content) {
-    // Pattern to match elements with duplicate class attributes
     $pattern = '/class="([^"]*)"(\s+)class="([^"]*)"/';
     
     $content = preg_replace_callback($pattern, function($matches) {
@@ -12,7 +10,6 @@ function mergeDuplicateClasses($content) {
         $class2 = trim($matches[3]);
         $space = $matches[2];
         
-        // Merge the classes, removing duplicates
         $allClasses = array_unique(array_filter(array_merge(
             explode(' ', $class1),
             explode(' ', $class2)
@@ -24,7 +21,6 @@ function mergeDuplicateClasses($content) {
     return $content;
 }
 
-// Process all blade files
 $iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($viewsPath)
 );
@@ -38,7 +34,6 @@ foreach ($iterator as $file) {
         $content = file_get_contents($filePath);
         $originalContent = $content;
         
-        // Fix duplicate class attributes
         $content = mergeDuplicateClasses($content);
         
         if ($content !== $originalContent) {

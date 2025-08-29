@@ -8,9 +8,7 @@
 
 $servicePath = __DIR__ . '/app/Services/TransformationService.php';
 
-// All 169 transformations that should be in the array
 $allTransformations = [
-    // Case Formats (already in array)
     'upper-case' => 'Upper Case',
     'lower-case' => 'Lower Case', 
     'title-case' => 'Title Case',
@@ -26,7 +24,6 @@ $allTransformations = [
     'dot-case' => 'Dot Case',
     'path-case' => 'Path Case',
     
-    // Style Guides (already in array)
     'ap-style' => 'AP Style',
     'nyt-style' => 'NY Times Style',
     'chicago-style' => 'Chicago Style',
@@ -45,7 +42,6 @@ $allTransformations = [
     'ama-style' => 'AMA Style',
     'bluebook-style' => 'Bluebook Style',
     
-    // Creative Styles (already in array)
     'reverse' => 'Reverse',
     'aesthetic' => 'Aesthetic',
     'sarcasm' => 'Sarcasm Case',
@@ -58,7 +54,6 @@ $allTransformations = [
     'italic' => 'Italic',
     'emoji-case' => 'Emoji Case',
     
-    // Business Styles (already in array)
     'email-style' => 'Email Style',
     'legal-style' => 'Legal Style',
     'marketing-headline' => 'Marketing Headline',
@@ -68,7 +63,6 @@ $allTransformations = [
     'proposal-style' => 'Proposal Style',
     'invoice-style' => 'Invoice Style',
     
-    // Social Media (already in array)
     'twitter-style' => 'Twitter/X Style',
     'instagram-style' => 'Instagram Style',
     'linkedin-style' => 'LinkedIn Style',
@@ -78,7 +72,6 @@ $allTransformations = [
     'hashtag-style' => 'Hashtag Style',
     'mention-style' => 'Mention Style',
     
-    // Technical (already in array)
     'api-docs' => 'API Documentation',
     'readme-style' => 'README Style',
     'changelog-style' => 'Changelog Style',
@@ -88,7 +81,6 @@ $allTransformations = [
     'wiki-style' => 'Wiki Style',
     'markdown-style' => 'Markdown Style',
     
-    // International (partially in array)
     'british-english' => 'British English',
     'american-english' => 'American English',
     'canadian-english' => 'Canadian English',
@@ -98,7 +90,6 @@ $allTransformations = [
     'unicode-normalize' => 'Unicode Normalize',
     'ascii-convert' => 'ASCII Convert',
     
-    // Utility (partially in array)
     'remove-spaces' => 'Remove Spaces',
     'remove-extra-spaces' => 'Remove Extra Spaces',
     'add-dashes' => 'Add Dashes',
@@ -112,7 +103,6 @@ $allTransformations = [
     'shuffle-words' => 'Shuffle Words',
     'word-frequency' => 'Word Frequency',
     
-    // NEW - Text Effects (MISSING FROM ARRAY)
     'bold-text' => 'Bold Text',
     'italic-text' => 'Italic Text',
     'strikethrough-text' => 'Strikethrough Text',
@@ -126,7 +116,6 @@ $allTransformations = [
     'cursed-text' => 'Cursed Text',
     'invisible-text' => 'Invisible Text',
     
-    // NEW - Generators (MISSING FROM ARRAY)
     'password-generator' => 'Password Generator',
     'uuid-generator' => 'UUID Generator',
     'random-number' => 'Random Number',
@@ -141,7 +130,6 @@ $allTransformations = [
     'hex-color' => 'Hex Color',
     'phone-number' => 'Phone Number',
     
-    // NEW - Code & Data Tools (MISSING FROM ARRAY)
     'binary-translator' => 'Binary Translator',
     'hex-converter' => 'Hex Converter',
     'morse-code' => 'Morse Code',
@@ -159,7 +147,6 @@ $allTransformations = [
     'utm-builder' => 'UTM Builder',
     'slugify-generator' => 'Slugify Generator',
     
-    // NEW - Text Analysis & Cleanup (MISSING FROM ARRAY)
     'sentence-counter' => 'Sentence Counter',
     'duplicate-finder' => 'Duplicate Finder',
     'duplicate-remover' => 'Duplicate Remover',
@@ -174,7 +161,6 @@ $allTransformations = [
     'phonetic-spelling' => 'Phonetic Spelling',
     'pig-latin' => 'Pig Latin',
     
-    // NEW - Social Media Fonts (MISSING FROM ARRAY)
     'discord-font' => 'Discord Font',
     'facebook-font' => 'Facebook Font',
     'instagram-font' => 'Instagram Font',
@@ -184,26 +170,21 @@ $allTransformations = [
     'stacked-text' => 'Stacked Text',
     'wingdings' => 'Wingdings',
     
-    // NEW - Miscellaneous (MISSING FROM ARRAY)
     'nato-phonetic' => 'NATO Phonetic',
     'roman-numerals' => 'Roman Numerals',
 ];
 
-// Read the file
 $content = file_get_contents($servicePath);
 
-// Create the new array string
 $arrayString = "    private \$transformations = [\n";
 foreach ($allTransformations as $key => $value) {
     $arrayString .= "        '$key' => '$value',\n";
 }
 $arrayString .= "    ];";
 
-// Replace the old array with the new one
 $pattern = '/private \$transformations = \[.*?\];/s';
 $content = preg_replace($pattern, $arrayString, $content);
 
-// Write back
 file_put_contents($servicePath, $content);
 
 echo "=================================================\n";
@@ -213,7 +194,6 @@ echo "✅ Updated array to include ALL " . count($allTransformations) . " transf
 echo "📊 Previous: 86 transformations\n";
 echo "📊 Now: " . count($allTransformations) . " transformations\n\n";
 
-// List the new additions
 $newAdditions = array_slice($allTransformations, 94);
 echo "🆕 Added " . count($newAdditions) . " missing transformations:\n";
 foreach ($newAdditions as $key => $value) {

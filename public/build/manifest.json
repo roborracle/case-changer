@@ -1,6 +1,10 @@
 {
+  "_vendor-R0888uIZ.js": {
+    "file": "assets/vendor-R0888uIZ.js",
+    "name": "vendor"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-CcjHJcFc.css",
+    "file": "assets/app-tn0RQdqM.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
@@ -8,9 +12,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CRysxNEQ.js",
+    "file": "assets/app-IrSNm1gi.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_vendor-R0888uIZ.js"
+    ]
   }
 }

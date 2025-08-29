@@ -19,11 +19,8 @@ return [
     |--------------------------------------------------------------------------
     */
     
-    'timeout' => env('TEST_HARNESS_TIMEOUT', 1800), // 30 minutes in seconds
     
-    'schedule_hours' => env('TEST_HARNESS_SCHEDULE_HOURS', 6), // Run every X hours
     
-    'retention_days' => env('TEST_HARNESS_RETENTION_DAYS', 30), // Keep results for X days
     
     /*
     |--------------------------------------------------------------------------
@@ -31,7 +28,6 @@ return [
     |--------------------------------------------------------------------------
     */
     
-    'failure_threshold' => env('TEST_HARNESS_FAILURE_THRESHOLD', 5), // Send alert if X+ tools fail
     
     'notification_email' => env('TEST_HARNESS_NOTIFICATION_EMAIL', env('MAIL_FROM_ADDRESS')),
     
@@ -45,9 +41,7 @@ return [
     |--------------------------------------------------------------------------
     */
     
-    'performance_threshold' => env('TEST_HARNESS_PERF_THRESHOLD', 1.2), // Alert if 20% slower
     
-    'baseline_sample_count' => env('TEST_HARNESS_BASELINE_SAMPLES', 10), // Runs to average for baseline
     
     /*
     |--------------------------------------------------------------------------
@@ -59,7 +53,6 @@ return [
     
     'dashboard_route' => env('TEST_HARNESS_DASHBOARD_ROUTE', '/admin/test-harness'),
     
-    'dashboard_auth_required' => env('TEST_HARNESS_AUTH', false), // Require authentication
     
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +62,6 @@ return [
     
     'memory_leak_detection' => env('TEST_HARNESS_MEMORY_CHECK', true),
     
-    'consecutive_failure_alert' => env('TEST_HARNESS_CONSECUTIVE_ALERT', 3), // Alert after X consecutive failures
     
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +69,6 @@ return [
     |--------------------------------------------------------------------------
     */
     
-    'cron_expression' => '0 */6 * * *', // Every 6 hours at minute 0
     
     'cron_command' => 'cd ' . base_path() . ' && php artisan test:harness --notify >> /dev/null 2>&1',
 ];

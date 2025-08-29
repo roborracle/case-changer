@@ -9,8 +9,6 @@
         <title>{{ $title ?? 'Case Changer - Professional Text Transformation Tool' }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
 
         <!-- Styles -->
@@ -78,7 +76,6 @@
                         <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors">
                         Terms of Service
                         </a>
-                        <a href="https://github.com/yourusername/case-changer" class="text-gray-500 hover:text-blue-600 transition-colors">
                         GitHub
                         </a>
                     </div>

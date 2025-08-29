@@ -11,15 +11,12 @@ echo "==================================================\n";
 echo "LIGHTHOUSE PERFORMANCE TEST\n";
 echo "==================================================\n\n";
 
-// Configuration
-$baseUrl = $argv[1] ?? 'http://127.0.0.1:8002';
 $testUrls = [
     '/' => 'Homepage',
     '/conversions' => 'All Tools Page',
     '/conversions/case/uppercase' => 'Tool Page',
 ];
 
-// Performance metrics targets
 $targets = [
     'performance' => 90,
     'accessibility' => 90,
@@ -34,7 +31,6 @@ foreach ($targets as $metric => $target) {
 }
 echo "\n";
 
-// Test optimizations
 $optimizationChecks = [
     'Compression' => checkCompression($baseUrl),
     'Caching Headers' => checkCaching($baseUrl),
@@ -114,7 +110,6 @@ echo "\n";
 echo "To run actual Lighthouse tests:\n";
 echo "--------------------------------\n";
 echo "1. Deploy to Railway with updated configuration\n";
-echo "2. Run: npx lighthouse https://your-app.railway.app --view\n";
 echo "3. Or use Chrome DevTools Lighthouse tab\n";
 
 echo "\n";
@@ -122,14 +117,12 @@ echo "==================================================\n";
 echo "TEST COMPLETE\n";
 echo "==================================================\n\n";
 
-// Helper functions
 function checkCompression($url) {
     $headers = @get_headers($url, 1);
     $hasGzip = isset($headers['Content-Encoding']) && 
                strpos($headers['Content-Encoding'], 'gzip') !== false;
     
     return [
-        'status' => true, // Configured in .htaccess
         'message' => 'Gzip/Brotli configured in .htaccess'
     ];
 }
@@ -165,7 +158,6 @@ function checkMinification($url) {
             $filePath = __DIR__ . '/public/build/' . $entry['file'];
             if (file_exists($filePath)) {
                 $content = file_get_contents($filePath);
-                // Check for minification patterns
                 $hasMinified = strlen($content) > 1000 && 
                               substr_count($content, "\n") < 50;
                 break;

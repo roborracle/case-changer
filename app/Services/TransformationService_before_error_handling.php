@@ -195,7 +195,6 @@ class TransformationService
     public function transform(string $text, string $transformation): string
     {
         try {
-            // Input validation
             if (empty($text) && !in_array($transformation, $this->getGeneratorTransformations())) {
                 Log::warning('Empty input provided for transformation', [
                     'transformation' => $transformation,
@@ -230,10 +229,8 @@ class TransformationService
                 return 'Error: Transformation method not implemented.';
             }
 
-            // Execute transformation with error handling
             $result = $this->executeTransformation($methodName, $text, $transformation);
             
-            // Log successful transformation (optional, can be disabled in production)
             if (config('app.debug')) {
                 Log::info('Transformation completed successfully', [
                     'transformation' => $transformation,
@@ -242,7 +239,6 @@ class TransformationService
                 ]);
             }
             
-            // Store transformation in database for analytics
             $this->storeTransformation($transformation, $text, $result);
             
             return $result;
@@ -266,12 +262,10 @@ class TransformationService
         try {
             $result = $this->$methodName($text);
             
-            // Validate result
             if ($result === null || $result === false) {
                 throw new Exception('Transformation returned invalid result');
             }
             
-            // Convert result to string if needed
             if (!is_string($result)) {
                 $result = (string) $result;
             }
@@ -297,13 +291,11 @@ class TransformationService
         try {
             Transformation::create([
                 'transformation_type' => $transformationType,
-                'input_text' => substr($inputText, 0, 10000), // Limit stored text length
                 'output_text' => substr($outputText, 0, 10000),
                 'user_ip' => request()?->ip(),
                 'user_agent' => substr(request()?->userAgent() ?? '', 0, 500)
             ]);
         } catch (Exception $e) {
-            // Don't fail transformation if storage fails
             Log::error('Failed to store transformation', [
                 'transformation_type' => $transformationType,
                 'error' => $e->getMessage()
@@ -378,9 +370,7 @@ class TransformationService
                 return '';
             }
             $text = mb_strtolower($text, 'UTF-8');
-            // Capitalize first letter
             $text = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($text, 1, null, 'UTF-8');
-            // Capitalize after periods, exclamation marks, and question marks
             $text = preg_replace_callback('/([.!?]\s+)([a-z])/u', function($matches) {
                 return $matches[1] . mb_strtoupper($matches[2], 'UTF-8');
             }, $text);
@@ -435,13 +425,9 @@ class TransformationService
 
     private function toSnakeCase(string $text): string
     {
-        // First handle camelCase and PascalCase
         $text = preg_replace('/(?<!^)[A-Z]/', '_$0', $text);
-        // Replace spaces and hyphens with underscores
         $text = str_replace([' ', '-'], '_', $text);
-        // Remove multiple underscores
         $text = preg_replace('/_+/', '_', $text);
-        // Convert to lowercase and trim underscores
         return mb_strtolower(trim($text, '_'), 'UTF-8');
     }
 
@@ -716,7 +702,6 @@ class TransformationService
 
     private function toCodeComments(string $text): string
     {
-        return "// " . $this->toSentenceCase($text);
     }
 
     private function toWikiStyle(string $text): string
@@ -729,7 +714,6 @@ class TransformationService
         return "Markdown Style: " . $this->toSentenceCase($text);
     }
 
-    // ================== INTERNATIONAL & REGIONAL FORMATS ==================
     
     private function toBritishEnglish(string $text): string
     {
@@ -771,16 +755,13 @@ class TransformationService
     
     private function toEUFormat(string $text): string
     {
-        // EU date format: DD/MM/YYYY
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$2/$1/$3', $text);
-        // EU decimal separator
         $text = preg_replace('/\b(\d+)\.(\d+)\b/', '$1,$2', $text);
         return $text;
     }
     
     private function toISOFormat(string $text): string
     {
-        // ISO 8601 date format
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$3-$1-$2', $text);
         return $text;
     }
@@ -795,10 +776,8 @@ class TransformationService
     
     private function toASCIIConvert(string $text): string
     {
-        return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
     }
     
-    // ================== UTILITY TRANSFORMATIONS ==================
     
     private function toRemoveSpaces(string $text): string
     {
@@ -860,7 +839,6 @@ class TransformationService
         return implode(' ', $words);
     }
     
-    // ================== TEXT EFFECTS ==================
     
     private function toBoldText(string $text): string
     {
@@ -942,11 +920,8 @@ class TransformationService
     
     private function toInvisibleText(string $text): string
     {
-        // Zero-width characters
-        return preg_replace('/(.)/u', '$1​', $text); // Zero-width space U+200B
     }
     
-    // ================== GENERATORS ==================
     
     private function toPasswordGenerator(string $text): string
     {
@@ -1054,7 +1029,6 @@ class TransformationService
         return sprintf('(%03d) %03d-%04d', rand(200, 999), rand(200, 999), rand(1000, 9999));
     }
     
-    // ================== CODE & DATA TOOLS ==================
     
     private function toBinaryTranslator(string $text): string
     {
@@ -1126,7 +1100,6 @@ class TransformationService
         if (json_last_error() === JSON_ERROR_NONE) {
             return json_encode($decoded, JSON_PRETTY_PRINT);
         }
-        // If not valid JSON, convert to JSON
         return json_encode($text);
     }
     
@@ -1151,7 +1124,6 @@ class TransformationService
     
     private function toCSSFormatter(string $text): string
     {
-        // Basic CSS formatting
         $text = preg_replace('/\s*{\s*/', ' {\n  ', $text);
         $text = preg_replace('/;\s*/', ';\n  ', $text);
         $text = preg_replace('/\s*}\s*/', '\n}\n', $text);
@@ -1160,14 +1132,12 @@ class TransformationService
     
     private function toHTMLFormatter(string $text): string
     {
-        // Basic HTML formatting
         $text = preg_replace('/></', '>\n<', $text);
         return $text;
     }
     
     private function toJavaScriptFormatter(string $text): string
     {
-        // Basic JS formatting
         $text = preg_replace('/;\s*/', ';\n', $text);
         $text = preg_replace('/\{\s*/', ' {\n  ', $text);
         $text = preg_replace('/\}\s*/', '\n}\n', $text);
@@ -1185,7 +1155,6 @@ class TransformationService
     
     private function toYAMLFormatter(string $text): string
     {
-        // Basic YAML formatting
         $lines = explode("\n", $text);
         $formatted = [];
         foreach ($lines as $line) {
@@ -1215,14 +1184,12 @@ class TransformationService
     private function toSlugifyGenerator(string $text): string
     {
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
         $text = preg_replace('~[^-\w]+~', '', $text);
         $text = trim($text, '-');
         $text = preg_replace('~-+~', '-', $text);
         return strtolower($text);
     }
     
-    // ================== TEXT ANALYSIS & CLEANUP ==================
     
     private function toSentenceCounter(string $text): string
     {
@@ -1251,7 +1218,6 @@ class TransformationService
     
     private function toTextReplacer(string $text): string
     {
-        // Default example: replace "old" with "new"
         return str_replace('old', 'new', $text);
     }
     
@@ -1324,11 +1290,9 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    // ================== SOCIAL MEDIA GENERATORS ==================
     
     private function toDiscordFont(string $text): string
     {
-        return '**' . $text . '**'; // Bold for Discord
     }
     
     private function toFacebookFont(string $text): string
@@ -1371,7 +1335,6 @@ class TransformationService
         return strtr(strtolower($text), $normal, $wingdings);
     }
     
-    // ================== MISCELLANEOUS ==================
     
     private function toNATOPhonetic(string $text): string
     {
@@ -1394,7 +1357,6 @@ class TransformationService
     
     private function toRomanNumerals(string $text): string
     {
-        // Convert numbers to Roman numerals
         if (!is_numeric($text)) {
             return $text;
         }
@@ -1413,7 +1375,6 @@ class TransformationService
         return $result;
     }
 
-    // Developer Tools Methods
     private function toSqlCase($text) {
         return strtoupper(str_replace([" ", "-"], "_", $text));
     }
@@ -1446,10 +1407,8 @@ class TransformationService
         return lcfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
-    // Text Analysis Methods
     private function toReadingTime($text) {
         $wordCount = str_word_count($text);
-        $minutes = ceil($wordCount / 200); // Average reading speed
         return "$minutes minute" . ($minutes > 1 ? "s" : "") . " read time";
     }
     
@@ -1499,7 +1458,6 @@ class TransformationService
         return "$unique unique words";
     }
     
-    // Advanced Format Methods
     private function toScientificNotation($text) {
         if (is_numeric($text)) {
             $num = (float)$text;
@@ -1530,7 +1488,6 @@ class TransformationService
             
             if ($fraction == 0) return "$whole";
             
-            // Simple fraction approximation
             $numerator = round($fraction * 100);
             $denominator = 100;
             $gcd = $this->gcd($numerator, $denominator);
@@ -1573,7 +1530,6 @@ class TransformationService
         return strtr($text, $numbers);
     }
     
-    // Helper methods
     private function countSyllables($text) {
         $text = strtolower($text);
         $syllables = 0;

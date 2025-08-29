@@ -1,0 +1,19 @@
+name: Production Deployment
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/fly-pr-review-apps@v1
+        with:
+          fly_api_token: ${{ secrets.FLY_API_TOKEN }}
+          railway_api_token: ${{ secrets.RAILWAY_API_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          app_name: case-changer-pro
+          command: "deploy"

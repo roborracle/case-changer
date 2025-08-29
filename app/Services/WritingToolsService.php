@@ -13,18 +13,7 @@ class WritingToolsService
      */
     public function toSmartQuotes(string $text): string
     {
-        // Replace double quotes
-        $text = preg_replace('/(\s|^)"/', '$1"', $text); // Opening double quote
-        $text = preg_replace('/"(\s|[.!?,;:]|$)/', '"$1', $text); // Closing double quote
-        $text = str_replace('("', '("', $text); // After opening parenthesis
-        $text = str_replace('")', '")', $text); // Before closing parenthesis
         
-        // Replace single quotes/apostrophes
-        $text = preg_replace('/(\s|^)\'/', '$1'', $text); // Opening single quote
-        $text = preg_replace('/\'(\s|[.!?,;:]|$)/', ''$1', $text); // Closing single quote
-        $text = preg_replace('/(\w)\'(\w)/', '$1'$2', $text); // Apostrophe in contractions
-        $text = str_replace('('', '('', $text); // After opening parenthesis
-        $text = str_replace('')', '')', $text); // Before closing parenthesis
         
         return $text;
     }
@@ -34,10 +23,8 @@ class WritingToolsService
      */
     public function toStraightQuotes(string $text): string
     {
-        // Replace curly double quotes with straight
         $text = str_replace(['"', '"', '„', '‟', '〝', '〞', '＂'], '"', $text);
         
-        // Replace curly single quotes with straight
         $text = str_replace([''', ''', '‚', '‛', '〝', '〞', '＇'], "'", $text);
         
         return $text;
@@ -52,7 +39,6 @@ class WritingToolsService
         $score = 100;
         $feedback = [];
         
-        // Length check (ideal: 6-12 words, 50-70 characters)
         $wordCount = str_word_count($headline);
         $charCount = strlen($headline);
         
@@ -73,7 +59,6 @@ class WritingToolsService
             $feedback[] = '✓ Optimal character count';
         }
         
-        // Power words check
         $powerWords = ['amazing', 'incredible', 'essential', 'proven', 'guaranteed', 'exclusive',
                       'revolutionary', 'breakthrough', 'discover', 'secret', 'powerful', 'ultimate',
                       'complete', 'comprehensive', 'definitive', 'expert', 'professional'];
@@ -93,7 +78,6 @@ class WritingToolsService
             $feedback[] = 'Consider adding a power word for impact';
         }
         
-        // Emotional words check
         $emotionalWords = ['love', 'hate', 'fear', 'angry', 'happy', 'sad', 'excited',
                           'worried', 'surprised', 'disgusted', 'trust', 'anticipate'];
         
@@ -109,7 +93,6 @@ class WritingToolsService
             $feedback[] = '✓ Contains emotional trigger';
         }
         
-        // Numbers check (headlines with numbers perform better)
         if (preg_match('/\d+/', $headline)) {
             $feedback[] = '✓ Contains numbers (increases clicks)';
         } else {
@@ -117,17 +100,14 @@ class WritingToolsService
             $feedback[] = 'Consider adding numbers (e.g., "5 Ways to...")';
         }
         
-        // Question check
         if (str_ends_with($headline, '?')) {
             $feedback[] = '✓ Question format engages readers';
         }
         
-        // How-to check
         if (stripos($headline, 'how to') !== false || stripos($headline, 'how-to') !== false) {
             $feedback[] = '✓ How-to format is highly engaging';
         }
         
-        // Urgency words
         $urgencyWords = ['now', 'today', 'limited', 'deadline', 'expires', 'hurry', 'quick', 'fast'];
         foreach ($urgencyWords as $word) {
             if (stripos($headline, $word) !== false) {
@@ -136,7 +116,6 @@ class WritingToolsService
             }
         }
         
-        // Clarity check - avoid vague words
         $vagueWords = ['thing', 'stuff', 'whatever', 'some', 'any'];
         foreach ($vagueWords as $word) {
             if (stripos($headline, $word) !== false) {
@@ -146,13 +125,11 @@ class WritingToolsService
             }
         }
         
-        // ALL CAPS check (generally bad)
         if (strtoupper($headline) === $headline && strlen($headline) > 3) {
             $score -= 15;
             $feedback[] = 'Avoid ALL CAPS - it looks spammy';
         }
         
-        // Ensure score stays in range
         $score = max(0, min(100, $score));
         
         return [
@@ -172,7 +149,6 @@ class WritingToolsService
         $score = 100;
         $feedback = [];
         
-        // Length check (ideal: 30-50 characters)
         $charCount = strlen($subject);
         
         if ($charCount < 20) {
@@ -185,12 +161,10 @@ class WritingToolsService
             $feedback[] = '✓ Perfect length for all devices';
         }
         
-        // Personalization check
         if (preg_match('/\{.*?\}|\[.*?\]/', $subject)) {
             $feedback[] = '✓ Contains personalization tokens';
         }
         
-        // Spam trigger words to avoid
         $spamWords = ['free', 'click here', 'buy now', 'limited time', 'act now', 'urgent',
                      'congratulations', 'winner', 'prize', '100%', 'guarantee', 'no obligation',
                      'risk-free', 'cancel', 'cheap', 'dear friend', 'double your', 'earn $',
@@ -210,40 +184,33 @@ class WritingToolsService
             $feedback[] = '✓ No spam triggers detected';
         }
         
-        // Emoji check
         if (preg_match('/[\x{1F600}-\x{1F64F}]|[\x{1F300}-\x{1F5FF}]|[\x{1F680}-\x{1F6FF}]|[\x{2600}-\x{26FF}]|[\x{2700}-\x{27BF}]/u', $subject)) {
             $feedback[] = '✓ Contains emoji (can increase open rates)';
         }
         
-        // Question format
         if (str_ends_with($subject, '?')) {
             $feedback[] = '✓ Question format increases curiosity';
         }
         
-        // Numbers
         if (preg_match('/\d+/', $subject)) {
             $feedback[] = '✓ Contains numbers (improves open rates)';
         }
         
-        // ALL CAPS check
         if (strtoupper($subject) === $subject && strlen($subject) > 3) {
             $score -= 20;
             $feedback[] = 'Never use ALL CAPS - major spam signal';
         }
         
-        // Excessive punctuation
         if (preg_match('/[!]{2,}|[?]{2,}/', $subject)) {
             $score -= 15;
             $feedback[] = 'Avoid excessive punctuation (!!!???)';
         }
         
-        // Special characters that might break
         if (preg_match('/[<>]/', $subject)) {
             $score -= 10;
             $feedback[] = 'Avoid < > characters - may break in some clients';
         }
         
-        // Action words
         $actionWords = ['discover', 'learn', 'get', 'start', 'join', 'find', 'see', 'download'];
         foreach ($actionWords as $word) {
             if (stripos($subject, $word) !== false) {
@@ -252,7 +219,6 @@ class WritingToolsService
             }
         }
         
-        // Ensure score stays in range
         $score = max(0, min(100, $score));
         
         return [
@@ -298,11 +264,9 @@ class WritingToolsService
      */
     public function toEmailCase(string $text): string
     {
-        // Preserve URLs and emails
         $urls = [];
         $emails = [];
         
-        // Extract and replace URLs
         $text = preg_replace_callback(
             '/(https?:\/\/[^\s]+)/i',
             function($matches) use (&$urls) {
@@ -313,7 +277,6 @@ class WritingToolsService
             $text
         );
         
-        // Extract and replace emails
         $text = preg_replace_callback(
             '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i',
             function($matches) use (&$emails) {
@@ -324,7 +287,6 @@ class WritingToolsService
             $text
         );
         
-        // Apply sentence case
         $sentences = preg_split('/([.!?]\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
         $result = [];
         
@@ -336,7 +298,6 @@ class WritingToolsService
             if (preg_match('/^[.!?]\s+$/', $sentence)) {
                 $result[] = $sentence;
             } else {
-                // Capitalize first letter of sentence
                 $formatted = trim($sentence);
                 if (strlen($formatted) > 0) {
                     $formatted = mb_strtoupper(mb_substr($formatted, 0, 1)) . mb_substr($formatted, 1);
@@ -347,12 +308,10 @@ class WritingToolsService
         
         $text = implode('', $result);
         
-        // Restore URLs
         foreach ($urls as $i => $url) {
             $text = str_replace('{{URL_' . $i . '}}', $url, $text);
         }
         
-        // Restore emails
         foreach ($emails as $i => $email) {
             $text = str_replace('{{EMAIL_' . $i . '}}', $email, $text);
         }
@@ -389,7 +348,6 @@ class WritingToolsService
         $letterCount = 0;
         
         foreach ($chars as $char) {
-            // Only count actual letters for alternation
             if (preg_match('/\p{L}/u', $char)) {
                 if ($letterCount % 2 === 0) {
                     $result .= mb_strtoupper($char);
@@ -398,7 +356,6 @@ class WritingToolsService
                 }
                 $letterCount++;
             } else {
-                // Non-letters pass through unchanged
                 $result .= $char;
             }
         }

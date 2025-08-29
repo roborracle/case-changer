@@ -23,7 +23,6 @@
         @endif
 
         <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3D0SMK2BM"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -62,6 +61,108 @@
 
         <!-- Footer -->
         @include('components.footer')
+
+        <!-- Tool Converter Script -->
+        <script>
+            function toolConverter(toolSlug) {
+                return {
+                    inputText: '',
+                    outputText: '',
+                    isLoading: false,
+                    error: null,
+                    showCopySuccess: false,
+                    
+                    get charCount() {
+                        return this.inputText.length;
+                    },
+                    
+                    get wordCount() {
+                        return this.inputText.trim() ? this.inputText.trim().split(/\s+/).length : 0;
+                    },
+                    
+                    init() {
+                        this.$watch('inputText', (value) => {
+                            if (value) {
+                                this.convertText();
+                            } else {
+                                this.outputText = '';
+                            }
+                        });
+                    },
+                    
+                    async convertText() {
+                        if (!this.inputText) {
+                            this.outputText = '';
+                            return;
+                        }
+                        
+                        this.isLoading = true;
+                        this.error = null;
+                        
+                        try {
+                            const response = await fetch('/api/conversions/convert', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                },
+                                body: JSON.stringify({
+                                    text: this.inputText,
+                                    tool: toolSlug
+                                })
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                this.outputText = data.result;
+                            } else {
+                                this.error = data.error || 'Conversion failed';
+                            }
+                        } catch (error) {
+                            this.error = 'An error occurred during conversion';
+                            console.error('Conversion error:', error);
+                        } finally {
+                            this.isLoading = false;
+                        }
+                    },
+                    
+                    clearText() {
+                        this.inputText = '';
+                        this.outputText = '';
+                        this.error = null;
+                    },
+                    
+                    async copyToClipboard() {
+                        if (!this.outputText) return;
+                        
+                        try {
+                            await navigator.clipboard.writeText(this.outputText);
+                            this.showCopySuccess = true;
+                            setTimeout(() => {
+                                this.showCopySuccess = false;
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    },
+                    
+                    downloadResult() {
+                        if (!this.outputText) return;
+                        
+                        const blob = new Blob([this.outputText], { type: 'text/plain' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${toolSlug}-result.txt`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }
+                }
+            }
+        </script>
 
         @stack('scripts')
     </body>

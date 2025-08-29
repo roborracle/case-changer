@@ -1,53 +1,34 @@
-# General Laravel ignores
-*.log
-.DS_Store
+# Created by SCARLETT, Codex Prime
+
+# Ignore all vendor dependencies
+/vendor/
+/node_modules/
+
+# Ignore environment files
 .env
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-# /public/build - Commented out to track compiled assets for Railway deployment
+
+# Ignore Laravel storage files
 /public/hot
 /public/storage
 /storage/*.key
-/storage/pail
-/vendor
-Homestead.json
-Homestead.yaml
-Thumbs.db
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/cache/data/*
+/storage/logs/*.log
+!/storage/logs/.gitignore
 
-# Production-specific ignores
-/.clinerules/
-/browser-test.php
-/test-browser.html
-/test-case-changer.php
-/test-console-errors.html
-/test-converters.php
-/test-design.php
-/test-localhost.php
-/test-nav-debug.php
-/test-pages.php
-/test-theme-system.html
-/test-theme.html
-/test-validation.php
-/validation-test.js
-/phpunit.xml
-/database/
-/tests/
-/resources/views/livewire/
-/public/test-js-theme.html
-/public/test-theme.html
-/public/verify-theme.html
-/.editorconfig
-/.env.example
-/.gitattributes
-/postcss.config.js
-/tailwind.config.js
+# Ignore testing artifacts
+.phpunit.result.cache
+coverage/
+
+# Ignore IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+
+# Ignore log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

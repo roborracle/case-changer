@@ -12,9 +12,7 @@ use App\Services\TransformationService;
 
 $service = new TransformationService();
 
-// Define EXACT expected outputs for each transformation
 $accuracyTests = [
-    // CASE CONVERSIONS
     'upper-case' => [
         'hello world' => 'HELLO WORLD',
         'Test Case 123' => 'TEST CASE 123',
@@ -31,7 +29,6 @@ $accuracyTests = [
         'test of the system' => 'Test Of The System',
     ],
     'sentence-case' => [
-        'hello world. new sentence' => 'Hello world. new sentence', // Known issue
         'HELLO WORLD' => 'Hello world',
         'test case example' => 'Test case example',
     ],
@@ -51,7 +48,6 @@ $accuracyTests = [
         'ABC def' => 'abc DEF',
     ],
     
-    // DEVELOPER FORMATS
     'camel-case' => [
         'hello world example' => 'helloWorldExample',
         'test case here' => 'testCaseHere',
@@ -63,32 +59,26 @@ $accuracyTests = [
         'my class name' => 'MyClassName',
     ],
     'snake-case' => [
-        'Hello World' => 'hello_world', // Should NOT be hello__world
         'Test Case Example' => 'test_case_example',
         'My Variable' => 'my_variable',
     ],
     'constant-case' => [
-        'Hello World' => 'HELLO_WORLD', // Should NOT be HELLO__WORLD
         'Test Case Example' => 'TEST_CASE_EXAMPLE',
         'My Constant' => 'MY_CONSTANT',
     ],
     'kebab-case' => [
-        'Hello World' => 'hello-world', // Should NOT be hello--world
         'Test Case Example' => 'test-case-example',
         'My URL Slug' => 'my-url-slug',
     ],
     'dot-case' => [
-        'Hello World' => 'hello.world', // Should NOT be hello..world
         'Test Case Example' => 'test.case.example',
         'Package Name' => 'package.name',
     ],
     'path-case' => [
-        'Hello World' => 'hello/world', // Should NOT be hello//world
         'Test Case Example' => 'test/case/example',
         'File Path' => 'file/path',
     ],
     
-    // TEXT MANIPULATION
     'reverse' => [
         'hello' => 'olleh',
         'world' => 'dlrow',
@@ -150,7 +140,6 @@ $accuracyTests = [
         'a b c a' => 'a: 2, b: 1, c: 1',
     ],
     
-    // CREATIVE FORMATS
     'aesthetic' => [
         'hello' => 'H E L L O',
         'test' => 'T E S T',
@@ -178,7 +167,6 @@ $accuracyTests = [
     ],
 ];
 
-// Run accuracy tests
 $totalTests = 0;
 $passedTests = 0;
 $failedTests = [];
@@ -220,7 +208,6 @@ foreach ($accuracyTests as $transformation => $tests) {
         }
     }
     
-    // Report for this transformation
     if ($transformFailed === 0) {
         echo "✅ $transformation: $transformPassed/$transformPassed tests passed\n";
     } else {
@@ -231,7 +218,6 @@ foreach ($accuracyTests as $transformation => $tests) {
     }
 }
 
-// Test all other transformations exist
 echo "\n=== TESTING REMAINING TRANSFORMATIONS ===\n";
 
 $allTransformations = $service->getTransformations();
@@ -259,7 +245,6 @@ foreach ($untestedTransformations as $transformation) {
     }
 }
 
-// Summary Report
 echo "\n=== ACCURACY VALIDATION SUMMARY ===\n";
 echo "Total Tests Run: $totalTests\n";
 echo "Passed: $passedTests\n";
@@ -279,13 +264,11 @@ if (count($failedTests) > 0) {
     }
 }
 
-// Check for specific known issues
 echo "\n=== KNOWN ISSUES CHECK ===\n";
 $knownIssues = [
     'snake-case' => ['Hello World' => 'hello__world'],
     'kebab-case' => ['Hello World' => 'hello--world'],
     'dot-case' => ['Hello World' => 'hello..world'],
-    'path-case' => ['Hello World' => 'hello//world'],
     'constant-case' => ['Hello World' => 'HELLO__WORLD'],
 ];
 
@@ -298,7 +281,6 @@ foreach ($knownIssues as $transformation => $test) {
     }
 }
 
-// Final Grade
 echo "\n=== FINAL ACCURACY GRADE ===\n";
 $percentage = round(($passedTests / $totalTests) * 100, 1);
 

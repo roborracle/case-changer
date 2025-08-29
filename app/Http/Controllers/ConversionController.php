@@ -17,7 +17,7 @@ class ConversionController extends Controller
     /**
      * Category structure with all conversion types
      */
-    private array $categories = [
+    public array $categories = [
         'case-conversions' => [
             'title' => 'Case Conversions',
             'description' => 'Traditional text case transformations for any content',
@@ -361,12 +361,14 @@ class ConversionController extends Controller
             abort(404);
         }
 
-        $schemaData = $this->schemaService->getToolSchemas(
-            $category,
-            $tool,
-            $this->categories[$category],
-            $this->categories[$category]['tools'][$tool]
-        );
+        $details = [
+            'title' => $this->categories[$category]['tools'][$tool]['name'],
+            'description' => $this->categories[$category]['tools'][$tool]['description'],
+            'category' => $this->categories[$category]['title'],
+            'category_slug' => $category,
+        ];
+
+        $schemaData = $this->schemaService->generateSoftwareApplicationSchema($tool, $details);
 
         return view('conversions.tool', [
             'category' => $category,
@@ -374,7 +376,7 @@ class ConversionController extends Controller
             'categoryData' => $this->categories[$category],
             'toolData' => $this->categories[$category]['tools'][$tool],
             'allCategories' => $this->categories,
-            'schemaData' => $schemaData
+            'schemaData' => json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
         ]);
     }
 

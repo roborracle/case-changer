@@ -155,12 +155,10 @@ class TopicalAuthorityService
             return 0.0;
         }
 
-        // Same cluster = high similarity
         if ($cluster1['cluster_id'] === $cluster2['cluster_id']) {
             return 0.8;
         }
 
-        // Check for shared entities
         $sharedEntities = array_intersect(
             $cluster1['related_entities'], 
             $cluster2['related_entities']
@@ -170,7 +168,6 @@ class TopicalAuthorityService
             return 0.3 + (count($sharedEntities) * 0.1);
         }
 
-        return 0.1; // Base similarity for all tools in the ecosystem
     }
 
     /**
@@ -222,7 +219,6 @@ class TopicalAuthorityService
         $transformationService = new TransformationService();
         $transformations = $transformationService->getTransformations();
 
-        // Add related tools from same cluster
         foreach (array_slice($cluster['related_tools'], 0, $limit) as $relatedTool) {
             $similarity = $this->calculateSimilarity($tool, $relatedTool);
             $links[] = [
@@ -234,7 +230,6 @@ class TopicalAuthorityService
             ];
         }
 
-        // Add directly related entities if defined
         if (isset($this->entityRelationships[$tool])) {
             foreach ($this->entityRelationships[$tool] as $related) {
                 if (isset($transformations[$related])) {
@@ -250,7 +245,6 @@ class TopicalAuthorityService
             }
         }
 
-        // Sort by strength and limit
         usort($links, function($a, $b) {
             return $b['strength'] <=> $a['strength'];
         });
@@ -364,7 +358,6 @@ class TopicalAuthorityService
     public function buildKnowledgeGraph(): array
     {
         $graph = [
-            '@context' => 'https://schema.org',
             '@type' => 'WebApplication',
             'name' => 'Case Changer Pro',
             'description' => 'Comprehensive text transformation platform with 172+ tools',

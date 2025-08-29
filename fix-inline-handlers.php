@@ -17,21 +17,16 @@ function fixInlineHandlers($filePath) {
     $content = file_get_contents($filePath);
     $originalContent = $content;
     
-    // Pattern replacements - remove inline handlers and add CSS classes
     $replacements = [
-        // onmouseover/onmouseout for text color changes
         '/onmouseover="this\.style\.color\s*=\s*[\'"]var\(--text-primary\)[\'"]"\s*onmouseout="this\.style\.color\s*=\s*[\'"]var\(--text-secondary\)[\'"]"/i' 
             => 'class="nav-link-hover"',
         
-        // onmouseover/onmouseout for background color changes  
         '/onmouseover="this\.style\.backgroundColor\s*=\s*[\'"]var\(--bg-tertiary\)[\'"]"\s*onmouseout="this\.style\.backgroundColor\s*=\s*[\'"]var\(--bg-secondary\)[\'"]"/i'
             => 'class="hover-bg-tertiary"',
             
-        // onmouseover/onmouseout for border color changes
         '/onmouseover="this\.style\.borderColor\s*=\s*[\'"]var\(--accent-primary\)[\'"]"\s*onmouseout="this\.style\.borderColor\s*=\s*[\'"]var\(--border-primary\)[\'"]"/i'
             => 'class="hover-border-accent"',
             
-        // Clean up any remaining inline handlers
         '/\s*onmouseover="[^"]*"/ ' => '',
         '/\s*onmouseout="[^"]*"/' => '',
         '/\s*onclick="[^"]*"/' => '',
@@ -45,7 +40,6 @@ function fixInlineHandlers($filePath) {
         }
     }
     
-    // Fix classes that may already exist - merge them properly
     $content = preg_replace_callback(
         '/class="([^"]*?)"\s+class="([^"]*?)"/',
         function($matches) {
@@ -84,7 +78,6 @@ echo "=================================================\n";
 echo "ZERO TOLERANCE INLINE HANDLER REMOVAL SCRIPT\n";
 echo "=================================================\n\n";
 
-// Scan all blade templates
 scanDirectory($viewsPath);
 
 echo "✅ Fixed $fixCount inline event handlers\n";

@@ -7,9 +7,7 @@
  * Task #17 - Browser Compatibility Audit
  */
 
-$baseUrl = 'http://localhost:8002';
 
-// Browser-specific features to test
 $features = [
     'CSS Features' => [
         'backdrop-filter' => ['Chrome 76+', 'Safari 9+', 'Firefox 103+', 'Edge 79+'],
@@ -51,7 +49,6 @@ echo "=================================================\n";
 echo "BROWSER COMPATIBILITY AUDIT - TASK #17\n";
 echo "=================================================\n\n";
 
-// Test 1: Analyze CSS for compatibility issues
 echo "1. Analyzing CSS Compatibility...\n";
 $cssFiles = glob(__DIR__ . '/resources/css/*.css');
 $cssIssues = [];
@@ -59,13 +56,11 @@ $cssIssues = [];
 foreach ($cssFiles as $file) {
     $content = file_get_contents($file);
     
-    // Check for backdrop-filter without prefix
     if (strpos($content, 'backdrop-filter:') !== false && 
         strpos($content, '-webkit-backdrop-filter') === false) {
         $cssIssues[] = basename($file) . ': backdrop-filter missing -webkit prefix';
     }
     
-    // Check for modern CSS features
     $modernFeatures = [
         'backdrop-filter' => 'Glassmorphism effect',
         'grid-template' => 'CSS Grid',
@@ -95,7 +90,6 @@ if (!empty($cssIssues)) {
     echo "   ✅ CSS properly prefixed\n";
 }
 
-// Test 2: Check vendor prefixes
 echo "\n2. Checking Vendor Prefixes...\n";
 $prefixPatterns = [
     '-webkit-' => 'WebKit/Chrome/Safari',
@@ -121,7 +115,6 @@ foreach ($results['vendor_prefixes'] as $prefix => $count) {
 }
 echo "   Total vendor prefixes: $totalPrefixes\n";
 
-// Test 3: JavaScript Compatibility
 echo "\n3. Analyzing JavaScript Compatibility...\n";
 $jsFiles = glob(__DIR__ . '/resources/js/*.js');
 $jsIssues = [];
@@ -129,7 +122,6 @@ $jsIssues = [];
 foreach ($jsFiles as $file) {
     $content = file_get_contents($file);
     
-    // Check for ES6+ features
     $es6Features = [
         '=>' => 'Arrow functions',
         '`' => 'Template literals',
@@ -154,7 +146,6 @@ foreach ($results['js_analysis'] as $feature => $found) {
     echo "   ✅ Uses: $feature\n";
 }
 
-// Test 4: HTML5 Feature Detection
 echo "\n4. Checking HTML5 Compatibility...\n";
 $html = @file_get_contents($baseUrl);
 if ($html) {
@@ -180,35 +171,29 @@ if ($html) {
     }
 }
 
-// Test 5: Specific Browser Issues
 echo "\n5. Testing Browser-Specific Issues...\n";
 
-// Safari-specific issues
 echo "   Safari Compatibility:\n";
 if (isset($results['css_analysis']['Glassmorphism effect'])) {
     echo "     ⚠️ Uses backdrop-filter (requires Safari 9+)\n";
     $results['issues'][] = 'Glassmorphism requires Safari 9+';
 }
 
-// Firefox-specific issues
 echo "   Firefox Compatibility:\n";
 if (isset($results['css_analysis']['Glassmorphism effect'])) {
     echo "     ⚠️ backdrop-filter requires Firefox 103+\n";
     $results['issues'][] = 'Glassmorphism requires Firefox 103+';
 }
 
-// Edge-specific issues
 echo "   Edge Compatibility:\n";
 if (isset($results['css_analysis']['CSS Grid'])) {
     echo "     ✅ CSS Grid supported (Edge 16+)\n";
 }
 
-// IE11 compatibility
 echo "   Internet Explorer 11:\n";
 echo "     ❌ NOT SUPPORTED - Uses modern features\n";
 $results['issues'][] = 'IE11 not supported';
 
-// Test 6: Feature Support Matrix
 echo "\n6. Browser Feature Support Matrix:\n";
 echo str_repeat('-', 80) . "\n";
 printf("%-30s %-12s %-12s %-12s %-12s\n", "Feature", "Chrome", "Firefox", "Safari", "Edge");
@@ -224,7 +209,6 @@ foreach ($features['CSS Features'] as $feature => $browsers) {
     );
 }
 
-// Calculate compatibility score
 echo "\n=================================================\n";
 echo "BROWSER COMPATIBILITY SUMMARY\n";
 echo "=================================================\n\n";
@@ -232,23 +216,19 @@ echo "=================================================\n\n";
 $score = 100;
 $deductions = [];
 
-// Deduct for missing prefixes
 if (count($results['vendor_prefixes']) < 2) {
     $score -= 10;
     $deductions[] = "-10: Insufficient vendor prefixes";
 }
 
-// Deduct for each compatibility issue
 foreach ($results['issues'] as $issue) {
     if (strpos($issue, 'IE11') !== false) {
-        // IE11 is optional
         continue;
     }
     $score -= 5;
     $deductions[] = "-5: $issue";
 }
 
-// Bonus for proper prefixing
 if (isset($results['vendor_prefixes']['-webkit-']) && 
     $results['vendor_prefixes']['-webkit-'] > 5) {
     $score = min(100, $score + 5);
@@ -267,7 +247,6 @@ if (!empty($deductions)) {
     echo "\n";
 }
 
-// Recommendations
 echo "Recommendations:\n";
 if ($score >= 90) {
     echo "✅ Excellent browser compatibility\n";
@@ -282,7 +261,6 @@ if ($score >= 90) {
     echo "   - Test on actual browsers\n";
 }
 
-// Browser Support Summary
 echo "\nMinimum Browser Versions Required:\n";
 echo "  • Chrome 76+ (backdrop-filter)\n";
 echo "  • Firefox 103+ (backdrop-filter)\n";
@@ -290,7 +268,6 @@ echo "  • Safari 9+ (backdrop-filter)\n";
 echo "  • Edge 79+ (backdrop-filter)\n";
 echo "  • IE11: NOT SUPPORTED\n";
 
-// Modern Features Used
 echo "\nModern Features Detected:\n";
 $modernCount = count($results['css_analysis']) + count($results['js_analysis']);
 echo "  CSS: " . count($results['css_analysis']) . " modern features\n";

@@ -58,7 +58,6 @@ class GeneratorService
     {
         $data = random_bytes(16);
         
-        // Set version (4) and variant bits
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
         
@@ -87,7 +86,6 @@ class GeneratorService
      */
     public function generateLetter(bool $uppercase = false): string
     {
-        $letter = chr(random_int(97, 122)); // a-z
         return $uppercase ? strtoupper($letter) : $letter;
     }
 
@@ -137,7 +135,6 @@ class GeneratorService
             return implode(':', $hex);
         }
         
-        // IPv4
         return implode('.', [
             random_int(1, 255),
             random_int(0, 255),

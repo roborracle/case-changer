@@ -1,9 +1,5 @@
 <?php
-// Test CSS loading
 $cssFiles = [
-    'app' => 'http://127.0.0.1:8002/build/assets/app-BWiu0TyI.css',
-    'glassmorphism' => 'http://127.0.0.1:8002/build/assets/glassmorphism-DCFg2Lg4.css',
-    'revolutionary' => 'http://127.0.0.1:8002/build/assets/revolutionary-ui-pWuX7qlM.css'
 ];
 
 foreach ($cssFiles as $name => $url) {
@@ -16,7 +12,6 @@ foreach ($cssFiles as $name => $url) {
         $size = strlen($content);
         echo "  Size: " . number_format($size) . " bytes\n";
         
-        // Check for key styles
         if ($name == 'glassmorphism') {
             echo "  Has gradient-background: " . (strpos($content, 'gradient-background') !== false ? 'YES' : 'NO') . "\n";
             echo "  Has glassmorphism-container: " . (strpos($content, 'glassmorphism-container') !== false ? 'YES' : 'NO') . "\n";

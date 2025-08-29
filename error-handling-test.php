@@ -13,7 +13,6 @@ require_once __DIR__ . '/app/Services/TransformationService.php';
 use App\Services\TransformationService;
 
 $service = new TransformationService();
-$baseUrl = 'http://localhost:8002';
 
 $results = [
     'error_handling' => [],
@@ -29,7 +28,6 @@ echo "=================================================\n";
 echo "ERROR HANDLING AUDIT - TASK #18\n";
 echo "=================================================\n\n";
 
-// Test 1: Check for try-catch in service methods
 echo "1. Checking Error Handling in TransformationService...\n";
 $reflection = new ReflectionClass($service);
 $methods = $reflection->getMethods(ReflectionMethod::IS_PRIVATE);
@@ -38,13 +36,10 @@ $totalMethods = count($methods);
 
 foreach ($methods as $method) {
     $source = file_get_contents(__FILE__);
-    // Note: Can't inspect method source directly in PHP
-    // This is a limitation - we know from grep there are NO try-catch blocks
 }
 echo "   ❌ No try-catch blocks found in TransformationService\n";
 $results['error_handling']['service'] = false;
 
-// Test 2: Test edge cases with invalid input
 echo "\n2. Testing Edge Cases with Invalid Input...\n";
 
 $edgeCases = [
@@ -78,7 +73,6 @@ foreach ($edgeCases as $caseName => $input) {
     }
 }
 
-// Test 3: Test invalid transformation types
 echo "\n3. Testing Invalid Transformation Types...\n";
 $invalidTypes = [
     'non_existent' => 'this-does-not-exist',
@@ -105,7 +99,6 @@ foreach ($invalidTypes as $typeName => $type) {
     }
 }
 
-// Test 4: Test API error responses
 echo "\n4. Testing API Error Responses...\n";
 $apiTests = [
     'missing_text' => json_encode(['transformation' => 'uppercase']),
@@ -138,7 +131,6 @@ foreach ($apiTests as $testName => $payload) {
     }
 }
 
-// Test 5: Check error logging configuration
 echo "\n5. Checking Error Logging Configuration...\n";
 $envFile = __DIR__ . '/.env';
 if (file_exists($envFile)) {
@@ -161,7 +153,6 @@ if (file_exists($envFile)) {
     }
 }
 
-// Test 6: Check for custom error pages
 echo "\n6. Checking Custom Error Pages...\n";
 $errorPages = ['404', '500', '503', '419'];
 foreach ($errorPages as $code) {
@@ -175,7 +166,6 @@ foreach ($errorPages as $code) {
     }
 }
 
-// Test 7: Check for global exception handler
 echo "\n7. Checking Global Exception Handler...\n";
 $handlerFile = __DIR__ . '/app/Exceptions/Handler.php';
 if (file_exists($handlerFile)) {
@@ -192,7 +182,6 @@ if (file_exists($handlerFile)) {
     $results['error_handling']['global_handler'] = false;
 }
 
-// Calculate score
 echo "\n=================================================\n";
 echo "ERROR HANDLING SUMMARY\n";
 echo "=================================================\n\n";
@@ -200,13 +189,11 @@ echo "=================================================\n\n";
 $score = 100;
 $deductions = [];
 
-// Major deductions
 if (!$results['error_handling']['service']) {
     $score -= 30;
     $deductions[] = "-30: No error handling in TransformationService";
 }
 
-// Edge case handling
 $failedEdgeCases = 0;
 foreach ($results['edge_cases'] as $case => $result) {
     if ($result === 'exception' || $result === 'fatal') {
@@ -219,7 +206,6 @@ if ($failedEdgeCases > 0) {
     $deductions[] = "-$deduction: $failedEdgeCases edge cases cause exceptions";
 }
 
-// API error handling
 $incorrectApi = 0;
 foreach ($results['api_errors'] as $test => $result) {
     if ($result === 'incorrect') {
@@ -231,7 +217,6 @@ if ($incorrectApi > 0) {
     $deductions[] = "-10: API error responses incorrect";
 }
 
-// Custom error pages
 $missingPages = 0;
 foreach ($results['user_feedback'] as $page => $exists) {
     if (!$exists) {
@@ -243,7 +228,6 @@ if ($missingPages > 0) {
     $deductions[] = "-10: Missing $missingPages custom error pages";
 }
 
-// Logging configuration
 if (!isset($results['logging']['channel']) || !$results['logging']['channel']) {
     $score -= 5;
     $deductions[] = "-5: Error logging not configured";
@@ -261,7 +245,6 @@ if (!empty($deductions)) {
     echo "\n";
 }
 
-// Critical issues
 echo "Critical Issues:\n";
 if (!$results['error_handling']['service']) {
     echo "  ❌ TransformationService has NO error handling\n";
@@ -273,7 +256,6 @@ if ($missingPages === count($errorPages)) {
     echo "  ❌ No custom error pages for users\n";
 }
 
-// Recommendations
 echo "\nRecommendations:\n";
 if ($score >= 80) {
     echo "✅ Good error handling overall\n";

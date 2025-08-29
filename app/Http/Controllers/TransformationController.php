@@ -1,8 +1,5 @@
 <?php
 
-// WHY THIS FILE EXISTS: To handle the user input from the main form, orchestrate the text transformation, and pass the results back to the original view, preserving the UI.
-// WHAT THIS FILE MUST NEVER DO: Contain complex business logic or deviate from the "request -> service -> response" pattern.
-// SUCCESS DEFINITION: This file is successful if it seamlessly replaces the functionality of the old Livewire component without altering the user interface.
 
 namespace App\Http\Controllers;
 
@@ -27,9 +24,7 @@ class TransformationController extends Controller
     {
         $inputText = '';
         $outputText = '';
-        $transformation = 'upper-case'; // Default transformation
 
-        // Only process if it's a POST request with input
         if ($request->isMethod('post')) {
             $validated = $request->validate([
                 'input' => 'required|string|max:10000',
@@ -41,7 +36,6 @@ class TransformationController extends Controller
             $outputText = $this->transformationService->transform($inputText, $transformation);
         }
 
-        // Return the view with all necessary data
         return view('home', [
             'input' => $inputText,
             'output' => $outputText,

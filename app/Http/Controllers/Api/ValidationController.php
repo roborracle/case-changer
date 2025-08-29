@@ -75,7 +75,6 @@ class ValidationController extends Controller
     public function validateAll(Request $request): JsonResponse
     {
         try {
-            // Check if validation is already running (prevent concurrent runs)
             if (Cache::get('validation:running', false)) {
                 return response()->json([
                     'data' => null,
@@ -86,13 +85,9 @@ class ValidationController extends Controller
                 ], 429);
             }
             
-            // Set lock
-            Cache::put('validation:running', true, 600); // 10 minute lock
             
-            // Run validation
             $results = $this->validationService->validateAllTools();
             
-            // Clear lock
             Cache::forget('validation:running');
             
             return response()->json([
@@ -101,7 +96,6 @@ class ValidationController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            // Clear lock on error
             Cache::forget('validation:running');
             
             return response()->json([
@@ -173,7 +167,6 @@ class ValidationController extends Controller
             ], 404);
         }
         
-        // Get latest certificate
         $latestCert = end($certificates);
         $certificate = json_decode(file_get_contents($latestCert), true);
         

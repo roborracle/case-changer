@@ -60,7 +60,6 @@ class SemanticEntity extends Model
     public function generateJsonLd(): array
     {
         $jsonLd = [
-            '@context' => 'https://schema.org',
             '@type' => $this->getSchemaType(),
             '@id' => $this->canonical_url,
             'name' => $this->label,
@@ -68,17 +67,14 @@ class SemanticEntity extends Model
             'url' => $this->canonical_url
         ];
 
-        // Add breadcrumb if exists
         if ($this->breadcrumb_schema) {
             $jsonLd['breadcrumb'] = $this->generateBreadcrumbJsonLd();
         }
 
-        // Add FAQ if exists
         if ($this->faq_schema) {
             $jsonLd['mainEntity'] = $this->generateFAQJsonLd();
         }
 
-        // Merge with custom structured data
         if ($this->structured_data) {
             $jsonLd = array_merge($jsonLd, $this->structured_data);
         }
@@ -149,12 +145,10 @@ class SemanticEntity extends Model
      */
     public function semanticDistance(SemanticEntity $other): float
     {
-        // Same cluster = close distance
         if ($this->cluster_id === $other->cluster_id) {
             return 0.2;
         }
 
-        // Check for direct relationship
         $relationship = $this->relatedEntities()
             ->where('related_entity_id', $other->entity_id)
             ->first();
@@ -163,7 +157,6 @@ class SemanticEntity extends Model
             return 1.0 - $relationship->pivot->strength;
         }
 
-        // Default distance for unrelated entities
         return 0.9;
     }
 
@@ -247,7 +240,6 @@ class SemanticEntity extends Model
             'twitter:description' => $this->meta_description ?: $this->description
         ];
 
-        // Add schema.org JSON-LD
         $tags['json-ld'] = json_encode($this->generateJsonLd(), JSON_UNESCAPED_SLASHES);
 
         return $tags;

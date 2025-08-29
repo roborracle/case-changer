@@ -56,7 +56,6 @@ return [
                 'driver' => 'monolog',
                 'handler' => \Monolog\Handler\StreamHandler::class,
                 'with' => [
-                    'stream' => 'php://stderr',
                 ],
                 'level' => env('LOG_LEVEL', 'error'),
             ],
@@ -96,11 +95,9 @@ return [
      * Application Settings
      */
     'app' => [
-        'url' => env('RAILWAY_PUBLIC_DOMAIN', 'https://case-changer-production.up.railway.app'),
         'force_https' => true,
         'trusted_proxies' => '*',
         'trusted_hosts' => [
-            parse_url(env('RAILWAY_PUBLIC_DOMAIN', 'https://case-changer-production.up.railway.app'), PHP_URL_HOST),
         ],
     ],
     
@@ -109,10 +106,6 @@ return [
      * Disable all persistence-dependent services
      */
     'services' => [
-        'history_persistence' => false,  // HistoryService won't save to files
-        'user_preferences' => false,     // No user preference storage
-        'analytics' => false,             // No analytics data collection
-        'file_uploads' => false,          // No file upload support
     ],
     
     /**
@@ -120,7 +113,6 @@ return [
      */
     'performance' => [
         'opcache' => true,
-        'preload' => false,  // Incompatible with ephemeral filesystem
         'realpath_cache_size' => '4096k',
         'realpath_cache_ttl' => 600,
     ],

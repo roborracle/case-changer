@@ -1,0 +1,19 @@
+
+> build
+> vite build
+
+vite v7.1.2 building for production...
+transforming...
+✓ 63 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/manifest.json                                     1.58 kB │ gzip:  0.37 kB
+public/build/assets/css/accessibility-3DNBKtXB.css             2.34 kB │ gzip:  0.91 kB
+public/build/assets/css/theme-variables-sAGfN_BY.css           4.51 kB │ gzip:  0.99 kB
+public/build/assets/css/glassmorphism-utilities-Dh28qIzb.css   4.54 kB │ gzip:  1.14 kB
+public/build/assets/css/glassmorphism-CjNSslv3.css            11.13 kB │ gzip:  2.51 kB
+public/build/assets/css/revolutionary-ui-BlxmxrjL.css         13.29 kB │ gzip:  3.09 kB
+public/build/assets/css/app-Dw1mw5x7.css                      32.02 kB │ gzip:  6.82 kB
+public/build/assets/js/vendor-BOZrvFJR.js                     41.28 kB │ gzip: 14.47 kB
+public/build/assets/js/app-CuzzmUlO.js                        49.80 kB │ gzip: 17.02 kB
+✓ built in 795ms

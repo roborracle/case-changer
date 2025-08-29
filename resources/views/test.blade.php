@@ -44,7 +44,6 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-            // Check if CSS is loaded
             const testEl = document.querySelector('.glassmorphism-container');
             if (testEl) {
             const styles = window.getComputedStyle(testEl);
@@ -56,14 +55,12 @@
             console.log('Animation:', styles.animation);
             }
 
-            // Check CSS variables
             const root = document.documentElement;
             const rootStyles = window.getComputedStyle(root);
             console.log('=== CSS Variables ===');
             console.log('--gradient-primary:', rootStyles.getPropertyValue('--gradient-primary'));
             console.log('--glass-bg-primary:', rootStyles.getPropertyValue('--glass-bg-primary'));
 
-            // Check if stylesheets loaded
             console.log('=== Stylesheets Loaded ===');
             for (let sheet of document.styleSheets) {
             try {

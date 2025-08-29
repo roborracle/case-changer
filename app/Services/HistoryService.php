@@ -64,7 +64,6 @@ class HistoryService
     public function __construct(int $maxSize = 20, ?string $sessionId = null)
     {
         $this->maxHistorySize = $maxSize;
-        // DISABLE persistence on Railway - ephemeral filesystem
         $this->sessionId = app()->environment('production') ? null : $sessionId;
         
         if ($this->sessionId) {
@@ -82,16 +81,13 @@ class HistoryService
      */
     public function addState(string $text, string $transformation = '', array $metadata = []): self
     {
-        // Clear any redo states when new state is added
         if ($this->currentPosition < count($this->history) - 1) {
             $this->history = array_slice($this->history, 0, $this->currentPosition + 1);
             $this->redoStack = [];
         }
 
-        // Compress text if needed
         $storedText = $this->shouldCompress($text) ? $this->compress($text) : $text;
 
-        // Create new history entry
         $entry = [
             'text' => $storedText,
             'timestamp' => time(),
@@ -103,23 +99,16 @@ class HistoryService
             ])
         ];
 
-        // Add to history
         $this->history[] = $entry;
         $this->currentPosition++;
 
-        // Maintain max history size
         if (count($this->history) > $this->maxHistorySize) {
             $removed = array_shift($this->history);
             $this->currentPosition--;
             
-            // Clean up memory
             unset($removed);
         }
 
-        // DISABLED: Don't persist on Railway (ephemeral filesystem)
-        // if ($this->sessionId) {
-        //     $this->saveHistory();
-        // }
 
         return $this;
     }
@@ -135,20 +124,16 @@ class HistoryService
             return null;
         }
 
-        // Move current state to redo stack
         if (isset($this->history[$this->currentPosition])) {
             $this->redoStack[] = $this->history[$this->currentPosition];
         }
 
-        // Move to previous state
         $this->currentPosition--;
 
-        // Get previous state
         if ($this->currentPosition >= 0 && isset($this->history[$this->currentPosition])) {
             $entry = $this->history[$this->currentPosition];
             $text = $entry['text'];
             
-            // Decompress if needed
             if (!empty($entry['metadata']['compressed'])) {
                 $text = $this->decompress($text);
             }
@@ -170,21 +155,17 @@ class HistoryService
             return null;
         }
 
-        // Get state from redo stack
         $entry = array_pop($this->redoStack);
         
         if ($entry) {
-            // Move position forward
             $this->currentPosition++;
             
-            // Ensure the state is in history
             if (!isset($this->history[$this->currentPosition])) {
                 $this->history[$this->currentPosition] = $entry;
             }
             
             $text = $entry['text'];
             
-            // Decompress if needed
             if (!empty($entry['metadata']['compressed'])) {
                 $text = $this->decompress($text);
             }
@@ -226,7 +207,6 @@ class HistoryService
             $entry = $this->history[$this->currentPosition];
             $text = $entry['text'];
             
-            // Decompress if needed
             if (!empty($entry['metadata']['compressed'])) {
                 $text = $this->decompress($text);
             }
@@ -334,14 +314,12 @@ class HistoryService
             return null;
         }
 
-        // Clear redo stack when jumping
         $this->redoStack = [];
         $this->currentPosition = $position;
 
         $entry = $this->history[$position];
         $text = $entry['text'];
         
-        // Decompress if needed
         if (!empty($entry['metadata']['compressed'])) {
             $text = $this->decompress($text);
         }

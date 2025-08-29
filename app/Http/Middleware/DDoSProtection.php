@@ -10,13 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DDoSProtection
 {
-    // DDoS protection thresholds
     private const MAX_REQUESTS_PER_SECOND = 10;
     private const MAX_REQUESTS_PER_MINUTE = 100;
     private const MAX_REQUESTS_PER_HOUR = 1000;
-    private const BLOCK_DURATION = 3600; // 1 hour
     
-    // Suspicious behavior patterns
     private const SUSPICIOUS_USER_AGENTS = [
         'bot', 'crawler', 'spider', 'scraper', 'curl', 'wget',
         'python', 'java', 'ruby', 'perl', 'go-http'
@@ -29,23 +26,19 @@ class DDoSProtection
     {
         $ip = $request->ip();
         
-        // Check if IP is blocked
         if ($this->isBlocked($ip)) {
             return $this->blockResponse($ip);
         }
         
-        // Check for suspicious patterns
         if ($this->isSuspicious($request)) {
             $this->logSuspiciousActivity($request);
         }
         
-        // Check request rates
         if (!$this->checkRateLimit($ip)) {
             $this->blockIp($ip);
             return $this->blockResponse($ip);
         }
         
-        // Track request
         $this->trackRequest($ip);
         
         return $next($request);
@@ -77,7 +70,6 @@ class DDoSProtection
      */
     private function checkRateLimit(string $ip): bool
     {
-        // Per-second check
         $secondKey = 'req:sec:' . $ip . ':' . time();
         $secondCount = Cache::get($secondKey, 0);
         if ($secondCount >= self::MAX_REQUESTS_PER_SECOND) {
@@ -88,7 +80,6 @@ class DDoSProtection
             return false;
         }
         
-        // Per-minute check
         $minuteKey = 'req:min:' . $ip . ':' . floor(time() / 60);
         $minuteCount = Cache::get($minuteKey, 0);
         if ($minuteCount >= self::MAX_REQUESTS_PER_MINUTE) {
@@ -99,7 +90,6 @@ class DDoSProtection
             return false;
         }
         
-        // Per-hour check
         $hourKey = 'req:hour:' . $ip . ':' . floor(time() / 3600);
         $hourCount = Cache::get($hourKey, 0);
         if ($hourCount >= self::MAX_REQUESTS_PER_HOUR) {
@@ -118,17 +108,14 @@ class DDoSProtection
      */
     private function trackRequest(string $ip): void
     {
-        // Track per-second
         $secondKey = 'req:sec:' . $ip . ':' . time();
         $count = Cache::get($secondKey, 0);
         Cache::put($secondKey, $count + 1, 2);
         
-        // Track per-minute
         $minuteKey = 'req:min:' . $ip . ':' . floor(time() / 60);
         $count = Cache::get($minuteKey, 0);
         Cache::put($minuteKey, $count + 1, 120);
         
-        // Track per-hour
         $hourKey = 'req:hour:' . $ip . ':' . floor(time() / 3600);
         $count = Cache::get($hourKey, 0);
         Cache::put($hourKey, $count + 1, 7200);
@@ -141,19 +128,16 @@ class DDoSProtection
     {
         $userAgent = strtolower($request->userAgent() ?? '');
         
-        // Check for suspicious user agents
         foreach (self::SUSPICIOUS_USER_AGENTS as $pattern) {
             if (str_contains($userAgent, $pattern)) {
                 return true;
             }
         }
         
-        // Check for missing user agent
         if (empty($userAgent)) {
             return true;
         }
         
-        // Check for rapid sequential requests to different endpoints
         $ip = $request->ip();
         $pathKey = 'paths:' . $ip;
         $paths = Cache::get($pathKey, []);
@@ -164,7 +148,6 @@ class DDoSProtection
             Cache::put($pathKey, $paths, 60);
         }
         
-        // Suspicious if accessing too many different paths quickly
         if (count($paths) > 20) {
             return true;
         }

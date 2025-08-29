@@ -12,9 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // Health check endpoint only
         '/up',
-        // API endpoints
         '/api/*',
     ];
 
@@ -26,7 +24,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected function tokensMatch($request)
     {
-        // Additional security: Log CSRF failures
         $result = parent::tokensMatch($request);
         
         if (!$result) {

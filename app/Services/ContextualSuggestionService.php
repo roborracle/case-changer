@@ -37,37 +37,30 @@ class ContextualSuggestionService
      */
     private function detectContext(string $text): ?string
     {
-        // Code detection
         if ($this->isCode($text)) {
             return 'Code/Programming';
         }
 
-        // Email detection
         if ($this->isEmail($text)) {
             return 'Email/Communication';
         }
 
-        // URL detection
         if ($this->isUrl($text)) {
             return 'Web/URL';
         }
 
-        // Title detection (short text, possibly all caps)
         if (strlen($text) < 100 && $this->isTitleLike($text)) {
             return 'Title/Heading';
         }
 
-        // List detection
         if ($this->isList($text)) {
             return 'List/Enumeration';
         }
 
-        // Long-form text
         if (str_word_count($text) > 50) {
             return 'Article/Document';
         }
 
-        // Name detection
         if ($this->isName($text)) {
             return 'Name/Identifier';
         }
@@ -157,7 +150,6 @@ class ContextualSuggestionService
                 break;
 
             default:
-                // General suggestions
                 $suggestions = [
                     ['type' => 'uppercase', 'label' => 'UPPERCASE', 'style' => 'upper'],
                     ['type' => 'lowercase', 'label' => 'lowercase', 'style' => 'lower'],
@@ -167,7 +159,6 @@ class ContextualSuggestionService
                 ];
         }
 
-        return array_slice($suggestions, 0, 5); // Return top 5 suggestions
     }
 
     /**
@@ -278,7 +269,6 @@ class ContextualSuggestionService
             return false;
         }
 
-        // Check for bullet points or numbering
         $listPatterns = [
             '/^[\-\*\•]\s/',
             '/^\d+[\.]\s/',
@@ -295,7 +285,6 @@ class ContextualSuggestionService
             }
         }
 
-        return $matchCount >= count($lines) * 0.5; // At least 50% of lines match
     }
 
     /**
@@ -362,8 +351,6 @@ class ContextualSuggestionService
      */
     public function getPopularTransformations(): array
     {
-        // This would typically pull from a database of usage stats
-        // For now, returning commonly used transformations
         return [
             ['type' => 'uppercase', 'label' => 'UPPERCASE', 'style' => 'upper'],
             ['type' => 'lowercase', 'label' => 'lowercase', 'style' => 'lower'],
@@ -444,14 +431,12 @@ class ContextualSuggestionService
             ]
         ];
 
-        // Filter by category
         if ($category && $category !== 'all' && isset($tools[$category])) {
             $filteredTools = $tools[$category];
         } else {
             $filteredTools = array_merge(...array_values($tools));
         }
 
-        // Filter by search term
         if ($searchTerm) {
             $searchTerm = strtolower($searchTerm);
             $filteredTools = array_filter($filteredTools, function($tool) use ($searchTerm) {

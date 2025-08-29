@@ -13,7 +13,6 @@ class LogLivewireErrors
         try {
             $response = $next($request);
             
-            // Log 500 errors for Livewire
             if ($request->is('livewire/*') && $response->status() >= 500) {
                 Log::error('Livewire 500 Error', [
                     'url' => $request->url(),

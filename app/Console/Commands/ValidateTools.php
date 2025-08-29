@@ -37,11 +37,9 @@ class ValidateTools extends Command
         $this->info('========================================');
         $this->newLine();
         
-        // Initialize validation service
         $transformationService = new TransformationService();
         $this->validationService = new ValidationService($transformationService);
         
-        // Check if validating specific tool
         $specificTool = $this->option('tool');
         
         if ($specificTool) {
@@ -65,16 +63,13 @@ class ValidateTools extends Command
         $progressBar = $this->output->createProgressBar(172);
         $progressBar->start();
         
-        // Run validation
         $results = $this->validationService->validateAllTools();
         
         $progressBar->finish();
         $this->newLine(2);
         
-        // Display results
         $this->displayResults($results);
         
-        // Export if requested
         if ($this->option('export')) {
             $this->exportResults($results);
         }
@@ -102,7 +97,6 @@ class ValidateTools extends Command
         
         $result = $this->validationService->validateTool($tool, $transformations[$tool]);
         
-        // Display detailed results
         $this->displayToolResult($tool, $result);
     }
     
@@ -111,7 +105,6 @@ class ValidateTools extends Command
      */
     private function displayResults(array $results): void
     {
-        // Summary table
         $this->table(
             ['Metric', 'Value'],
             [
@@ -125,7 +118,6 @@ class ValidateTools extends Command
             ]
         );
         
-        // Show failed tools if any
         if ($results['failed'] > 0) {
             $this->newLine();
             $this->error('Failed Tools:');
@@ -139,7 +131,6 @@ class ValidateTools extends Command
             }
         }
         
-        // Show warning tools if any
         if ($results['warnings'] > 0) {
             $this->newLine();
             $this->warn('Tools with Warnings:');
@@ -148,7 +139,6 @@ class ValidateTools extends Command
             }
         }
         
-        // Show slow tools
         if (count($results['summary']['slow_tools']) > 0) {
             $this->newLine();
             $this->warn('Performance Issues:');
@@ -157,7 +147,6 @@ class ValidateTools extends Command
             }
         }
         
-        // Overall health status
         $this->newLine();
         if ($results['summary']['health_status'] === 'HEALTHY') {
             $this->info('✅ SYSTEM STATUS: HEALTHY - All validations passed!');

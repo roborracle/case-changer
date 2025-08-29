@@ -11,9 +11,7 @@ $processedCount = 0;
 $removedCount = 0;
 $fileCount = 0;
 
-// Mapping of common inline styles to Tailwind classes
 $styleMap = [
-    // Background colors
     'background-color: var(--bg-primary)' => 'bg-primary',
     'background-color: var(--bg-secondary)' => 'bg-secondary',
     'background-color: var(--bg-tertiary)' => 'bg-tertiary',
@@ -25,7 +23,6 @@ $styleMap = [
     'background-color: white' => 'bg-white',
     'background-color: transparent' => 'bg-transparent',
     
-    // Text colors
     'color: var(--text-primary)' => 'text-primary',
     'color: var(--text-secondary)' => 'text-secondary',
     'color: var(--text-tertiary)' => 'text-tertiary',
@@ -37,7 +34,6 @@ $styleMap = [
     'color: blue' => 'text-blue-500',
     'color: green' => 'text-green-500',
     
-    // Padding
     'padding: 20px' => 'p-5',
     'padding: 10px' => 'p-2.5',
     'padding: 15px' => 'p-4',
@@ -49,7 +45,6 @@ $styleMap = [
     'padding-left: 20px' => 'pl-5',
     'padding-right: 20px' => 'pr-5',
     
-    // Margin
     'margin: 20px 0' => 'my-5',
     'margin: 0 20px' => 'mx-5',
     'margin: 20px' => 'm-5',
@@ -61,7 +56,6 @@ $styleMap = [
     'margin-left: 20px' => 'ml-5',
     'margin-right: 20px' => 'mr-5',
     
-    // Border
     'border: 1px solid' => 'border',
     'border: 2px solid red' => 'border-2 border-red-500',
     'border: 2px solid blue' => 'border-2 border-blue-500',
@@ -70,20 +64,17 @@ $styleMap = [
     'border-radius: 4px' => 'rounded',
     'border-radius: 50%' => 'rounded-full',
     
-    // Display
     'display: flex' => 'flex',
     'display: none' => 'hidden',
     'display: block' => 'block',
     'display: inline-block' => 'inline-block',
     'display: grid' => 'grid',
     
-    // Sizing
     'width: 100%' => 'w-full',
     'height: 100%' => 'h-full',
     'min-height: 400px' => 'min-h-[400px]',
     'max-width: 100%' => 'max-w-full',
     
-    // Typography
     'font-weight: bold' => 'font-bold',
     'font-weight: 600' => 'font-semibold',
     'font-size: 16px' => 'text-base',
@@ -104,19 +95,16 @@ function convertInlineStyleToTailwind($styleAttribute) {
         $style = trim($style);
         if (empty($style)) continue;
         
-        // Direct mapping
         if (isset($styleMap[$style])) {
             $classes[] = $styleMap[$style];
             continue;
         }
         
-        // Try to parse individual properties
         if (strpos($style, ':') !== false) {
             list($property, $value) = explode(':', $style, 2);
             $property = trim($property);
             $value = trim($value);
             
-            // Convert common patterns
             switch ($property) {
                 case 'padding':
                 case 'margin':
@@ -139,7 +127,6 @@ function convertInlineStyleToTailwind($styleAttribute) {
                     $classes[] = convertSizeToTailwind($property, $value);
                     break;
                 default:
-                    // Log unmapped styles for manual review
                     echo "  ⚠️  Unmapped style: $style\n";
             }
         }
@@ -151,7 +138,6 @@ function convertInlineStyleToTailwind($styleAttribute) {
 function convertSpacingToTailwind($property, $value) {
     $prefix = $property === 'padding' ? 'p' : 'm';
     
-    // Convert px values
     if (preg_match('/^(\d+)px$/', $value, $matches)) {
         $px = (int)$matches[1];
         $mapping = [
@@ -163,7 +149,6 @@ function convertSpacingToTailwind($property, $value) {
         if (isset($mapping[$px])) {
             return $prefix . '-' . $mapping[$px];
         }
-        // For non-standard values, use arbitrary value
         return $prefix . '-[' . $px . 'px]';
     }
     
@@ -181,9 +166,7 @@ function convertBackgroundToTailwind($value) {
         }
     }
     
-    // Handle hex colors
     if (preg_match('/^#([a-fA-F0-9]{6})$/', $value)) {
-        // Common colors
         $colorMap = [
             '#ffffff' => 'white', '#000000' => 'black',
             '#ff0000' => 'red-500', '#00ff00' => 'green-500',
@@ -194,7 +177,6 @@ function convertBackgroundToTailwind($value) {
         if (isset($colorMap[$lower])) {
             return 'bg-' . $colorMap[$lower];
         }
-        // Use arbitrary value for non-standard colors
         return 'bg-[' . $value . ']';
     }
     
@@ -213,7 +195,6 @@ function convertColorToTailwind($value) {
         }
     }
     
-    // Handle hex colors
     if (preg_match('/^#([a-fA-F0-9]{6})$/', $value)) {
         $colorMap = [
             '#ffffff' => 'white', '#000000' => 'black',
@@ -257,7 +238,6 @@ function convertSizeToTailwind($property, $value) {
     if ($value === '100%') return $prefix . '-full';
     if ($value === 'auto') return $prefix . '-auto';
     
-    // Handle px values
     if (preg_match('/^(\d+)px$/', $value, $matches)) {
         return $prefix . '-[' . $matches[1] . 'px]';
     }
@@ -271,7 +251,6 @@ function processFile($filePath) {
     $content = file_get_contents($filePath);
     $originalContent = $content;
     
-    // Find all inline styles
     $pattern = '/style="([^"]*)"/';
     preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
     
@@ -283,22 +262,18 @@ function processFile($filePath) {
             $fullMatch = $match[0];
             $styleContent = $match[1];
             
-            // Convert to Tailwind classes
             $tailwindClasses = convertInlineStyleToTailwind($styleContent);
             
             if (!empty($tailwindClasses)) {
                 $classString = implode(' ', $tailwindClasses);
                 
-                // Check if there's already a class attribute
                 if (preg_match('/class="([^"]*)"/', $content)) {
-                    // Merge with existing classes
                     $content = preg_replace(
                         '/(class="[^"]*)"(\s*)' . preg_quote($fullMatch, '/') . '/',
                         '$1 ' . $classString . '"$2',
                         $content
                     );
                 } else {
-                    // Replace style with class
                     $content = str_replace($fullMatch, 'class="' . $classString . '"', $content);
                 }
                 
@@ -306,15 +281,12 @@ function processFile($filePath) {
                 echo "  ✓ Converted: $styleContent → $classString\n";
             } else {
                 echo "  ⚠️  Could not convert: $styleContent\n";
-                // Still remove the style attribute even if we can't convert it
-                // This enforces ZERO TOLERANCE policy
                 $content = str_replace(' ' . $fullMatch, '', $content);
                 $content = str_replace($fullMatch, '', $content);
                 $removedCount++;
             }
         }
         
-        // Save the file
         file_put_contents($filePath, $content);
         $processedCount++;
     }
@@ -336,12 +308,10 @@ function processDirectory($dir) {
 echo "=== REMOVING ALL INLINE STYLES - ZERO TOLERANCE ===\n\n";
 echo "Processing templates in: $viewsPath\n\n";
 
-// Process all view files
 processDirectory($viewsPath);
 
 echo "\n=== VERIFICATION ===\n";
 
-// Verify no inline styles remain
 $remainingStyles = shell_exec("grep -r 'style=\"' $viewsPath --include='*.blade.php' 2>/dev/null | wc -l");
 $remainingStyles = trim($remainingStyles);
 

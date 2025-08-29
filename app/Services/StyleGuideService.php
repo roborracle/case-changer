@@ -25,33 +25,26 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // APA: Capitalize major words in titles
                 return $this->applyTitleCase($text, ['and', 'as', 'but', 'for', 'if', 'nor', 'or', 'so', 'yet', 'a', 'an', 'the', 'at', 'by', 'for', 'in', 'of', 'on', 'to', 'up']);
             
             case 'heading1':
-                // Level 1: Centered, Bold, Title Case
                 return mb_convert_case($text, MB_CASE_TITLE);
             
             case 'heading2':
-                // Level 2: Flush Left, Bold, Title Case
                 return mb_convert_case($text, MB_CASE_TITLE);
             
             case 'heading3':
-                // Level 3: Flush Left, Bold Italic, Title Case
                 return mb_convert_case($text, MB_CASE_TITLE);
             
             case 'heading4':
-                // Level 4: Indented, Bold, Title Case, Ending With Period
                 $formatted = mb_convert_case($text, MB_CASE_TITLE);
                 return rtrim($formatted, '.') . '.';
             
             case 'heading5':
-                // Level 5: Indented, Bold Italic, Title Case, Ending With Period
                 $formatted = mb_convert_case($text, MB_CASE_TITLE);
                 return rtrim($formatted, '.') . '.';
             
             case 'reference':
-                // Sentence case for article titles in references
                 return $this->applySentenceCase($text);
             
             default:
@@ -70,15 +63,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // MLA: Capitalize principal words
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'as']);
             
             case 'heading':
-                // MLA uses title case for headings
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet']);
             
             case 'works_cited':
-                // First word and proper nouns capitalized
                 return $this->applySentenceCase($text);
             
             default:
@@ -97,15 +87,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // Chicago: Capitalize first and last words and all major words
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'against', 'between', 'in', 'of', 'to', 'as']);
             
             case 'heading':
-                // Chicago uses headline-style capitalization
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'or', 'nor']);
             
             case 'bibliography':
-                // Sentence style for article titles
                 return $this->applySentenceCase($text);
             
             default:
@@ -124,18 +111,15 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // AP: Capitalize principal words, including prepositions and conjunctions of 4+ letters
                 $words = explode(' ', $text);
                 $result = [];
                 
                 foreach ($words as $index => $word) {
                     $lower = mb_strtolower($word);
                     
-                    // Always capitalize first and last words
                     if ($index === 0 || $index === count($words) - 1) {
                         $result[] = mb_convert_case($word, MB_CASE_TITLE);
                     }
-                    // Don't capitalize articles, conjunctions, prepositions under 4 letters
                     elseif (in_array($lower, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'by', 'in', 'of', 'on', 'to', 'up']) && mb_strlen($word) < 4) {
                         $result[] = $lower;
                     }
@@ -147,7 +131,6 @@ class StyleGuideService
                 return implode(' ', $result);
             
             case 'dateline':
-                // AP datelines are in uppercase
                 return mb_strtoupper($text);
             
             default:
@@ -166,15 +149,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'case_name':
-                // Bluebook: Italicized in text, standard in footnotes
                 return $this->applyTitleCase($text, ['v.', 'vs.']);
             
             case 'article_title':
-                // Title case for law review articles
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'of', 'to']);
             
             case 'book_title':
-                // Small caps for book titles (simulated with uppercase)
                 return mb_strtoupper($text);
             
             default:
@@ -193,15 +173,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // IEEE: Capitalize only first word and proper nouns
                 return $this->applySentenceCase($text, true);
             
             case 'section':
-                // Section headings in uppercase Roman numerals for main sections
                 return mb_strtoupper($text);
             
             case 'subsection':
-                // Subsections with first letter capitalized
                 return $this->applySentenceCase($text);
             
             default:
@@ -220,11 +197,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // AMA: Capitalize major words
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'with', 'at', 'by', 'from', 'in', 'of', 'on', 'to']);
             
             case 'journal_article':
-                // Sentence case for journal articles
                 return $this->applySentenceCase($text);
             
             default:
@@ -243,15 +218,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // Harvard: Minimal capitalization (sentence case)
                 return $this->applySentenceCase($text);
             
             case 'book_title':
-                // Book titles in italics with minimal capitalization
                 return $this->applySentenceCase($text);
             
             case 'journal':
-                // Journal names with significant words capitalized
                 return $this->applyTitleCase($text, ['and', 'of', 'the', 'in']);
             
             default:
@@ -270,11 +242,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // Vancouver: Sentence case for titles
                 return $this->applySentenceCase($text);
             
             case 'journal':
-                // Journal abbreviations
                 $words = explode(' ', $text);
                 $result = [];
                 foreach ($words as $word) {
@@ -302,15 +272,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'case':
-                // OSCOLA: Case names in italics
                 return $this->applyTitleCase($text, ['v', 'and']);
             
             case 'article':
-                // Article titles in single quotes
                 return $this->applySentenceCase($text);
             
             case 'book':
-                // Book titles in italics
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'or', 'in', 'of', 'to']);
             
             default:
@@ -329,11 +296,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'headline':
-                // Reuters: Capitalize first word and proper nouns only
                 return $this->applySentenceCase($text, true);
             
             case 'dateline':
-                // Location in caps
                 $parts = explode(',', $text);
                 if (count($parts) > 0) {
                     $parts[0] = mb_strtoupper(trim($parts[0]));
@@ -356,15 +321,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'headline':
-                // Bloomberg: Similar to AP but more conversational
                 return $this->formatAP($text, 'title');
             
             case 'ticker':
-                // Stock tickers in uppercase
                 return mb_strtoupper($text);
             
             case 'company':
-                // Company names preserved as registered
                 return $text;
             
             default:
@@ -383,11 +345,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // Oxford: Capitalize all significant words
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'at', 'by', 'for', 'from', 'in', 'of', 'on', 'to', 'with']);
             
             case 'heading':
-                // Minimal capitalization for headings
                 return $this->applySentenceCase($text);
             
             default:
@@ -406,11 +366,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'title':
-                // Cambridge: Similar to Oxford
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'as', 'at', 'by', 'for', 'in', 'of', 'on', 'to']);
             
             case 'chapter':
-                // Chapter titles in title case
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'or']);
             
             default:
@@ -429,11 +387,9 @@ class StyleGuideService
     {
         switch ($type) {
             case 'headline':
-                // NY Times: Up style (most words capitalized)
                 return $this->applyTitleCase($text, ['a', 'an', 'the', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet']);
             
             case 'byline':
-                // Bylines in title case
                 return mb_convert_case($text, MB_CASE_TITLE);
             
             default:
@@ -452,15 +408,12 @@ class StyleGuideService
     {
         switch ($type) {
             case 'article_title':
-                // Wikipedia: Sentence case except proper nouns
                 return $this->applySentenceCase($text, true);
             
             case 'section_heading':
-                // Section headings in sentence case
                 return $this->applySentenceCase($text);
             
             case 'image_caption':
-                // Captions as complete sentences
                 $formatted = $this->applySentenceCase($text);
                 if (!preg_match('/[.!?]$/', $formatted)) {
                     $formatted .= '.';
@@ -487,15 +440,12 @@ class StyleGuideService
         foreach ($words as $index => $word) {
             $lower = mb_strtolower($word);
             
-            // Always capitalize first and last words
             if ($index === 0 || $index === count($words) - 1) {
                 $result[] = mb_convert_case($word, MB_CASE_TITLE);
             }
-            // Check if word is in exceptions list
             elseif (in_array($lower, $exceptions)) {
                 $result[] = $lower;
             }
-            // Capitalize all other words
             else {
                 $result[] = mb_convert_case($word, MB_CASE_TITLE);
             }
@@ -528,7 +478,6 @@ class StyleGuideService
                 $formatted = mb_strtoupper(mb_substr($formatted, 0, 1)) . mb_substr($formatted, 1);
                 
                 if ($preserveProperNouns) {
-                    // Preserve common proper nouns (basic implementation)
                     $properNouns = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
                                   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
                                   'September', 'October', 'November', 'December'];
@@ -625,7 +574,6 @@ class StyleGuideService
         $style = strtolower($style);
         
         if (!isset($styleMap[$style])) {
-            // Try with uppercase variants
             $upperStyle = strtoupper($style);
             if (isset($styleMap[strtolower($upperStyle)])) {
                 $style = strtolower($upperStyle);

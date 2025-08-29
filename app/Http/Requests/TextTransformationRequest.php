@@ -20,12 +20,10 @@ class TextTransformationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check rate limiting
         if (!$this->securityService->checkRateLimit()) {
             abort(429, 'Too many requests. Please try again later.');
         }
         
-        // Validate origin
         if (!$this->securityService->validateOrigin()) {
             abort(403, 'Invalid request origin.');
         }
@@ -67,7 +65,6 @@ class TextTransformationRequest extends FormRequest
     {
         $text = $this->input('text', '');
         
-        // Check for malicious patterns
         if ($this->securityService->checkSQLInjection($text)) {
             abort(400, 'Invalid input detected.');
         }
@@ -76,7 +73,6 @@ class TextTransformationRequest extends FormRequest
             abort(400, 'Invalid input detected.');
         }
         
-        // Sanitize input
         $this->merge([
             'text' => $this->securityService->sanitize($text, 'text'),
             'format' => $this->securityService->sanitize($this->input('format', ''), 'alphanumeric')
@@ -88,7 +84,6 @@ class TextTransformationRequest extends FormRequest
      */
     protected function passedValidation(): void
     {
-        // Log successful validation for monitoring
         $this->securityService->logSecurityEvent('Text transformation request validated', [
             'format' => $this->input('format'),
             'text_length' => strlen($this->input('text'))

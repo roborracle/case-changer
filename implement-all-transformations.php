@@ -8,9 +8,7 @@
 
 $servicePath = __DIR__ . '/app/Services/TransformationService.php';
 
-// All missing transformations that need to be implemented
 $missingTransformations = [
-    // International & Regional Formats
     'british-english' => 'toBritishEnglish',
     'american-english' => 'toAmericanEnglish', 
     'canadian-english' => 'toCanadianEnglish',
@@ -20,7 +18,6 @@ $missingTransformations = [
     'unicode-normalize' => 'toUnicodeNormalize',
     'ascii-convert' => 'toASCIIConvert',
     
-    // Utility Transformations  
     'remove-spaces' => 'toRemoveSpaces',
     'remove-extra-spaces' => 'toRemoveExtraSpaces',
     'add-dashes' => 'toAddDashes',
@@ -33,7 +30,6 @@ $missingTransformations = [
     'sort-words' => 'toSortWords',
     'shuffle-words' => 'toShuffleWords',
     
-    // Text Effects
     'bold-text' => 'toBoldText',
     'italic-text' => 'toItalicText',
     'strikethrough-text' => 'toStrikethroughText',
@@ -47,7 +43,6 @@ $missingTransformations = [
     'cursed-text' => 'toCursedText',
     'invisible-text' => 'toInvisibleText',
     
-    // Generators
     'password-generator' => 'toPasswordGenerator',
     'uuid-generator' => 'toUUIDGenerator',
     'random-number' => 'toRandomNumber',
@@ -62,7 +57,6 @@ $missingTransformations = [
     'hex-color' => 'toHexColor',
     'phone-number' => 'toPhoneNumber',
     
-    // Code & Data Tools
     'binary-translator' => 'toBinaryTranslator',
     'hex-converter' => 'toHexConverter',
     'morse-code' => 'toMorseCode',
@@ -80,7 +74,6 @@ $missingTransformations = [
     'utm-builder' => 'toUTMBuilder',
     'slugify-generator' => 'toSlugifyGenerator',
     
-    // Text Analysis & Cleanup
     'sentence-counter' => 'toSentenceCounter',
     'duplicate-finder' => 'toDuplicateFinder',
     'duplicate-remover' => 'toDuplicateRemover',
@@ -95,7 +88,6 @@ $missingTransformations = [
     'phonetic-spelling' => 'toPhoneticSpelling',
     'pig-latin' => 'toPigLatin',
     
-    // Social Media Generators
     'discord-font' => 'toDiscordFont',
     'facebook-font' => 'toFacebookFont',
     'instagram-font' => 'toInstagramFont',
@@ -105,14 +97,11 @@ $missingTransformations = [
     'stacked-text' => 'toStackedText',
     'wingdings' => 'toWingdings',
     
-    // Miscellaneous
     'nato-phonetic' => 'toNATOPhonetic',
     'roman-numerals' => 'toRomanNumerals'
 ];
 
-// Implementation code for each transformation
 $implementations = '
-    // ================== INTERNATIONAL & REGIONAL FORMATS ==================
     
     private function toBritishEnglish(string $text): string
     {
@@ -154,16 +143,13 @@ $implementations = '
     
     private function toEUFormat(string $text): string
     {
-        // EU date format: DD/MM/YYYY
         $text = preg_replace(\'/\\b(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})\\b/\', \'$2/$1/$3\', $text);
-        // EU decimal separator
         $text = preg_replace(\'/\\b(\\d+)\\.(\\d+)\\b/\', \'$1,$2\', $text);
         return $text;
     }
     
     private function toISOFormat(string $text): string
     {
-        // ISO 8601 date format
         $text = preg_replace(\'/\\b(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})\\b/\', \'$3-$1-$2\', $text);
         return $text;
     }
@@ -178,10 +164,8 @@ $implementations = '
     
     private function toASCIIConvert(string $text): string
     {
-        return iconv(\'UTF-8\', \'ASCII//TRANSLIT//IGNORE\', $text);
     }
     
-    // ================== UTILITY TRANSFORMATIONS ==================
     
     private function toRemoveSpaces(string $text): string
     {
@@ -243,7 +227,6 @@ $implementations = '
         return implode(\' \', $words);
     }
     
-    // ================== TEXT EFFECTS ==================
     
     private function toBoldText(string $text): string
     {
@@ -325,11 +308,8 @@ $implementations = '
     
     private function toInvisibleText(string $text): string
     {
-        // Zero-width characters
-        return preg_replace(\'/(.)/u\', \'$1​\', $text); // Zero-width space U+200B
     }
     
-    // ================== GENERATORS ==================
     
     private function toPasswordGenerator(string $text): string
     {
@@ -437,7 +417,6 @@ $implementations = '
         return sprintf(\'(%03d) %03d-%04d\', rand(200, 999), rand(200, 999), rand(1000, 9999));
     }
     
-    // ================== CODE & DATA TOOLS ==================
     
     private function toBinaryTranslator(string $text): string
     {
@@ -509,7 +488,6 @@ $implementations = '
         if (json_last_error() === JSON_ERROR_NONE) {
             return json_encode($decoded, JSON_PRETTY_PRINT);
         }
-        // If not valid JSON, convert to JSON
         return json_encode($text);
     }
     
@@ -534,7 +512,6 @@ $implementations = '
     
     private function toCSSFormatter(string $text): string
     {
-        // Basic CSS formatting
         $text = preg_replace(\'/\\s*{\\s*/\', \' {\\n  \', $text);
         $text = preg_replace(\'/;\\s*/\', \';\\n  \', $text);
         $text = preg_replace(\'/\\s*}\\s*/\', \'\\n}\\n\', $text);
@@ -543,14 +520,12 @@ $implementations = '
     
     private function toHTMLFormatter(string $text): string
     {
-        // Basic HTML formatting
         $text = preg_replace(\'/></\', \'>\\n<\', $text);
         return $text;
     }
     
     private function toJavaScriptFormatter(string $text): string
     {
-        // Basic JS formatting
         $text = preg_replace(\'/;\\s*/\', \';\\n\', $text);
         $text = preg_replace(\'/\\{\\s*/\', \' {\\n  \', $text);
         $text = preg_replace(\'/\\}\\s*/\', \'\\n}\\n\', $text);
@@ -568,7 +543,6 @@ $implementations = '
     
     private function toYAMLFormatter(string $text): string
     {
-        // Basic YAML formatting
         $lines = explode("\\n", $text);
         $formatted = [];
         foreach ($lines as $line) {
@@ -598,14 +572,12 @@ $implementations = '
     private function toSlugifyGenerator(string $text): string
     {
         $text = preg_replace(\'~[^\pL\d]+~u\', \'-\', $text);
-        $text = iconv(\'utf-8\', \'us-ascii//TRANSLIT\', $text);
         $text = preg_replace(\'~[^-\w]+~\', \'\', $text);
         $text = trim($text, \'-\');
         $text = preg_replace(\'~-+~\', \'-\', $text);
         return strtolower($text);
     }
     
-    // ================== TEXT ANALYSIS & CLEANUP ==================
     
     private function toSentenceCounter(string $text): string
     {
@@ -634,7 +606,6 @@ $implementations = '
     
     private function toTextReplacer(string $text): string
     {
-        // Default example: replace "old" with "new"
         return str_replace(\'old\', \'new\', $text);
     }
     
@@ -707,11 +678,9 @@ $implementations = '
         return implode(\' \', $result);
     }
     
-    // ================== SOCIAL MEDIA GENERATORS ==================
     
     private function toDiscordFont(string $text): string
     {
-        return \'**\' . $text . \'**\'; // Bold for Discord
     }
     
     private function toFacebookFont(string $text): string
@@ -754,7 +723,6 @@ $implementations = '
         return strtr(strtolower($text), $normal, $wingdings);
     }
     
-    // ================== MISCELLANEOUS ==================
     
     private function toNATOPhonetic(string $text): string
     {
@@ -777,7 +745,6 @@ $implementations = '
     
     private function toRomanNumerals(string $text): string
     {
-        // Convert numbers to Roman numerals
         if (!is_numeric($text)) {
             return $text;
         }
@@ -796,10 +763,8 @@ $implementations = '
         return $result;
     }';
 
-// Read the current service file
 $content = file_get_contents($servicePath);
 
-// Find the transform method and update it
 $transformMethodPattern = '/public function transform\(string \$text, string \$format\): string\s*\{[^}]+\}/s';
 $newTransformMethod = 'public function transform(string $text, string $format): string
     {
@@ -814,10 +779,8 @@ $newTransformMethod = 'public function transform(string $text, string $format): 
 
 $content = preg_replace($transformMethodPattern, $newTransformMethod, $content);
 
-// Add all new methods before the final closing brace
 $content = str_replace("\n}", $implementations . "\n}", $content);
 
-// Write the updated file
 file_put_contents($servicePath, $content);
 
 echo "=================================================\n";

@@ -12,7 +12,6 @@ if (!file_exists($serviceFile)) {
 
 $content = file_get_contents($serviceFile);
 
-// Methods that need fixing (missing type hints and error handling)
 $fixMethods = [
     'toSqlCase' => 'SQL Case transformation failed',
     'toPythonCase' => 'Python case transformation failed', 
@@ -39,13 +38,11 @@ $fixMethods = [
 ];
 
 foreach ($fixMethods as $methodName => $errorMessage) {
-    // Pattern to match method without proper type hints
     $pattern = "/private function {$methodName}\(\\\$text\)\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/s";
     
     if (preg_match($pattern, $content, $matches)) {
         $methodBody = $matches[1];
         
-        // Skip if already has error handling
         if (strpos($methodBody, 'try {') !== false) {
             continue;
         }
@@ -71,10 +68,8 @@ foreach ($fixMethods as $methodName => $errorMessage) {
     }
 }
 
-// Save the updated file
 file_put_contents($serviceFile, $content);
 
-// Validate syntax
 $syntaxCheck = shell_exec("php -l {$serviceFile} 2>&1");
 if (strpos($syntaxCheck, 'No syntax errors') !== false) {
     echo "✓ All remaining methods fixed and syntax validated!\n";

@@ -132,7 +132,6 @@ class CodeDataService
     public function toSlug(string $text): string
     {
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
         $text = preg_replace('~[^-\w]+~', '', $text);
         $text = trim($text, '-');
         $text = preg_replace('~-+~', '-', $text);
@@ -193,7 +192,6 @@ class CodeDataService
      */
     public function formatCSS(string $css): string
     {
-        // Basic CSS formatting
         $css = preg_replace('/\s*{\s*/', ' {' . "\n  ", $css);
         $css = preg_replace('/;\s*/', ';' . "\n  ", $css);
         $css = preg_replace('/\s*}\s*/', "\n}\n\n", $css);
@@ -207,9 +205,7 @@ class CodeDataService
      */
     public function minifyCSS(string $css): string
     {
-        // Remove comments
         $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
-        // Remove unnecessary whitespace
         $css = preg_replace('/\s+/', ' ', $css);
         $css = preg_replace('/\s*([{}:;,])\s*/', '$1', $css);
         
@@ -225,7 +221,6 @@ class CodeDataService
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         
-        // Suppress errors for invalid HTML
         libxml_use_internal_errors(true);
         $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
@@ -238,9 +233,7 @@ class CodeDataService
      */
     public function minifyHTML(string $html): string
     {
-        // Remove comments
         $html = preg_replace('/<!--(?!<!)[^\[>].*?-->/', '', $html);
-        // Remove whitespace
         $html = preg_replace('/\s+/', ' ', $html);
         $html = preg_replace('/>\s+</', '><', $html);
         
@@ -252,7 +245,6 @@ class CodeDataService
      */
     public function formatJavaScript(string $js): string
     {
-        // Basic JS formatting
         $js = preg_replace('/\s*{\s*/', ' {\n  ', $js);
         $js = preg_replace('/;\s*/', ';\n  ', $js);
         $js = preg_replace('/\s*}\s*/', '\n}', $js);
@@ -303,7 +295,6 @@ class CodeDataService
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         
-        // Suppress errors for invalid XML
         libxml_use_internal_errors(true);
         $dom->loadXML($xml);
         libxml_clear_errors();
@@ -316,7 +307,6 @@ class CodeDataService
      */
     public function formatYAML(string $yaml): string
     {
-        // Basic YAML formatting
         $lines = explode("\n", $yaml);
         $formatted = [];
         $indent = 0;
@@ -325,14 +315,12 @@ class CodeDataService
             $trimmed = trim($line);
             if (empty($trimmed)) continue;
             
-            // Decrease indent for list items
             if (strpos($trimmed, '-') === 0) {
                 $indent = max(0, $indent - 2);
             }
             
             $formatted[] = str_repeat(' ', $indent) . $trimmed;
             
-            // Increase indent after colons
             if (substr($trimmed, -1) === ':' && strpos($trimmed, ': ') === false) {
                 $indent += 2;
             }
@@ -346,7 +334,6 @@ class CodeDataService
      */
     public function formatTypeScript(string $ts): string
     {
-        // Basic TypeScript formatting (similar to JavaScript)
         $ts = preg_replace('/\s*{\s*/', ' {\n  ', $ts);
         $ts = preg_replace('/;\s*/', ';\n  ', $ts);
         $ts = preg_replace('/\s*}\s*/', '\n}', $ts);
@@ -359,7 +346,6 @@ class CodeDataService
      */
     public function formatGraphQL(string $graphql): string
     {
-        // Basic GraphQL formatting
         $graphql = preg_replace('/\s*{\s*/', ' {\n  ', $graphql);
         $graphql = preg_replace('/,\s*/', ',\n  ', $graphql);
         $graphql = preg_replace('/\s*}\s*/', '\n}\n', $graphql);
@@ -372,7 +358,6 @@ class CodeDataService
      */
     public function formatSCSS(string $scss): string
     {
-        // Basic SCSS formatting
         $scss = preg_replace('/\s*{\s*/', ' {\n  ', $scss);
         $scss = preg_replace('/;\s*/', ';\n  ', $scss);
         $scss = preg_replace('/\s*}\s*/', '\n}\n\n', $scss);
@@ -418,27 +403,22 @@ class CodeDataService
      */
     public function formatMarkdown(string $markdown): string
     {
-        // Basic Markdown formatting
         $lines = explode("\n", $markdown);
         $formatted = [];
         
         foreach ($lines as $line) {
             $trimmed = trim($line);
             
-            // Headers
             if (preg_match('/^#+/', $trimmed)) {
                 $formatted[] = $trimmed;
                 $formatted[] = '';
             }
-            // Lists
             elseif (preg_match('/^[-*+]\s/', $trimmed) || preg_match('/^\d+\.\s/', $trimmed)) {
                 $formatted[] = $trimmed;
             }
-            // Empty lines
             elseif (empty($trimmed)) {
                 $formatted[] = '';
             }
-            // Regular paragraphs
             else {
                 $formatted[] = $trimmed;
             }
@@ -461,7 +441,6 @@ class CodeDataService
         ];
         
         try {
-            // Add delimiters if not present
             if (!preg_match('/^[\/#~`].*[\/#~`][gimsx]*$/', $pattern)) {
                 $pattern = '/' . $pattern . '/';
             }
@@ -488,7 +467,6 @@ class CodeDataService
      */
     public function sortNumbers(string $text, bool $ascending = true): string
     {
-        // Extract numbers from text
         preg_match_all('/\d+(?:\.\d+)?/', $text, $matches);
         $numbers = array_map('floatval', $matches[0]);
         
@@ -536,10 +514,6 @@ class CodeDataService
      */
     public function minifyJavaScript(string $js): string
     {
-        // Basic JS minification
-        $js = preg_replace('/\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\//', '', $js); // Remove comments
-        $js = preg_replace('/\/\/.*?\n/', '\n', $js); // Remove line comments
-        $js = preg_replace('/\s+/', ' ', $js); // Compress whitespace
         $js = str_replace(['; ', ' {', '{ ', '} ', ' }', ', '], [';', '{', '{', '}', '}', ','], $js);
         
         return trim($js);
@@ -634,20 +608,16 @@ class CodeDataService
         
         $csv = '';
         
-        // Handle array of objects/associative arrays
         if (is_array($data[0])) {
-            // Headers
             $headers = array_keys($data[0]);
             $csv .= implode(',', $headers) . "\n";
             
-            // Rows
             foreach ($data as $row) {
                 $csv .= implode(',', array_map(function($value) {
                     return '"' . str_replace('"', '""', $value) . '"';
                 }, $row)) . "\n";
             }
         } else {
-            // Simple array
             $csv = implode(',', array_map(function($value) {
                 return '"' . str_replace('"', '""', $value) . '"';
             }, $data));

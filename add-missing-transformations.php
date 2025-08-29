@@ -6,9 +6,7 @@
  * Task #20 - Production fixes
  */
 
-// The 22 missing transformations that need to be added
 $missingTransformations = [
-    // Developer Tools (8)
     'sql-case' => 'SQL Case',
     'python-case' => 'Python Case',
     'java-case' => 'Java Case',
@@ -18,7 +16,6 @@ $missingTransformations = [
     'rust-case' => 'Rust Case',
     'swift-case' => 'Swift Case',
     
-    // Text Analysis (7)
     'reading-time' => 'Reading Time',
     'flesch-score' => 'Flesch Score',
     'sentiment-analysis' => 'Sentiment Analysis',
@@ -27,7 +24,6 @@ $missingTransformations = [
     'paragraph-counter' => 'Paragraph Counter',
     'unique-words' => 'Unique Words',
     
-    // Advanced Formats (7)
     'scientific-notation' => 'Scientific Notation',
     'engineering-notation' => 'Engineering Notation',
     'fraction-converter' => 'Fraction Converter',
@@ -41,37 +37,30 @@ echo "=================================================\n";
 echo "ADDING 22 MISSING TRANSFORMATIONS\n";
 echo "=================================================\n\n";
 
-// Read the TransformationService file
 $file = __DIR__ . '/app/Services/TransformationService.php';
 $content = file_get_contents($file);
 
-// Find the transformations array
 $pattern = '/private \$transformations = \[(.*?)\];/s';
 if (preg_match($pattern, $content, $matches)) {
     $existingArray = $matches[1];
     
-    // Add new transformations to the array
     $newEntries = [];
     foreach ($missingTransformations as $slug => $name) {
         $newEntries[] = "        '$slug' => '$name'";
         echo "Adding: $name ($slug)\n";
     }
     
-    // Insert before the closing of array
     $updatedArray = rtrim($existingArray) . ",\n" . implode(",\n", $newEntries) . "\n    ";
     
-    // Replace in content
     $newContent = str_replace(
         "private \$transformations = [$existingArray];",
         "private \$transformations = [$updatedArray];",
         $content
     );
     
-    // Now add the missing methods
     echo "\nAdding transformation methods...\n";
     
     $methods = '
-    // Developer Tools Methods
     private function toSqlCase($text) {
         return strtoupper(str_replace([" ", "-"], "_", $text));
     }
@@ -104,10 +93,8 @@ if (preg_match($pattern, $content, $matches)) {
         return lcfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
-    // Text Analysis Methods
     private function toReadingTime($text) {
         $wordCount = str_word_count($text);
-        $minutes = ceil($wordCount / 200); // Average reading speed
         return "$minutes minute" . ($minutes > 1 ? "s" : "") . " read time";
     }
     
@@ -157,7 +144,6 @@ if (preg_match($pattern, $content, $matches)) {
         return "$unique unique words";
     }
     
-    // Advanced Format Methods
     private function toScientificNotation($text) {
         if (is_numeric($text)) {
             $num = (float)$text;
@@ -188,7 +174,6 @@ if (preg_match($pattern, $content, $matches)) {
             
             if ($fraction == 0) return "$whole";
             
-            // Simple fraction approximation
             $numerator = round($fraction * 100);
             $denominator = 100;
             $gcd = $this->gcd($numerator, $denominator);
@@ -231,7 +216,6 @@ if (preg_match($pattern, $content, $matches)) {
         return strtr($text, $numbers);
     }
     
-    // Helper methods
     private function countSyllables($text) {
         $text = strtolower($text);
         $syllables = 0;
@@ -248,10 +232,8 @@ if (preg_match($pattern, $content, $matches)) {
         return $b ? $this->gcd($b, $a % $b) : $a;
     }';
     
-    // Insert methods before the final closing brace
     $newContent = preg_replace('/}\s*$/', $methods . "\n}", $newContent);
     
-    // Write back to file
     file_put_contents($file, $newContent);
     
     echo "\n✅ Successfully added 22 transformations!\n";

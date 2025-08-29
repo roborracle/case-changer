@@ -13,7 +13,6 @@ class MiscellaneousService
      */
     public function generateWordCloud(string $text): string
     {
-        // Since we can't generate actual images, return cloud-like ASCII representation
         $textAnalysis = app(TextAnalysisService::class);
         $frequency = $textAnalysis->getWordFrequency($text, 20);
         
@@ -31,7 +30,6 @@ class MiscellaneousService
             $size = (int) (($count / $maxCount) * 5) + 1;
             $word = strtoupper($word);
             
-            // Create visual representation based on frequency
             switch ($size) {
                 case 6:
                 case 5:
@@ -84,7 +82,6 @@ class MiscellaneousService
         
         $result .= "Original Text: {$text}\n\n";
         
-        // Unicode code points
         $result .= "Unicode Code Points:\n";
         for ($i = 0; $i < mb_strlen($text); $i++) {
             $char = mb_substr($text, $i, 1);
@@ -93,11 +90,9 @@ class MiscellaneousService
             $result .= "'{$char}' = U+{$hex} ({$codePoint})\n";
         }
         
-        // HTML entities
         $result .= "\nHTML Entities:\n";
         $result .= htmlentities($text, ENT_QUOTES | ENT_HTML5, 'UTF-8') . "\n";
         
-        // URL encoding
         $result .= "\nURL Encoded:\n";
         $result .= urlencode($text) . "\n";
         
@@ -144,7 +139,6 @@ class MiscellaneousService
      */
     public function generatePhoneticSpelling(string $text): string
     {
-        // Simple phonetic conversions
         $phonetics = [
             'ph' => 'f',
             'gh' => 'f',
@@ -178,15 +172,9 @@ class MiscellaneousService
      */
     public function removeFormatting(string $text): string
     {
-        // Remove Unicode formatting characters
-        $text = preg_replace('/[\x{0300}-\x{036F}]/u', '', $text); // Combining diacritics
-        $text = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $text); // Zero-width chars
-        $text = preg_replace('/[\x{2000}-\x{206F}]/u', ' ', $text); // General punctuation
         
-        // Remove HTML tags if present
         $text = strip_tags($text);
         
-        // Normalize whitespace
         $text = preg_replace('/\s+/', ' ', $text);
         
         return trim($text);
@@ -300,7 +288,6 @@ class MiscellaneousService
      */
     private function generateDiscordFont(string $text): string
     {
-        // Use bold Unicode for Discord
         $textEffects = app(TextEffectsService::class);
         return $textEffects->toBold($text);
     }
@@ -310,7 +297,6 @@ class MiscellaneousService
      */
     private function generateFacebookFont(string $text): string
     {
-        // Use italic Unicode for Facebook
         $textEffects = app(TextEffectsService::class);
         return $textEffects->toItalic($text);
     }
@@ -320,7 +306,6 @@ class MiscellaneousService
      */
     private function generateInstagramFont(string $text): string
     {
-        // Use aesthetic spacing for Instagram
         $chars = mb_str_split($text);
         return implode(' ', $chars);
     }
@@ -330,7 +315,6 @@ class MiscellaneousService
      */
     private function generateTwitterFont(string $text): string
     {
-        // Use wide text for Twitter
         $textEffects = app(TextEffectsService::class);
         return $textEffects->toWide($text);
     }

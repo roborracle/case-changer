@@ -7,7 +7,6 @@
  * Task #15 - Performance Audit
  */
 
-$baseUrl = 'http://localhost:8002';
 $results = [
     'pages' => [],
     'api' => [],
@@ -20,15 +19,12 @@ echo "=================================================\n";
 echo "PERFORMANCE TESTING - TASK #15\n";
 echo "=================================================\n\n";
 
-// Test 1: Homepage Load Time
 echo "1. Testing Homepage Load Time...\n";
 $times = [];
 for ($i = 0; $i < 5; $i++) {
     $start = microtime(true);
     $response = @file_get_contents($baseUrl);
     $end = microtime(true);
-    $times[] = ($end - $start) * 1000; // Convert to ms
-    usleep(100000); // 100ms delay between requests
 }
 $avgTime = array_sum($times) / count($times);
 $results['pages']['homepage'] = [
@@ -40,7 +36,6 @@ $results['pages']['homepage'] = [
 echo "   Average: {$results['pages']['homepage']['avg_time']}ms\n";
 echo "   Size: " . number_format($results['pages']['homepage']['size']) . " bytes\n\n";
 
-// Test 2: Conversions Page Load
 echo "2. Testing Conversions Page Load...\n";
 $times = [];
 for ($i = 0; $i < 5; $i++) {
@@ -60,7 +55,6 @@ $results['pages']['conversions'] = [
 echo "   Average: {$results['pages']['conversions']['avg_time']}ms\n";
 echo "   Size: " . number_format($results['pages']['conversions']['size']) . " bytes\n\n";
 
-// Test 3: Sample Tool Page
 echo "3. Testing Tool Page (uppercase)...\n";
 $times = [];
 for ($i = 0; $i < 5; $i++) {
@@ -80,7 +74,6 @@ $results['pages']['tool'] = [
 echo "   Average: {$results['pages']['tool']['avg_time']}ms\n";
 echo "   Size: " . number_format($results['pages']['tool']['size']) . " bytes\n\n";
 
-// Test 4: API Transformation Performance
 echo "4. Testing API Transformation Endpoint...\n";
 $transformations = ['uppercase', 'lowercase', 'camel-case', 'snake-case', 'reverse'];
 $testText = str_repeat("The quick brown fox jumps over the lazy dog. ", 10);
@@ -108,7 +101,6 @@ foreach ($transformations as $type) {
         if ($response !== false) {
             $times[] = ($end - $start) * 1000;
         }
-        usleep(50000); // 50ms delay
     }
     
     if (count($times) > 0) {
@@ -125,7 +117,6 @@ foreach ($transformations as $type) {
     }
 }
 
-// Test 5: Asset Sizes
 echo "\n5. Checking Asset Sizes...\n";
 $assetsDir = __DIR__ . '/public/build/assets';
 if (is_dir($assetsDir)) {
@@ -158,7 +149,6 @@ if (is_dir($assetsDir)) {
     echo "   Files: {$results['assets']['file_count']}\n";
 }
 
-// Test 6: Memory Usage
 echo "\n6. Testing Memory Usage...\n";
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/app/Services/TransformationService.php';
@@ -168,10 +158,8 @@ use App\Services\TransformationService;
 $memStart = memory_get_usage(true);
 $peakStart = memory_get_peak_usage(true);
 
-// Instantiate service
 $service = new TransformationService();
 
-// Run transformations
 $largeText = str_repeat("Lorem ipsum dolor sit amet. ", 1000);
 for ($i = 0; $i < 10; $i++) {
     $service->transform($largeText, 'uppercase');
@@ -194,7 +182,6 @@ echo "   Final: " . round($results['memory']['final'], 2) . " MB\n";
 echo "   Peak: " . round($results['memory']['peak'], 2) . " MB\n";
 echo "   Increase: " . round($results['memory']['increase'], 2) . " MB\n";
 
-// Test 7: Concurrent Requests
 echo "\n7. Testing Concurrent Load...\n";
 $concurrent = 10;
 $urls = [];
@@ -239,12 +226,10 @@ $results['concurrent'] = [
 echo "   $concurrent concurrent requests: {$results['concurrent']['total_time']}ms total\n";
 echo "   Average per request: {$results['concurrent']['avg_time']}ms\n";
 
-// Performance Summary
 echo "\n=================================================\n";
 echo "PERFORMANCE SUMMARY\n";
 echo "=================================================\n\n";
 
-// Calculate scores
 $pageLoadScore = 100;
 if ($results['pages']['homepage']['avg_time'] > 200) $pageLoadScore -= 20;
 if ($results['pages']['homepage']['avg_time'] > 500) $pageLoadScore -= 30;
@@ -282,7 +267,6 @@ echo "  Asset Score: $assetScore/100\n";
 echo "  Memory Score: $memoryScore/100\n";
 echo "  Overall Score: " . round($overallScore) . "/100\n\n";
 
-// Recommendations
 echo "Recommendations:\n";
 if ($pageLoadScore < 80) {
     echo "  ⚠️ Page load times need optimization\n";

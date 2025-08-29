@@ -8,11 +8,9 @@
 
 echo "=== PERFORMANCE AND ACCESSIBILITY TESTING ===\n\n";
 
-// Performance Metrics
 echo "PERFORMANCE METRICS\n";
 echo str_repeat('-', 40) . "\n";
 
-// 1. Asset Loading Test
 echo "1. Asset Build Sizes:\n";
 $buildDir = __DIR__ . '/public/build';
 if (is_dir($buildDir)) {
@@ -25,7 +23,6 @@ if (is_dir($buildDir)) {
         $filename = basename($file);
         $sizeKB = round($size / 1024, 2);
         
-        // Check if file is optimized
         $status = $sizeKB < 100 ? '✅' : ($sizeKB < 200 ? '⚠️' : '❌');
         echo "   $status $filename: {$sizeKB}KB\n";
     }
@@ -39,9 +36,7 @@ if (is_dir($buildDir)) {
 
 echo "\n";
 
-// 2. Response Time Test
 echo "2. Page Load Performance:\n";
-$baseUrl = 'http://localhost:8000';
 $pages = [
     '/' => 'Home Page',
     '/conversions' => 'Conversions Index',
@@ -76,7 +71,6 @@ foreach ($pages as $path => $name) {
 
 echo "\n";
 
-// 3. Caching Headers Test
 echo "3. Caching Headers:\n";
 $ch = curl_init($baseUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -87,7 +81,6 @@ $response = curl_exec($ch);
 $headers = curl_getinfo($ch);
 curl_close($ch);
 
-// Parse headers
 $headerLines = explode("\n", $response);
 $cacheControl = '';
 $etag = '';
@@ -111,11 +104,9 @@ echo "   " . (!empty($lastModified) ? '✅' : '❌') . " Last-Modified: " . ($la
 
 echo "\n";
 
-// ACCESSIBILITY TESTING
 echo "ACCESSIBILITY COMPLIANCE\n";
 echo str_repeat('-', 40) . "\n";
 
-// 1. ARIA Attributes Test
 echo "1. ARIA Attributes Check:\n";
 $ch = curl_init($baseUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -140,7 +131,6 @@ foreach ($ariaChecks as $check => $description) {
 
 echo "\n";
 
-// 2. Keyboard Navigation Test
 echo "2. Keyboard Navigation Elements:\n";
 $keyboardElements = [
     '<button' => 'Buttons',
@@ -159,7 +149,6 @@ foreach ($keyboardElements as $element => $description) {
 
 echo "\n";
 
-// 3. Focus Management Test
 echo "3. Focus Management:\n";
 $focusChecks = [
     'focus:outline' => 'Focus outline styles',
@@ -176,7 +165,6 @@ foreach ($focusChecks as $check => $description) {
 
 echo "\n";
 
-// 4. Semantic HTML Test
 echo "4. Semantic HTML Structure:\n";
 $semanticElements = [
     '<nav' => 'Navigation element',
@@ -197,7 +185,6 @@ foreach ($semanticElements as $element => $description) {
 
 echo "\n";
 
-// 5. Mobile Responsiveness Test
 echo "5. Mobile Responsiveness:\n";
 $responsiveChecks = [
     'viewport' => 'Viewport meta tag',
@@ -215,11 +202,9 @@ foreach ($responsiveChecks as $check => $description) {
 
 echo "\n";
 
-// JAVASCRIPT OPTIMIZATION TEST
 echo "JAVASCRIPT OPTIMIZATION\n";
 echo str_repeat('-', 40) . "\n";
 
-// Check Alpine.js initialization
 echo "1. Alpine.js Configuration:\n";
 $jsFile = __DIR__ . '/resources/js/app.js';
 if (file_exists($jsFile)) {
@@ -243,7 +228,6 @@ if (file_exists($jsFile)) {
 
 echo "\n";
 
-// CSS OPTIMIZATION TEST
 echo "CSS OPTIMIZATION\n";
 echo str_repeat('-', 40) . "\n";
 
@@ -263,7 +247,6 @@ foreach ($criticalChecks as $check => $description) {
 
 echo "\n";
 
-// SECURITY HEADERS TEST
 echo "SECURITY HEADERS\n";
 echo str_repeat('-', 40) . "\n";
 
@@ -290,13 +273,11 @@ foreach ($securityHeaders as $header => $description) {
 
 echo "\n";
 
-// PERFORMANCE SUMMARY
 echo "=== PERFORMANCE SUMMARY ===\n";
 
 $performanceScore = 0;
 $maxScore = 10;
 
-// Calculate score based on tests
 if (isset($totalKB) && $totalKB < 300) $performanceScore += 2;
 if (isset($time) && $time < 200) $performanceScore += 2;
 if (!empty($cacheControl)) $performanceScore += 1;

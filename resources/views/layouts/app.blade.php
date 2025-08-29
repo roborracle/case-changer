@@ -27,11 +27,8 @@
         <title>{{ $title ?? 'Case Changer Pro - Professional Text Transformation Tool' }}</title>
 
         <!-- Preconnect for Performance -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="dns-prefetch" href="https://fonts.bunny.net">
         
         <!-- Fonts with Display Swap for Better Performance -->
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Critical CSS (inline for performance) -->
         <style>
@@ -120,8 +117,10 @@
 
         <!-- Footer Section -->
         @if(!isset($hideFooter) || !$hideFooter)
-        <footer role="contentinfo" class="bg-gray-900 text-white mt-auto">
-            @include('partials.footer')
+        <footer role="contentinfo" class="bg-gray-900 text-white mt-auto py-8">
+            <div class="container mx-auto text-center text-gray-400">
+                <p>&copy; {{ date('Y') }} Case Changer Pro. All Rights Reserved.</p>
+            </div>
         </footer>
         @endif
 

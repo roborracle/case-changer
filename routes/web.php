@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransformationController;
+use App\Http\Controllers\HealthCheckController;
 
-// Health check for Railway monitoring
-Route::get('/up', function () {
+Route::middleware('throttle:web')->group(function () {
+    Route::get('/up', function () {
     return response()->json([
         'status' => 'healthy',
         'timestamp' => now()->toIso8601String(),
@@ -15,35 +16,40 @@ Route::get('/up', function () {
     ]);
 })->name('health');
 
-// Homepage - Universal Converter (One Tool to Rule Them All)
-Route::get('/', [TransformationController::class, 'transform'])->name('home');
-Route::post('/', [TransformationController::class, 'transform'])->name('transform');
+Route::get('/health', HealthCheckController::class);
 
-// Legacy routes (redirect to home)
-Route::get('/case-changer', function() {
-    return redirect('/');
-})->name('case-changer');
-Route::get('/modern', function() {
-    return redirect('/');
-})->name('modern-case-changer');
+Route::get('/readiness', function () {
+    return response('OK', 200);
+});
 
-// Additional conversions route for backward compatibility
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/hubs', function () {
+})->name('hubs.index');
+Route::get('/hub/{category}', [\App\Http\Controllers\ContentHubController::class, 'show'])->name('hub.show');
+Route::get('/hub/{category}/metrics', [\App\Http\Controllers\ContentHubController::class, 'metricsApi'])->name('hub.metrics');
+
+Route::get('/converter', [TransformationController::class, 'transform'])->name('converter');
+Route::post('/converter', [TransformationController::class, 'transform'])->name('transform');
+
+Route::get('/case-changer', [TransformationController::class, 'transform'])->name('case-changer');
+Route::get('/modern', [TransformationController::class, 'transform'])->name('modern-case-changer');
+
+Route::get('/api/tools/validation-status', [HomeController::class, 'validationStatus'])->name('api.tools.validation-status');
+
 Route::get('/conversions', [ConversionController::class, 'index'])->name('conversions.index');
 Route::get('/conversions/{category}', [ConversionController::class, 'category'])->name('conversions.category');
 Route::get('/conversions/{category}/{tool}', [ConversionController::class, 'tool'])->name('conversions.tool');
 
-// API routes for dynamic data with rate limiting
 Route::middleware(['throttle:60,1'])->group(function () {
     Route::get('/api/conversions/{category}', [ConversionController::class, 'getCategoryData']);
     Route::get('/api/conversions', [ConversionController::class, 'getAllCategories']);
 });
 
-// Sitemap
 Route::get('/sitemap', function() {
     return view('sitemap');
 })->name('sitemap');
 
-// Legal Pages
 Route::get('/terms', function() {
     return view('legal.terms');
 })->name('terms');
@@ -56,7 +62,6 @@ Route::get('/cookies', function() {
     return view('legal.cookies');
 })->name('cookies');
 
-// Information Pages
 Route::get('/about', function() {
     return view('pages.about');
 })->name('about');
@@ -68,3 +73,16 @@ Route::get('/contact', function() {
 Route::get('/faq', function() {
     return view('pages.faq');
 })->name('faq');
+
+Route::prefix('qa')->name('qa.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\QADashboardController::class, 'index'])->name('dashboard');
+    
+    Route::prefix('api')->name('api.')->group(function () {
+        Route::get('/metrics', [App\Http\Controllers\QADashboardController::class, 'metrics'])->name('metrics');
+        Route::get('/runs/{runId}', [App\Http\Controllers\QADashboardController::class, 'runDetails'])->name('run-details');
+        Route::post('/trigger-run', [App\Http\Controllers\QADashboardController::class, 'triggerRun'])->name('trigger-run');
+        Route::get('/flaky-tests', [App\Http\Controllers\QADashboardController::class, 'flakyTests'])->name('flaky-tests');
+        Route::get('/performance', [App\Http\Controllers\QADashboardController::class, 'performanceMetrics'])->name('performance');
+    });
+});
+});

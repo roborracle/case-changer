@@ -30,7 +30,6 @@ class TransformationTestSuite
     private $errorTests = 0;
     private $skippedTests = 0;
     
-    // Test data sets
     private $testCases = [
         'basic' => [
             'text' => 'Hello World 123',
@@ -74,7 +73,6 @@ class TransformationTestSuite
         ]
     ];
     
-    // Expected outputs for validation (partial list)
     private $expectedOutputs = [
         'uppercase' => [
             'basic' => 'HELLO WORLD 123',
@@ -194,7 +192,6 @@ class TransformationTestSuite
             'performance' => []
         ];
         
-        // Progress indicator
         $progress = sprintf("[%3d/%3d]", $current, $total);
         echo "$progress Testing: $name ($slug)\n";
         
@@ -202,7 +199,6 @@ class TransformationTestSuite
             $result = $this->runSingleTest($slug, $caseKey, $testCase);
             $transformationResults['tests'][$caseKey] = $result;
             
-            // Count results
             if ($result['status'] === 'passed') {
                 $transformationResults['passed']++;
                 $this->passedTests++;
@@ -219,7 +215,6 @@ class TransformationTestSuite
             $this->totalTests++;
         }
         
-        // Summary for this transformation
         $status = $this->getTransformationStatus($transformationResults);
         $statusIcon = $this->getStatusIcon($status);
         
@@ -244,14 +239,11 @@ class TransformationTestSuite
         ];
         
         try {
-            // Measure execution time
             $startTime = microtime(true);
             
-            // Run transformation with error suppression
             $output = @$this->service->transform($testCase['text'], $slug);
             
             $endTime = microtime(true);
-            $result['execution_time'] = ($endTime - $startTime) * 1000; // Convert to ms
             
             if ($output === null || $output === false) {
                 $result['status'] = 'error';
@@ -259,7 +251,6 @@ class TransformationTestSuite
             } else {
                 $result['output'] = $output;
                 
-                // Check if we have expected output
                 if (isset($this->expectedOutputs[$slug][$caseKey])) {
                     $result['expected'] = $this->expectedOutputs[$slug][$caseKey];
                     if ($output === $result['expected']) {
@@ -269,7 +260,6 @@ class TransformationTestSuite
                         $result['error'] = 'Output does not match expected';
                     }
                 } else {
-                    // No expected output defined, just check it's not empty for non-empty input
                     if ($testCase['text'] !== '' && $output === '') {
                         $result['status'] = 'failed';
                         $result['error'] = 'Empty output for non-empty input';
@@ -338,7 +328,6 @@ class TransformationTestSuite
         echo "ANALYZING RESULTS...\n";
         echo str_repeat('=', 80) . "\n\n";
         
-        // Count transformation statuses
         $transformationStats = [
             'perfect' => 0,
             'partial' => 0,
@@ -358,7 +347,6 @@ class TransformationTestSuite
                 $transformationStats['error']++;
             }
             
-            // Track slowest transformations
             $avgTime = array_sum(array_column($result['tests'], 'execution_time')) / count($result['tests']);
             $this->results['performance'][] = [
                 'transformation' => $slug,
@@ -366,7 +354,6 @@ class TransformationTestSuite
             ];
         }
         
-        // Sort performance by slowest
         usort($this->results['performance'], function($a, $b) {
             return $b['avg_time'] <=> $a['avg_time'];
         });
@@ -378,7 +365,6 @@ class TransformationTestSuite
         $this->results['summary']['error_tests'] = $this->errorTests;
         $this->results['summary']['skipped_tests'] = $this->skippedTests;
         
-        // Calculate success rate
         if ($this->totalTests > 0) {
             $this->results['summary']['success_rate'] = 
                 round(($this->passedTests / $this->totalTests) * 100, 2);
@@ -386,7 +372,6 @@ class TransformationTestSuite
             $this->results['summary']['success_rate'] = 0;
         }
         
-        // Execution time
         $this->results['summary']['total_execution_time'] = 
             round(microtime(true) - $this->startTime, 2);
     }
@@ -399,21 +384,18 @@ class TransformationTestSuite
         echo "TEST EXECUTION SUMMARY\n";
         echo str_repeat('-', 80) . "\n";
         
-        // Transformation counts
         echo "Transformations:\n";
         echo "  Found: {$summary['total_transformations']}/172\n";
         if ($summary['total_transformations'] < 172) {
             echo "  ⚠️ Missing: " . (172 - $summary['total_transformations']) . "\n";
         }
         
-        // Transformation results
         echo "\nTransformation Results:\n";
         echo "  ✅ Perfect (all tests passed): {$stats['perfect']}\n";
         echo "  ⚠️ Partial (some tests failed): {$stats['partial']}\n";
         echo "  ❌ Failed (all tests failed): {$stats['failed']}\n";
         echo "  🔴 Error (crashes/exceptions): {$stats['error']}\n";
         
-        // Test results
         echo "\nTest Results:\n";
         echo "  Total Tests: {$summary['total_tests']}\n";
         echo "  ✅ Passed: {$summary['passed_tests']}\n";
@@ -424,11 +406,9 @@ class TransformationTestSuite
         }
         echo "  Success Rate: {$summary['success_rate']}%\n";
         
-        // Performance
         echo "\nPerformance:\n";
         echo "  Total Execution Time: {$summary['total_execution_time']}s\n";
         
-        // Slowest transformations
         echo "\n5 Slowest Transformations:\n";
         for ($i = 0; $i < min(5, count($this->results['performance'])); $i++) {
             $perf = $this->results['performance'][$i];
@@ -439,7 +419,6 @@ class TransformationTestSuite
             );
         }
         
-        // Critical errors
         if (count($this->results['errors']) > 0) {
             echo "\n⚠️ CRITICAL ERRORS DETECTED:\n";
             $displayedErrors = array_slice($this->results['errors'], 0, 5);
@@ -451,7 +430,6 @@ class TransformationTestSuite
             }
         }
         
-        // Overall verdict
         echo "\n" . str_repeat('=', 80) . "\n";
         echo "OVERALL VERDICT: ";
         if ($summary['success_rate'] >= 95) {
@@ -474,7 +452,6 @@ class TransformationTestSuite
     }
 }
 
-// Run the test suite
 try {
     $suite = new TransformationTestSuite();
     $suite->run();

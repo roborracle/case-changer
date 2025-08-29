@@ -1,9 +1,5 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
-import persist from '@alpinejs/persist';
-
-// Register the persist plugin
-Alpine.plugin(persist);
 
 // Make Alpine available globally
 window.Alpine = Alpine;

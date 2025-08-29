@@ -14,7 +14,6 @@ use App\Http\Controllers\ConversionController;
 $controller = new ConversionController();
 $categories = getCategories();
 
-$baseUrl = 'http://localhost:8002';
 $issues = [];
 $totalPages = 0;
 $pagesWithIssues = 0;
@@ -23,7 +22,6 @@ echo "=================================================\n";
 echo "LAYOUT & ALIGNMENT AUDIT - TASK #10\n";
 echo "=================================================\n\n";
 
-// Function to get categories from controller
 function getCategories() {
     $reflection = new ReflectionClass('App\Http\Controllers\ConversionController');
     $property = $reflection->getProperty('categories');
@@ -32,7 +30,6 @@ function getCategories() {
     return $property->getValue($controller);
 }
 
-// Test home page
 echo "Testing Home Page...\n";
 $response = file_get_contents($baseUrl);
 $totalPages++;
@@ -41,12 +38,10 @@ if (strpos($response, 'grid-cols-') === false) {
     $pagesWithIssues++;
 }
 
-// Test main conversions page
 echo "Testing Conversions Index...\n";
 $response = file_get_contents($baseUrl . '/conversions');
 $totalPages++;
 
-// Check for responsive grid classes
 $gridPatterns = ['grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4'];
 foreach ($gridPatterns as $pattern) {
     if (strpos($response, $pattern) === false) {
@@ -54,7 +49,6 @@ foreach ($gridPatterns as $pattern) {
     }
 }
 
-// Test each category page
 echo "\nTesting Category Pages...\n";
 foreach ($categories as $categorySlug => $categoryData) {
     echo "  - $categorySlug: ";
@@ -67,7 +61,6 @@ foreach ($categories as $categorySlug => $categoryData) {
         $issues[] = ['page' => "conversions/$categorySlug", 'issue' => 'Page not accessible'];
         $pagesWithIssues++;
     } else {
-        // Check for proper layout classes
         $hasGrid = strpos($response, 'grid') !== false;
         $hasContainer = strpos($response, 'container') !== false || strpos($response, 'max-w-') !== false;
         
@@ -80,15 +73,12 @@ foreach ($categories as $categorySlug => $categoryData) {
         }
     }
     
-    // Test individual tool pages in this category
     foreach ($categoryData['tools'] as $toolSlug => $toolData) {
         $url = $baseUrl . '/conversions/' . $categorySlug . '/' . $toolSlug;
         $totalPages++;
-        // Skip individual tool testing for now to save time
     }
 }
 
-// Check for common layout patterns
 echo "\n=================================================\n";
 echo "LAYOUT PATTERNS CHECK\n";
 echo "=================================================\n\n";
@@ -97,7 +87,6 @@ $sampleToolUrl = $baseUrl . '/conversions/case-formats/uppercase';
 $response = @file_get_contents($sampleToolUrl);
 
 if ($response) {
-    // Check for input/output layout
     $hasInputArea = strpos($response, 'textarea') !== false;
     $hasOutputArea = strpos($response, 'output') !== false || strpos($response, 'result') !== false;
     $hasButtons = strpos($response, 'button') !== false;
@@ -107,7 +96,6 @@ if ($response) {
     echo "  Output area: " . ($hasOutputArea ? '✅' : '❌') . "\n";
     echo "  Action buttons: " . ($hasButtons ? '✅' : '❌') . "\n";
     
-    // Check for responsive classes
     $responsiveClasses = ['sm:', 'md:', 'lg:', 'xl:'];
     $foundResponsive = 0;
     foreach ($responsiveClasses as $prefix) {
@@ -117,12 +105,10 @@ if ($response) {
     }
     echo "  Responsive prefixes found: $foundResponsive/4\n";
     
-    // Check for glassmorphism
     $hasGlassmorphism = strpos($response, 'glass') !== false || strpos($response, 'backdrop') !== false;
     echo "  Glassmorphism styling: " . ($hasGlassmorphism ? '✅' : '❌') . "\n";
 }
 
-// Summary Report
 echo "\n=================================================\n";
 echo "AUDIT SUMMARY\n";
 echo "=================================================\n\n";
@@ -139,7 +125,6 @@ if (count($issues) > 0) {
     }
 }
 
-// Check CSS files
 echo "\n=================================================\n";
 echo "CSS FILES CHECK\n";
 echo "=================================================\n\n";
@@ -158,7 +143,6 @@ if (is_dir($cssPath)) {
     echo "❌ Build directory not found\n";
 }
 
-// Recommendations
 echo "\n=================================================\n";
 echo "RECOMMENDATIONS\n";
 echo "=================================================\n\n";
