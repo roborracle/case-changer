@@ -37,8 +37,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ForceHttps::class,
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\ApplyTheme::class,
-            \App\Http\Middleware\RemoveCspHeader::class,
-            \App\Http\Middleware\SecurityHeaders::class,
         ]);
         
         $middleware->encryptCookies(except: [
