@@ -15,9 +15,11 @@ Route::get('/up', function () {
     ]);
 })->name('health');
 
-// Homepage - Universal Converter (One Tool to Rule Them All)
-Route::get('/', [TransformationController::class, 'transform'])->name('home');
-Route::post('/', [TransformationController::class, 'transform'])->name('transform');
+// Homepage - Professional Case Changer Pro
+Route::get('/', function() {
+    return view('home-pro');
+})->name('home');
+Route::post('/api/transform', [TransformationController::class, 'transform'])->name('transform');
 
 // Legacy routes (redirect to home)
 Route::get('/case-changer', function() {
