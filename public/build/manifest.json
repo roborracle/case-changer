@@ -1,16 +1,13 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CcjHJcFc.css",
+    "file": "assets/app-CA0psoCK.css",
     "src": "resources/css/app.css",
-    "isEntry": true,
-    "names": [
-      "app.css"
-    ]
+    "isEntry": true
   },
-  "resources/js/app.js": {
-    "file": "assets/app-CRysxNEQ.js",
-    "name": "app",
-    "src": "resources/js/app.js",
+  "resources/js/stimulus-app.js": {
+    "file": "assets/stimulus-app-BEgetd6z.js",
+    "name": "stimulus-app",
+    "src": "resources/js/stimulus-app.js",
     "isEntry": true
   }
 }

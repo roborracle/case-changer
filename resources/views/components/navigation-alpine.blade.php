@@ -83,7 +83,7 @@ $categories = [
                     </a>
 
                     <!-- All Tools Dropdown -->
-                    <div class="relative" x-data="navigationDropdown()">
+                    <div class="relative" x-data="navigationDropdown">
                         <button @click="toggle()"
                             @click.away="close()"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -164,7 +164,7 @@ $categories = [
                     </a>
 
                     <!-- Popular Tools Dropdown -->
-                    <div class="relative" x-data="navigationDropdown()">
+                    <div class="relative" x-data="navigationDropdown">
                         <button @click="toggle()"
                             @click.away="close()"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -206,7 +206,7 @@ $categories = [
             <!-- Theme Toggle, Search and Mobile Menu -->
             <div class="flex items-center space-x-2">
                 <!-- Theme Toggle -->
-                <div class="relative" x-data="themeToggle()">
+                <div class="relative" x-data="themeToggle">
                     <button @click="toggleMenu()"
                         @click.away="showMenu = false"
                         class="p-2 rounded-md transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-apple-blue"
@@ -363,7 +363,7 @@ $categories = [
             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             class="relative glass-card max-w-2xl w-full"
-            x-data="searchModal()">
+            x-data="searchModal">
             <div class="p-6">
                 <div class="flex items-center mb-4">
                     <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -34,7 +34,7 @@
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Critical CSS (inline for performance) -->
-        <style>
+        <style nonce="{{ csp_nonce() }}">
             /* Critical CSS for above-the-fold content */
             .h-full { height: 100%; }
             .min-h-screen { min-height: 100vh; }
@@ -48,11 +48,11 @@
         </style>
 
         <!-- Styles with Preload for Performance -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/stimulus-app.js'])
         
         <!-- Structured Data -->
         @if(isset($schemaData))
-        <script type="application/ld+json">
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
             {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
         </script>
         @endif

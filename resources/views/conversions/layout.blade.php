@@ -14,17 +14,17 @@
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/stimulus-app.js'])
 
         @if(isset($schemaData))
-        <script type="application/ld+json">
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
             {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
         </script>
         @endif
 
         <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3D0SMK2BM"></script>
-        <script>
+        <script nonce="{{ csp_nonce() }}">
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
@@ -33,7 +33,7 @@
     </head>
     <body class="min-h-screen bg-secondary" >
         <!-- Navigation -->
-        @include('components.navigation-alpine')
+        @include('components.navigation-stimulus')
 
         <!-- Breadcrumbs -->
         @hasSection('breadcrumbs')

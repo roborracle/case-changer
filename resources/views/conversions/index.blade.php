@@ -25,7 +25,7 @@
         <div class="mb-16 rounded-xl p-8 shadow-lg bg-secondary" >
             <h2 class="text-3xl font-bold mb-4 text-center text-primary" >Universal Text Converter</h2>
             <p class="text-center mb-6 text-lg text-secondary" >One tool to rule them all - select from 172 conversion formats</p>
-            <div x-data="universalConverter()" class="rounded-lg p-6 bg-primary border" >
+            <div x-data="universalConverter" class="rounded-lg p-6 bg-primary border" >
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Input Section -->
                     <div>
