@@ -462,6 +462,25 @@ Alpine.data('improvedConverter', () => ({
         return this.characterCount + ' characters';
     },
     
+    // Store current preview for CSP-compliant template access
+    currentPreview: null,
+    
+    // CSP-compliant methods for template access
+    shouldShowCopyForCurrent() {
+        if (!this.currentPreview) return false;
+        return !this.copiedFormat || this.copiedFormat !== this.currentPreview.key;
+    },
+    
+    isCopiedForCurrent() {
+        if (!this.currentPreview) return false;
+        return this.copiedFormat === this.currentPreview.key;
+    },
+    
+    getOutputForCurrent() {
+        if (!this.currentPreview) return '...';
+        return this.currentPreview.output || '...';
+    },
+    
     init() {
         console.log('improvedConverter initialized');
         // Listen for quick convert events
@@ -469,6 +488,11 @@ Alpine.data('improvedConverter', () => ({
             if (e.detail && e.detail.transformation) {
                 this.quickTransform(e.detail.transformation);
             }
+        });
+        
+        // Watch for inputText changes and generate previews
+        this.$watch('inputText', () => {
+            this.generateAllPreviews();
         });
     },
     
@@ -490,11 +514,8 @@ Alpine.data('improvedConverter', () => ({
         if (!text) return '';
         
         try {
-            // Try to use the new transformation system
-            const method = getMethod(transformation);
-            if (method) {
-                return await method.transform(text);
-            }
+            // Use the transform function directly
+            return await transform(transformation, text);
         } catch (error) {
             console.warn(`Transformation ${transformation} failed, using fallback`, error);
         }
@@ -550,21 +571,6 @@ Alpine.data('improvedConverter', () => ({
         }
     },
     
-    isFormatCopied(format) {
-        return this.copiedFormat === format;
-    },
-    
-    shouldShowCopyButton(format) {
-        return !this.copiedFormat || this.copiedFormat !== format;
-    },
-    
-    getPreviewOutput(preview) {
-        return preview && preview.output ? preview.output : '...';
-    },
-    
-    isPreviewDisabled(preview) {
-        return !preview || !preview.output;
-    },
     
     async pasteFromClipboard() {
         try {
