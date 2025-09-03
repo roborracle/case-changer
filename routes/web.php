@@ -16,10 +16,9 @@ Route::get('/up', function () {
 })->name('health');
 
 // Homepage - Professional Case Changer Pro
-Route::get('/', function() {
-    return view('home-pro');
-})->name('home');
-Route::post('/api/transform', [TransformationController::class, 'transform'])->name('transform');
+Route::get('/', [TransformationController::class, 'transform'])->name('home');
+Route::post('/', [TransformationController::class, 'transform'])->name('home.post');
+Route::post('/api/transform', [\App\Http\Controllers\Api\TransformationApiController::class, 'transform'])->name('transform');
 
 // Legacy routes (redirect to home)
 Route::get('/case-changer', function() {
@@ -59,14 +58,45 @@ Route::get('/cookies', function() {
 })->name('cookies');
 
 // Information Pages
-Route::get('/about', function() {
+Route::get('/pages/about', function() {
     return view('pages.about');
-})->name('about');
+})->name('pages.about');
+
+Route::get('/pages/contact', function() {
+    return view('pages.contact');
+})->name('pages.contact');
+
+Route::get('/pages/faq', function() {
+    return view('pages.faq');
+})->name('pages.faq');
+
+// Legacy redirects for information pages
+Route::get('/about', function() {
+    return redirect('/pages/about');
+});
 
 Route::get('/contact', function() {
-    return view('pages.contact');
-})->name('contact');
+    return redirect('/pages/contact');
+});
 
 Route::get('/faq', function() {
-    return view('pages.faq');
-})->name('faq');
+    return redirect('/pages/faq');
+});
+
+// Test route for improved homepage
+Route::get('/home-improved', function() {
+    $categories = config('categories.categories');
+    $transformations = [
+        'upper-case' => 'UPPERCASE',
+        'lower-case' => 'lowercase',
+        'title-case' => 'Title Case',
+        'sentence-case' => 'Sentence case',
+        'camel-case' => 'camelCase',
+        'snake-case' => 'snake_case',
+        'kebab-case' => 'kebab-case',
+        'constant-case' => 'CONSTANT_CASE',
+        'pascal-case' => 'PascalCase',
+        'dot-case' => 'dot.case'
+    ];
+    return view('home-improved', compact('categories', 'transformations'));
+});

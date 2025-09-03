@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "task:run": "node scripts/task_watcher.cjs",
+        "task:simulate": "node scripts/dev/simulate_task_complete.cjs"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.8",
@@ -17,6 +19,7 @@
         "vite": "^5.3.4"
     },
     "dependencies": {
+        "@alpinejs/csp": "^3.14.9",
         "@alpinejs/persist": "^3.14.9",
         "@hotwired/stimulus": "^3.2.2",
         "alpinejs": "^3.14.9"

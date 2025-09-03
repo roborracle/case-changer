@@ -1,224 +1,130 @@
-/* Import all CSS modules before Tailwind directives */
-@import './theme-variables.css';
-@import './glassmorphism.css';
-@import './glassmorphism-utilities.css';
-@import './mobile-fixes.css';
-@import './navigation-fixes.css';
-@import './accessibility.css';
-@import './hover-states.css';
-
-/* Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Hide Alpine elements before initialization */
+/* Theme CSS variables */
+:root {
+    --color-primary: #ffffff;
+    --color-secondary: #f9fafb;
+    --color-accent: #3b82f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+}
+
+.dark {
+    --color-primary: #1f2937;
+    --color-secondary: #111827;
+    --color-accent: #3b82f6;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --border-color: #374151;
+}
+
+/* Custom utility classes */
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.border { border-color: var(--border-color); }
+.accent-primary { color: var(--color-accent); }
+
 [x-cloak] { display: none !important; }
 
-/* Apple-inspired Design System for Case Changer Pro with Dark Mode */
-
-/* Light Theme Variables */
-:root {
-    /* Apple System Colors - Light */
-    --apple-blue: #007AFF;
-    --apple-gray-50: #F5F5F7;
-    --apple-gray-100: #E8E8ED;
-    --apple-gray-200: #D2D2D7;
-    --apple-gray-300: #C7C7CC;
-    --apple-gray-400: #8E8E93;
-    --apple-gray-500: #636366;
-    --apple-gray-600: #48484A;
-    --apple-gray-700: #363638;
-    --apple-gray-800: #2C2C2E;
-    --apple-gray-900: #1C1C1E;
-    
-    /* Theme Colors - Light */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-tertiary: #64748b;
-    --border-primary: #e2e8f0;
-    --border-secondary: #cbd5e1;
-    --accent-primary: #007AFF;
-    --accent-secondary: #0A84FF;
-    --shadow-primary: rgba(0, 0, 0, 0.1);
-    --shadow-secondary: rgba(0, 0, 0, 0.05);
-    
-    /* System Font Stack */
-    --system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-    --mono-font: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+/* Custom scrollbar hiding utility */
+.scrollbar-hide {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    /* Chrome, Safari and Opera */
+    display: none;
 }
 
-/* Dark Theme Variables */
-.dark {
-    /* Apple System Colors - Dark */
-    --apple-blue: #0A84FF;
-    
-    /* Theme Colors - Dark */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #94a3b8;
-    --border-primary: #334155;
-    --border-secondary: #475569;
-    --accent-primary: #007AFF;
-    --accent-secondary: #0A84FF;
-    --shadow-primary: rgba(0, 0, 0, 0.3);
-    --shadow-secondary: rgba(0, 0, 0, 0.2);
-}
-
-body {
-    font-family: var(--system-font);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Apple-style Focus States */
-*:focus {
-    outline: none;
-}
-
-*:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-/* Apple-style Components */
-.btn-apple-primary {
-    @apply px-6 py-2.5 rounded-lg transition-colors font-medium text-sm;
-    background-color: var(--accent-primary);
-    color: white;
-    font-family: var(--system-font);
-}
-
-.btn-apple-primary:hover {
-    filter: brightness(1.1);
-}
-
-.btn-apple-secondary {
-    @apply px-6 py-2.5 rounded-lg transition-colors font-medium text-sm;
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-primary);
-    font-family: var(--system-font);
-}
-
-.btn-apple-secondary:hover {
-    background-color: var(--border-secondary);
-}
-
-/* Apple-style subtle shadows */
-.shadow-apple {
-    box-shadow: 0 4px 6px -1px var(--shadow-secondary), 0 2px 4px -1px var(--shadow-secondary);
-}
-
-.shadow-apple-lg {
-    box-shadow: 0 10px 15px -3px var(--shadow-primary), 0 4px 6px -2px var(--shadow-secondary);
-}
-
-/* Custom scrollbar for better UX */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-/* Smooth transitions for interactive elements - Apple style */
-button {
-    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Theme transition for all elements */
-* {
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Focus styles for accessibility */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-/* Remove default focus for mouse users */
-button:focus:not(:focus-visible),
-input:focus:not(:focus-visible),
-textarea:focus:not(:focus-visible) {
-    outline: none;
-}
-
-/* Loading spinner utility */
-.spinner {
-    border: 2px solid var(--border-primary);
-    border-top: 2px solid var(--accent-primary);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-}
-
-/* Theme toggle button */
-.theme-toggle {
-    @apply p-2 rounded-lg transition-colors;
-    background-color: var(--bg-tertiary);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-primary);
-}
-
-.theme-toggle:hover {
-    background-color: var(--border-secondary);
-    color: var(--text-primary);
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Print styles */
-@media print {
-    .no-print {
-        display: none !important;
+/* Accessibility - Focus Styles */
+@layer base {
+    /* Enhanced focus styles for keyboard navigation */
+    :focus {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
     }
     
-    .print-only {
-        display: block !important;
+    /* Remove default focus outline for mouse users */
+    :focus:not(:focus-visible) {
+        outline: none;
+    }
+    
+    /* Custom focus visible styles */
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+        border-radius: 0.125rem;
+    }
+    
+    /* Focus styles for buttons and interactive elements */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Skip link styles - screen reader only by default */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+    
+    /* Make skip link visible on focus */
+    .sr-only:focus,
+    .focus\:not-sr-only:focus {
+        position: absolute;
+        width: auto;
+        height: auto;
+        padding: 0.5rem 1rem;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
     }
 }
 
-/* Responsive text area heights */
-@media (min-width: 768px) {
-    textarea {
-        min-height: 16rem;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --color-accent: #2563eb;
+        --border-color: #000000;
+    }
+    
+    .dark {
+        --color-accent: #60a5fa;
+        --border-color: #ffffff;
     }
 }
 
-@media (min-width: 1024px) {
-    textarea {
-        min-height: 20rem;
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

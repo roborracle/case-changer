@@ -327,8 +327,11 @@ class ConversionController extends Controller
             ['name' => 'All Tools']
         ]);
 
+        // Use categories from config instead of hardcoded array
+        $categories = config('categories.categories');
+
         return view('conversions.index', [
-            'categories' => $this->categories,
+            'categories' => $categories,
             'schemaData' => $breadcrumbs
         ]);
     }
@@ -338,16 +341,18 @@ class ConversionController extends Controller
      */
     public function category($category)
     {
-        if (!isset($this->categories[$category])) {
+        $categories = config('categories.categories');
+        
+        if (!isset($categories[$category])) {
             abort(404);
         }
 
-        $schemaData = $this->schemaService->getCategorySchemas($category, $this->categories[$category]);
+        $schemaData = $this->schemaService->getCategorySchemas($category, $categories[$category]);
 
         return view('conversions.category', [
             'category' => $category,
-            'categoryData' => $this->categories[$category],
-            'allCategories' => $this->categories,
+            'categoryData' => $categories[$category],
+            'allCategories' => $categories,
             'schemaData' => $schemaData
         ]);
     }

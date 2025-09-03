@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
+use App\Services\BaseTransformationService;
 use App\Models\Transformation;
 use Exception;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Log;
 
-class TransformationService
+class TransformationService extends BaseTransformationService
 {
-        private $transformations = [
+        protected array $transformations = [
         'upper-case' => 'Upper Case',
         'lower-case' => 'Lower Case',
         'title-case' => 'Title Case',
@@ -181,7 +182,47 @@ class TransformationService
         'percentage-format' => 'Percentage Format',
         'currency-format' => 'Currency Format',
         'ordinal-numbers' => 'Ordinal Numbers',
-        'spelled-numbers' => 'Spelled Numbers'
+        'spelled-numbers' => 'Spelled Numbers',
+        
+        // Additional Professional Tools (173-210)
+        'base64-encode' => 'Base64 Encode',
+        'base64-decode' => 'Base64 Decode',
+        'url-encode' => 'URL Encode',
+        'url-decode' => 'URL Decode',
+        'html-encode' => 'HTML Entity Encode',
+        'html-decode' => 'HTML Entity Decode',
+        'json-escape' => 'JSON Escape',
+        'json-unescape' => 'JSON Unescape',
+        'xml-escape' => 'XML Escape',
+        'xml-unescape' => 'XML Unescape',
+        'sql-escape' => 'SQL Escape',
+        'regex-escape' => 'Regex Escape',
+        'csv-escape' => 'CSV Escape',
+        'shell-escape' => 'Shell Escape',
+        'javascript-escape' => 'JavaScript Escape',
+        'backslash-escape' => 'Backslash Escape',
+        'double-quote-escape' => 'Double Quote Escape',
+        'single-quote-escape' => 'Single Quote Escape',
+        'tab-to-spaces' => 'Tab to Spaces',
+        'spaces-to-tabs' => 'Spaces to Tabs',
+        'indent-text' => 'Indent Text',
+        'outdent-text' => 'Outdent Text',
+        'wrap-text' => 'Wrap Text',
+        'unwrap-text' => 'Unwrap Text',
+        'justify-text' => 'Justify Text',
+        'center-text' => 'Center Text',
+        'right-align' => 'Right Align',
+        'left-align' => 'Left Align',
+        'vertical-text' => 'Vertical Text',
+        'diagonal-text' => 'Diagonal Text',
+        'wave-text' => 'Wave Text',
+        'circle-text' => 'Circle Text',
+        'spiral-text' => 'Spiral Text',
+        'rainbow-text' => 'Rainbow Text',
+        'gradient-text' => 'Gradient Text',
+        'shadow-text' => 'Shadow Text',
+        'outline-text' => 'Outline Text',
+        'emboss-text' => 'Emboss Text'
     ];
 
     public function getTransformations(): array
@@ -195,24 +236,8 @@ class TransformationService
     public function transform(string $text, string $transformation): string
     {
         try {
-            // Input validation
-            if (empty($text) && !in_array($transformation, $this->getGeneratorTransformations())) {
-                Log::warning('Empty input provided for transformation', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text)
-                ]);
-                return 'Error: Please provide text to transform.';
-            }
-
-            if (strlen($text) > 50000) {
-                Log::warning('Input text too long', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text)
-                ]);
-                return 'Error: Text is too long. Please limit to 50,000 characters.';
-            }
-
-            if (!array_key_exists($transformation, $this->transformations)) {
+            // Check if transformation exists
+            if (!$this->hasTransformation($transformation)) {
                 Log::error('Invalid transformation requested', [
                     'transformation' => $transformation,
                     'available_transformations' => array_keys($this->transformations)
@@ -220,74 +245,25 @@ class TransformationService
                 return 'Error: Invalid transformation type.';
             }
 
+            // Build method name
             $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
 
-            if (!method_exists($this, $methodName)) {
-                Log::error('Transformation method not found', [
-                    'transformation' => $transformation,
-                    'method' => $methodName
-                ]);
-                return 'Error: Transformation method not implemented.';
-            }
-
-            // Execute transformation with error handling
+            // Execute transformation using parent class method
             $result = $this->executeTransformation($methodName, $text, $transformation);
             
-            // Log successful transformation (optional, can be disabled in production)
-            if (config('app.debug')) {
-                Log::info('Transformation completed successfully', [
-                    'transformation' => $transformation,
-                    'input_length' => strlen($text),
-                    'output_length' => strlen($result)
-                ]);
+            // Store transformation in database for analytics if successful
+            if (!str_starts_with($result, 'Error:')) {
+                $this->storeTransformation($transformation, $text, $result);
             }
-            
-            // Store transformation in database for analytics
-            $this->storeTransformation($transformation, $text, $result);
             
             return $result;
 
         } catch (Exception $e) {
-            Log::error('Transformation failed with exception', [
-                'transformation' => $transformation,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'input_length' => strlen($text ?? '')
-            ]);
-            return 'Error: Transformation failed. Please try again.';
+            return $this->handleTransformationError($transformation, $e, substr($text, 0, 100));
         }
     }
 
-    /**
-     * Execute transformation method with error handling
-     */
-    private function executeTransformation(string $methodName, string $text, string $transformation): string
-    {
-        try {
-            $result = $this->$methodName($text);
-            
-            // Validate result
-            if ($result === null || $result === false) {
-                throw new Exception('Transformation returned invalid result');
-            }
-            
-            // Convert result to string if needed
-            if (!is_string($result)) {
-                $result = (string) $result;
-            }
-            
-            return $result;
-            
-        } catch (Exception $e) {
-            Log::error('Transformation method execution failed', [
-                'method' => $methodName,
-                'transformation' => $transformation,
-                'error' => $e->getMessage(),
-                'input_length' => strlen($text)
-            ]);
-            throw $e;
-        }
-    }
+    // executeTransformation is now inherited from BaseTransformationService
 
     /**
      * Store transformation in database for analytics
@@ -332,7 +308,7 @@ class TransformationService
         ];
     }
 
-    private function toUpperCase(string $text): string
+    protected function toUpperCase(string $text): string
     {
         try {
             if (empty($text)) {
@@ -345,7 +321,7 @@ class TransformationService
         }
     }
 
-    private function toLowerCase(string $text): string
+    protected function toLowerCase(string $text): string
     {
         try {
             if (empty($text)) {
@@ -358,7 +334,7 @@ class TransformationService
         }
     }
 
-    private function toTitleCase(string $text): string
+    protected function toTitleCase(string $text): string
     {
         try {
             if (empty($text)) {
@@ -371,7 +347,7 @@ class TransformationService
         }
     }
 
-    private function toSentenceCase(string $text): string
+    protected function toSentenceCase(string $text): string
     {
         try {
             if (empty($text)) {
@@ -391,7 +367,7 @@ class TransformationService
         }
     }
 
-    private function toCapitalizeWords(string $text): string
+    protected function toCapitalizeWords(string $text): string
     {
         try {
             if (empty($text)) {
@@ -404,7 +380,7 @@ class TransformationService
         }
     }
 
-    private function toAlternatingCase(string $text): string
+    protected function toAlternatingCase(string $text): string
     {
         try {
             if (empty($text)) {
@@ -422,7 +398,7 @@ class TransformationService
         }
     }
 
-    private function toInverseCase(string $text): string
+    protected function toInverseCase(string $text): string
     {
         $result = '';
         for ($i = 0; $i < strlen($text); $i++) {
@@ -436,20 +412,20 @@ class TransformationService
         return $result;
     }
 
-    private function toCamelCase(string $text): string
+    protected function toCamelCase(string $text): string
     {
         $text = ucwords(str_replace(['-', '_'], ' ', $text));
         $text = str_replace(' ', '', $text);
         return lcfirst($text);
     }
 
-    private function toPascalCase(string $text): string
+    protected function toPascalCase(string $text): string
     {
         $text = ucwords(str_replace(['-', '_'], ' ', $text));
         return str_replace(' ', '', $text);
     }
 
-    private function toSnakeCase(string $text): string
+    protected function toSnakeCase(string $text): string
     {
         // First handle camelCase and PascalCase
         $text = preg_replace('/(?<!^)[A-Z]/', '_$0', $text);
@@ -461,122 +437,122 @@ class TransformationService
         return mb_strtolower(trim($text, '_'), 'UTF-8');
     }
 
-    private function toConstantCase(string $text): string
+    protected function toConstantCase(string $text): string
     {
         return mb_strtoupper($this->toSnakeCase($text), 'UTF-8');
     }
 
-    private function toKebabCase(string $text): string
+    protected function toKebabCase(string $text): string
     {
         return str_replace('_', '-', $this->toSnakeCase($text));
     }
 
-    private function toDotCase(string $text): string
+    protected function toDotCase(string $text): string
     {
         return str_replace('_', '.', $this->toSnakeCase($text));
     }
 
-    private function toPathCase(string $text): string
+    protected function toPathCase(string $text): string
     {
         return str_replace('_', '/', $this->toSnakeCase($text));
     }
 
-    private function toApStyle(string $text): string
+    protected function toApStyle(string $text): string
     {
         return "AP Style: " . $this->toTitleCase($text);
     }
 
-    private function toNytStyle(string $text): string
+    protected function toNytStyle(string $text): string
     {
         return "NY Times Style: " . $this->toTitleCase($text);
     }
 
-    private function toChicagoStyle(string $text): string
+    protected function toChicagoStyle(string $text): string
     {
         return "Chicago Style: " . $this->toTitleCase($text);
     }
 
-    private function toGuardianStyle(string $text): string
+    protected function toGuardianStyle(string $text): string
     {
         return "Guardian Style: " . $this->toTitleCase($text);
     }
 
-    private function toBbcStyle(string $text): string
+    protected function toBbcStyle(string $text): string
     {
         return "BBC Style: " . $this->toTitleCase($text);
     }
 
-    private function toReutersStyle(string $text): string
+    protected function toReutersStyle(string $text): string
     {
         return "Reuters Style: " . $this->toTitleCase($text);
     }
 
-    private function toEconomistStyle(string $text): string
+    protected function toEconomistStyle(string $text): string
     {
         return "Economist Style: " . $this->toTitleCase($text);
     }
 
-    private function toWsjStyle(string $text): string
+    protected function toWsjStyle(string $text): string
     {
         return "WSJ Style: " . $this->toTitleCase($text);
     }
 
-    private function toApaStyle(string $text): string
+    protected function toApaStyle(string $text): string
     {
         return "APA Style: " . $this->toSentenceCase($text);
     }
 
-    private function toMlaStyle(string $text): string
+    protected function toMlaStyle(string $text): string
     {
         return "MLA Style: " . $this->toTitleCase($text);
     }
 
-    private function toChicagoAuthorDate(string $text): string
+    protected function toChicagoAuthorDate(string $text): string
     {
         return "Chicago Author-Date: " . $this->toSentenceCase($text);
     }
 
-    private function toChicagoNotes(string $text): string
+    protected function toChicagoNotes(string $text): string
     {
         return "Chicago Notes: " . $this->toTitleCase($text);
     }
 
-    private function toHarvardStyle(string $text): string
+    protected function toHarvardStyle(string $text): string
     {
         return "Harvard Style: " . $this->toSentenceCase($text);
     }
 
-    private function toVancouverStyle(string $text): string
+    protected function toVancouverStyle(string $text): string
     {
         return "Vancouver Style: " . $this->toSentenceCase($text);
     }
 
-    private function toIeeeStyle(string $text): string
+    protected function toIeeeStyle(string $text): string
     {
         return "IEEE Style: " . $this->toTitleCase($text);
     }
 
-    private function toAmaStyle(string $text): string
+    protected function toAmaStyle(string $text): string
     {
         return "AMA Style: " . $this->toSentenceCase($text);
     }
 
-    private function toBluebookStyle(string $text): string
+    protected function toBluebookStyle(string $text): string
     {
         return "Bluebook Style: " . $this->toTitleCase($text);
     }
 
-    private function toReverse(string $text): string
+    protected function toReverse(string $text): string
     {
         return strrev($text);
     }
 
-    private function toAesthetic(string $text): string
+    protected function toAesthetic(string $text): string
     {
         return implode(' ', str_split(strtoupper($text)));
     }
 
-    private function toSarcasm(string $text): string
+    protected function toSarcasm(string $text): string
     {
         $result = '';
         for ($i = 0; $i < strlen($text); $i++) {
@@ -585,169 +561,169 @@ class TransformationService
         return $result;
     }
 
-    private function toSmallcaps(string $text): string
+    protected function toSmallcaps(string $text): string
     {
         return "Small Caps: " . strtoupper($text);
     }
 
-    private function toBubble(string $text): string
+    protected function toBubble(string $text): string
     {
         return "Bubble Text: " . $text;
     }
 
-    private function toSquare(string $text): string
+    protected function toSquare(string $text): string
     {
         return "Square Text: " . $text;
     }
 
-    private function toScript(string $text): string
+    protected function toScript(string $text): string
     {
         return "Script: " . $text;
     }
 
-    private function toDoubleStruck(string $text): string
+    protected function toDoubleStruck(string $text): string
     {
         return "Double Struck: " . $text;
     }
 
-    private function toBold(string $text): string
+    protected function toBold(string $text): string
     {
         return "**" . $text . "**";
     }
 
-    private function toItalic(string $text): string
+    protected function toItalic(string $text): string
     {
         return "*" . $text . "*";
     }
 
-    private function toEmojiCase(string $text): string
+    protected function toEmojiCase(string $text): string
     {
         return $text . " ✨";
     }
 
-    private function toEmailStyle(string $text): string
+    protected function toEmailStyle(string $text): string
     {
         return "Email Style: " . $this->toSentenceCase($text);
     }
 
-    private function toLegalStyle(string $text): string
+    protected function toLegalStyle(string $text): string
     {
         return "Legal Style: " . strtoupper($text);
     }
 
-    private function toMarketingHeadline(string $text): string
+    protected function toMarketingHeadline(string $text): string
     {
         return "Marketing Headline: " . $this->toTitleCase($text);
     }
 
-    private function toPressRelease(string $text): string
+    protected function toPressRelease(string $text): string
     {
         return "Press Release: " . $this->toSentenceCase($text);
     }
 
-    private function toMemoStyle(string $text): string
+    protected function toMemoStyle(string $text): string
     {
         return "Memo Style: " . $this->toSentenceCase($text);
     }
 
-    private function toReportStyle(string $text): string
+    protected function toReportStyle(string $text): string
     {
         return "Report Style: " . $this->toSentenceCase($text);
     }
 
-    private function toProposalStyle(string $text): string
+    protected function toProposalStyle(string $text): string
     {
         return "Proposal Style: " . $this->toTitleCase($text);
     }
 
-    private function toInvoiceStyle(string $text): string
+    protected function toInvoiceStyle(string $text): string
     {
         return "Invoice Style: " . $this->toSentenceCase($text);
     }
 
-    private function toTwitterStyle(string $text): string
+    protected function toTwitterStyle(string $text): string
     {
         return "Twitter/X Style: " . $this->toSentenceCase($text);
     }
 
-    private function toInstagramStyle(string $text): string
+    protected function toInstagramStyle(string $text): string
     {
         return "Instagram Style: " . $this->toTitleCase($text);
     }
 
-    private function toLinkedinStyle(string $text): string
+    protected function toLinkedinStyle(string $text): string
     {
         return "LinkedIn Style: " . $this->toTitleCase($text);
     }
 
-    private function toFacebookStyle(string $text): string
+    protected function toFacebookStyle(string $text): string
     {
         return "Facebook Style: " . $this->toSentenceCase($text);
     }
 
-    private function toYoutubeTitle(string $text): string
+    protected function toYoutubeTitle(string $text): string
     {
         return "YouTube Title: " . $this->toTitleCase($text);
     }
 
-    private function toTiktokStyle(string $text): string
+    protected function toTiktokStyle(string $text): string
     {
         return "TikTok Style: " . $this->toSentenceCase($text);
     }
 
-    private function toHashtagStyle(string $text): string
+    protected function toHashtagStyle(string $text): string
     {
         return "#" . str_replace(' ', '', $this->toTitleCase($text));
     }
 
-    private function toMentionStyle(string $text): string
+    protected function toMentionStyle(string $text): string
     {
         return "@" . str_replace(' ', '', $this->toCamelCase($text));
     }
 
-    private function toApiDocs(string $text): string
+    protected function toApiDocs(string $text): string
     {
         return "API Documentation: " . $this->toSentenceCase($text);
     }
 
-    private function toReadmeStyle(string $text): string
+    protected function toReadmeStyle(string $text): string
     {
         return "README Style: " . $this->toTitleCase($text);
     }
 
-    private function toChangelogStyle(string $text): string
+    protected function toChangelogStyle(string $text): string
     {
         return "Changelog Style: " . $this->toSentenceCase($text);
     }
 
-    private function toUserManual(string $text): string
+    protected function toUserManual(string $text): string
     {
         return "User Manual: " . $this->toTitleCase($text);
     }
 
-    private function toTechnicalSpec(string $text): string
+    protected function toTechnicalSpec(string $text): string
     {
         return "Technical Spec: " . $this->toSentenceCase($text);
     }
 
-    private function toCodeComments(string $text): string
+    protected function toCodeComments(string $text): string
     {
         return "// " . $this->toSentenceCase($text);
     }
 
-    private function toWikiStyle(string $text): string
+    protected function toWikiStyle(string $text): string
     {
         return "Wiki Style: " . $this->toTitleCase($text);
     }
 
-    private function toMarkdownStyle(string $text): string
+    protected function toMarkdownStyle(string $text): string
     {
         return "Markdown Style: " . $this->toSentenceCase($text);
     }
 
     // ================== INTERNATIONAL & REGIONAL FORMATS ==================
     
-    private function toBritishEnglish(string $text): string
+    protected function toBritishEnglish(string $text): string
     {
         $replacements = [
             "color" => "colour", "center" => "centre", "theater" => "theatre",
@@ -757,7 +733,7 @@ class TransformationService
         return str_ireplace(array_keys($replacements), array_values($replacements), $text);
     }
     
-    private function toAmericanEnglish(string $text): string
+    protected function toAmericanEnglish(string $text): string
     {
         $replacements = [
             "colour" => "color", "centre" => "center", "theatre" => "theater",
@@ -767,7 +743,7 @@ class TransformationService
         return str_ireplace(array_keys($replacements), array_values($replacements), $text);
     }
     
-    private function toCanadianEnglish(string $text): string
+    protected function toCanadianEnglish(string $text): string
     {
         $replacements = [
             "color" => "colour", "center" => "centre", "theater" => "theatre",
@@ -776,7 +752,7 @@ class TransformationService
         return str_ireplace(array_keys($replacements), array_values($replacements), $text);
     }
     
-    private function toAustralianEnglish(string $text): string
+    protected function toAustralianEnglish(string $text): string
     {
         $replacements = [
             "color" => "colour", "center" => "centre", "theater" => "theatre",
@@ -785,7 +761,7 @@ class TransformationService
         return str_ireplace(array_keys($replacements), array_values($replacements), $text);
     }
     
-    private function toEUFormat(string $text): string
+    protected function toEUFormat(string $text): string
     {
         // EU date format: DD/MM/YYYY
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$2/$1/$3', $text);
@@ -794,14 +770,14 @@ class TransformationService
         return $text;
     }
     
-    private function toISOFormat(string $text): string
+    protected function toISOFormat(string $text): string
     {
         // ISO 8601 date format
         $text = preg_replace('/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/', '$3-$1-$2', $text);
         return $text;
     }
     
-    private function toUnicodeNormalize(string $text): string
+    protected function toUnicodeNormalize(string $text): string
     {
         if (class_exists('Normalizer')) {
             return \Normalizer::normalize($text, \Normalizer::FORM_C);
@@ -809,67 +785,67 @@ class TransformationService
         return $text;
     }
     
-    private function toASCIIConvert(string $text): string
+    protected function toASCIIConvert(string $text): string
     {
         return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
     }
     
     // ================== UTILITY TRANSFORMATIONS ==================
     
-    private function toRemoveSpaces(string $text): string
+    protected function toRemoveSpaces(string $text): string
     {
         return str_replace(' ', '', $text);
     }
     
-    private function toRemoveExtraSpaces(string $text): string
+    protected function toRemoveExtraSpaces(string $text): string
     {
         return preg_replace('/\s+/', ' ', trim($text));
     }
     
-    private function toAddDashes(string $text): string
+    protected function toAddDashes(string $text): string
     {
         return str_replace(' ', '-', $text);
     }
     
-    private function toAddUnderscores(string $text): string
+    protected function toAddUnderscores(string $text): string
     {
         return str_replace(' ', '_', $text);
     }
     
-    private function toAddPeriods(string $text): string
+    protected function toAddPeriods(string $text): string
     {
         return str_replace(' ', '.', $text);
     }
     
-    private function toRemovePunctuation(string $text): string
+    protected function toRemovePunctuation(string $text): string
     {
         return preg_replace('/[[:punct:]]/', '', $text);
     }
     
-    private function toExtractLetters(string $text): string
+    protected function toExtractLetters(string $text): string
     {
         return preg_replace('/[^a-zA-Z]/', '', $text);
     }
     
-    private function toExtractNumbers(string $text): string
+    protected function toExtractNumbers(string $text): string
     {
         return preg_replace('/[^0-9]/', '', $text);
     }
     
-    private function toRemoveDuplicates(string $text): string
+    protected function toRemoveDuplicates(string $text): string
     {
         $words = explode(' ', $text);
         return implode(' ', array_unique($words));
     }
     
-    private function toSortWords(string $text): string
+    protected function toSortWords(string $text): string
     {
         $words = explode(' ', $text);
         sort($words);
         return implode(' ', $words);
     }
     
-    private function toShuffleWords(string $text): string
+    protected function toShuffleWords(string $text): string
     {
         $words = explode(' ', $text);
         shuffle($words);
@@ -878,64 +854,64 @@ class TransformationService
     
     // ================== TEXT EFFECTS ==================
     
-    private function toBoldText(string $text): string
+    protected function toBoldText(string $text): string
     {
         $normal = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         $bold = '𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵';
         return strtr($text, $normal, $bold);
     }
     
-    private function toItalicText(string $text): string
+    protected function toItalicText(string $text): string
     {
         $normal = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $italic = '𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻';
         return strtr($text, $normal, $italic);
     }
     
-    private function toStrikethroughText(string $text): string
+    protected function toStrikethroughText(string $text): string
     {
         return preg_replace('/(.)/u', '$1̶', $text);
     }
     
-    private function toUnderlineText(string $text): string
+    protected function toUnderlineText(string $text): string
     {
         return preg_replace('/(.)/u', '$1̲', $text);
     }
     
-    private function toSuperscript(string $text): string
+    protected function toSuperscript(string $text): string
     {
         $normal = 'abcdefghijklmnopqrstuvwxyz0123456789+-=()';
         $super = 'ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖᵠʳˢᵗᵘᵛʷˣʸᶻ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾';
         return strtr(mb_strtolower($text), $normal, $super);
     }
     
-    private function toSubscript(string $text): string
+    protected function toSubscript(string $text): string
     {
         $normal = 'aehijklmnoprstuvx0123456789+-=()';
         $sub = 'ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎';
         return strtr(mb_strtolower($text), $normal, $sub);
     }
     
-    private function toWideText(string $text): string
+    protected function toWideText(string $text): string
     {
         $normal = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
         $wide = 'ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　';
         return strtr($text, $normal, $wide);
     }
     
-    private function toUpsideDown(string $text): string
+    protected function toUpsideDown(string $text): string
     {
         $normal = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $flipped = 'ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz∀qƆpƎℲפHIſʞ˥WNOԀQɹS┴∩ΛMX⅄Z';
         return strrev(strtr($text, $normal, $flipped));
     }
     
-    private function toMirrorText(string $text): string
+    protected function toMirrorText(string $text): string
     {
         return strrev($text);
     }
     
-    private function toZalgoText(string $text): string
+    protected function toZalgoText(string $text): string
     {
         $zalgo = ['̍', '̎', '̄', '̅', '̿', '̑', '̆', '̐', '͒', '͗'];
         $result = '';
@@ -948,7 +924,7 @@ class TransformationService
         return $result;
     }
     
-    private function toCursedText(string $text): string
+    protected function toCursedText(string $text): string
     {
         $cursed = ['̷', '̸', '̶', '̴'];
         return preg_replace_callback('/(.)/u', function($m) use ($cursed) {
@@ -956,7 +932,7 @@ class TransformationService
         }, $text);
     }
     
-    private function toInvisibleText(string $text): string
+    protected function toInvisibleText(string $text): string
     {
         // Zero-width characters
         return preg_replace('/(.)/u', '$1​', $text); // Zero-width space U+200B
@@ -964,7 +940,7 @@ class TransformationService
     
     // ================== GENERATORS ==================
     
-    private function toPasswordGenerator(string $text): string
+    protected function toPasswordGenerator(string $text): string
     {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
         $length = strlen($text) > 0 ? min(32, max(8, strlen($text))) : 16;
@@ -975,7 +951,7 @@ class TransformationService
         return $password;
     }
     
-    private function toUUIDGenerator(string $text): string
+    protected function toUUIDGenerator(string $text): string
     {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -986,7 +962,7 @@ class TransformationService
         );
     }
     
-    private function toRandomNumber(string $text): string
+    protected function toRandomNumber(string $text): string
     {
         $words = explode(' ', $text);
         $result = [];
@@ -996,7 +972,7 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toRandomLetter(string $text): string
+    protected function toRandomLetter(string $text): string
     {
         $letters = 'abcdefghijklmnopqrstuvwxyz';
         $words = explode(' ', $text);
@@ -1011,7 +987,7 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toRandomDate(string $text): string
+    protected function toRandomDate(string $text): string
     {
         $start = strtotime('2020-01-01');
         $end = strtotime('2025-12-31');
@@ -1019,19 +995,19 @@ class TransformationService
         return date('Y-m-d', $timestamp);
     }
     
-    private function toRandomMonth(string $text): string
+    protected function toRandomMonth(string $text): string
     {
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 
                   'July', 'August', 'September', 'October', 'November', 'December'];
         return $months[rand(0, 11)];
     }
     
-    private function toRandomIP(string $text): string
+    protected function toRandomIP(string $text): string
     {
         return rand(1, 255) . '.' . rand(0, 255) . '.' . rand(0, 255) . '.' . rand(1, 255);
     }
     
-    private function toRandomChoice(string $text): string
+    protected function toRandomChoice(string $text): string
     {
         $choices = explode(',', $text);
         if (count($choices) > 0) {
@@ -1040,39 +1016,39 @@ class TransformationService
         return $text;
     }
     
-    private function toLoremIpsum(string $text): string
+    protected function toLoremIpsum(string $text): string
     {
         $lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
         return $lorem;
     }
     
-    private function toUsernameGenerator(string $text): string
+    protected function toUsernameGenerator(string $text): string
     {
         $adjectives = ['cool', 'super', 'mega', 'ultra', 'pro', 'epic'];
         $nouns = ['gamer', 'coder', 'ninja', 'wizard', 'master', 'legend'];
         return $adjectives[array_rand($adjectives)] . '_' . $nouns[array_rand($nouns)] . rand(10, 999);
     }
     
-    private function toEmailGenerator(string $text): string
+    protected function toEmailGenerator(string $text): string
     {
         $username = $this->toUsernameGenerator($text);
         $domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'example.com'];
         return strtolower(str_replace('_', '.', $username)) . '@' . $domains[array_rand($domains)];
     }
     
-    private function toHexColor(string $text): string
+    protected function toHexColor(string $text): string
     {
         return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
     }
     
-    private function toPhoneNumber(string $text): string
+    protected function toPhoneNumber(string $text): string
     {
         return sprintf('(%03d) %03d-%04d', rand(200, 999), rand(200, 999), rand(1000, 9999));
     }
     
     // ================== CODE & DATA TOOLS ==================
     
-    private function toBinaryTranslator(string $text): string
+    protected function toBinaryTranslator(string $text): string
     {
         $result = [];
         for ($i = 0; $i < strlen($text); $i++) {
@@ -1081,12 +1057,12 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toHexConverter(string $text): string
+    protected function toHexConverter(string $text): string
     {
         return bin2hex($text);
     }
     
-    private function toMorseCode(string $text): string
+    protected function toMorseCode(string $text): string
     {
         $morse = [
             'A' => '.-', 'B' => '-...', 'C' => '-.-.', 'D' => '-..', 'E' => '.',
@@ -1109,7 +1085,7 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toCaesarCipher(string $text): string
+    protected function toCaesarCipher(string $text): string
     {
         $shift = 3;
         $result = '';
@@ -1136,7 +1112,7 @@ class TransformationService
         return hash('sha256', $text);
     }
     
-    private function toJSONFormatter(string $text): string
+    protected function toJSONFormatter(string $text): string
     {
         $decoded = json_decode($text);
         if (json_last_error() === JSON_ERROR_NONE) {
@@ -1146,7 +1122,7 @@ class TransformationService
         return json_encode($text);
     }
     
-    private function toCSVtoJSON(string $text): string
+    protected function toCSVtoJSON(string $text): string
     {
         $lines = explode("\n", $text);
         if (count($lines) > 0) {
@@ -1165,7 +1141,7 @@ class TransformationService
         return '[]';
     }
     
-    private function toCSSFormatter(string $text): string
+    protected function toCSSFormatter(string $text): string
     {
         // Basic CSS formatting
         $text = preg_replace('/\s*{\s*/', ' {\n  ', $text);
@@ -1174,14 +1150,14 @@ class TransformationService
         return trim($text);
     }
     
-    private function toHTMLFormatter(string $text): string
+    protected function toHTMLFormatter(string $text): string
     {
         // Basic HTML formatting
         $text = preg_replace('/></', '>\n<', $text);
         return $text;
     }
     
-    private function toJavaScriptFormatter(string $text): string
+    protected function toJavaScriptFormatter(string $text): string
     {
         // Basic JS formatting
         $text = preg_replace('/;\s*/', ';\n', $text);
@@ -1190,7 +1166,7 @@ class TransformationService
         return $text;
     }
     
-    private function toXMLFormatter(string $text): string
+    protected function toXMLFormatter(string $text): string
     {
         $dom = new \DOMDocument('1.0');
         $dom->preserveWhiteSpace = false;
@@ -1199,7 +1175,7 @@ class TransformationService
         return $dom->saveXML();
     }
     
-    private function toYAMLFormatter(string $text): string
+    protected function toYAMLFormatter(string $text): string
     {
         // Basic YAML formatting
         $lines = explode("\n", $text);
@@ -1218,7 +1194,7 @@ class TransformationService
         return mb_convert_encoding($text, 'UTF-8', mb_detect_encoding($text));
     }
     
-    private function toUTMBuilder(string $text): string
+    protected function toUTMBuilder(string $text): string
     {
         $url = trim($text);
         if (filter_var($url, FILTER_VALIDATE_URL)) {
@@ -1228,7 +1204,7 @@ class TransformationService
         return $text;
     }
     
-    private function toSlugifyGenerator(string $text): string
+    protected function toSlugifyGenerator(string $text): string
     {
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
         $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
@@ -1240,14 +1216,14 @@ class TransformationService
     
     // ================== TEXT ANALYSIS & CLEANUP ==================
     
-    private function toSentenceCounter(string $text): string
+    protected function toSentenceCounter(string $text): string
     {
         $sentences = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
         $count = count($sentences);
         return "Sentence count: " . $count . "\n\n" . $text;
     }
     
-    private function toDuplicateFinder(string $text): string
+    protected function toDuplicateFinder(string $text): string
     {
         $words = str_word_count($text, 1);
         $counts = array_count_values($words);
@@ -1259,56 +1235,56 @@ class TransformationService
         return $result;
     }
     
-    private function toDuplicateRemover(string $text): string
+    protected function toDuplicateRemover(string $text): string
     {
         $lines = explode("\n", $text);
         return implode("\n", array_unique($lines));
     }
     
-    private function toTextReplacer(string $text): string
+    protected function toTextReplacer(string $text): string
     {
         // Default example: replace "old" with "new"
         return str_replace('old', 'new', $text);
     }
     
-    private function toLineBreakRemover(string $text): string
+    protected function toLineBreakRemover(string $text): string
     {
         return str_replace(["\r\n", "\r", "\n"], ' ', $text);
     }
     
-    private function toPlainTextConverter(string $text): string
+    protected function toPlainTextConverter(string $text): string
     {
         $text = strip_tags($text);
         $text = html_entity_decode($text);
         return $text;
     }
     
-    private function toRemoveFormatting(string $text): string
+    protected function toRemoveFormatting(string $text): string
     {
         return strip_tags(html_entity_decode($text));
     }
     
-    private function toRemoveLetters(string $text): string
+    protected function toRemoveLetters(string $text): string
     {
         return preg_replace('/[a-zA-Z]/', '', $text);
     }
     
-    private function toRemoveUnderscores(string $text): string
+    protected function toRemoveUnderscores(string $text): string
     {
         return str_replace('_', ' ', $text);
     }
     
-    private function toWhitespaceRemover(string $text): string
+    protected function toWhitespaceRemover(string $text): string
     {
         return preg_replace('/\s+/', ' ', trim($text));
     }
     
-    private function toRepeatText(string $text): string
+    protected function toRepeatText(string $text): string
     {
         return str_repeat($text . ' ', 3);
     }
     
-    private function toPhoneticSpelling(string $text): string
+    protected function toPhoneticSpelling(string $text): string
     {
         $phonetic = [
             'a' => 'ay', 'b' => 'bee', 'c' => 'see', 'd' => 'dee', 'e' => 'ee',
@@ -1326,7 +1302,7 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toPigLatin(string $text): string
+    protected function toPigLatin(string $text): string
     {
         $words = explode(' ', $text);
         $result = [];
@@ -1342,45 +1318,45 @@ class TransformationService
     
     // ================== SOCIAL MEDIA GENERATORS ==================
     
-    private function toDiscordFont(string $text): string
+    protected function toDiscordFont(string $text): string
     {
         return '**' . $text . '**'; // Bold for Discord
     }
     
-    private function toFacebookFont(string $text): string
+    protected function toFacebookFont(string $text): string
     {
         return $this->toBoldText($text);
     }
     
-    private function toInstagramFont(string $text): string
+    protected function toInstagramFont(string $text): string
     {
         return $this->toItalicText($text);
     }
     
-    private function toTwitterFont(string $text): string
+    protected function toTwitterFont(string $text): string
     {
         return $this->toBoldText($text);
     }
     
-    private function toBigText(string $text): string
+    protected function toBigText(string $text): string
     {
         $normal = 'abcdefghijklmnopqrstuvwxyz';
         $big = 'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ';
         return strtr(strtolower($text), $normal, $big);
     }
     
-    private function toSlashText(string $text): string
+    protected function toSlashText(string $text): string
     {
         return preg_replace('/(.)/u', '$1/', $text);
     }
     
-    private function toStackedText(string $text): string
+    protected function toStackedText(string $text): string
     {
         $chars = str_split($text);
         return implode("\n", $chars);
     }
     
-    private function toWingdings(string $text): string
+    protected function toWingdings(string $text): string
     {
         $normal = 'abcdefghijklmnopqrstuvwxyz';
         $wingdings = '♋♌♍♎♏♐♑♒♓♔♕♖♗♘♙♚♛♜♝♞♟♠♡♢♣♤♥♦';
@@ -1389,7 +1365,7 @@ class TransformationService
     
     // ================== MISCELLANEOUS ==================
     
-    private function toNATOPhonetic(string $text): string
+    protected function toNATOPhonetic(string $text): string
     {
         $nato = [
             'A' => 'Alpha', 'B' => 'Bravo', 'C' => 'Charlie', 'D' => 'Delta',
@@ -1408,7 +1384,7 @@ class TransformationService
         return implode(' ', $result);
     }
     
-    private function toRomanNumerals(string $text): string
+    protected function toRomanNumerals(string $text): string
     {
         // Convert numbers to Roman numerals
         if (!is_numeric($text)) {
@@ -1430,7 +1406,7 @@ class TransformationService
     }
 
     // Developer Tools Methods
-    private function toSqlCase(string $text): string {
+    protected function toSqlCase(string $text): string {
         try {
             if (empty($text)) {
                 return '';
@@ -1442,42 +1418,42 @@ class TransformationService
         }
     }
     
-    private function toPythonCase($text) {
+    protected function toPythonCase(string $text): string {
         return str_replace([" ", "-"], "_", strtolower($text));
     }
     
-    private function toJavaCase($text) {
+    protected function toJavaCase(string $text): string {
         return lcfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
-    private function toPhpCase($text) {
+    protected function toPhpCase(string $text): string {
         return "$" . str_replace([" ", "-"], "_", strtolower($text));
     }
     
-    private function toRubyCase($text) {
+    protected function toRubyCase(string $text): string {
         return "@" . str_replace([" ", "-"], "_", strtolower($text));
     }
     
-    private function toGoCase($text) {
+    protected function toGoCase(string $text): string {
         return ucfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
-    private function toRustCase($text) {
+    protected function toRustCase(string $text): string {
         return str_replace([" ", "-"], "_", strtolower($text));
     }
     
-    private function toSwiftCase($text) {
+    protected function toSwiftCase(string $text): string {
         return lcfirst(str_replace(" ", "", ucwords(str_replace(["-", "_"], " ", $text))));
     }
     
     // Text Analysis Methods
-    private function toReadingTime($text) {
+    protected function toReadingTime(string $text): string {
         $wordCount = str_word_count($text);
         $minutes = ceil($wordCount / 200); // Average reading speed
         return "$minutes minute" . ($minutes > 1 ? "s" : "") . " read time";
     }
     
-    private function toFleschScore($text) {
+    protected function toFleschScore(string $text): string {
         $sentences = max(1, preg_match_all('/[.!?]+/', $text, $matches));
         $words = str_word_count($text);
         $syllables = $this->countSyllables($text);
@@ -1488,7 +1464,7 @@ class TransformationService
         return "Flesch Score: " . round($score, 1);
     }
     
-    private function toSentimentAnalysis($text) {
+    protected function toSentimentAnalysis(string $text): string {
         $positive = preg_match_all('/\b(good|great|excellent|amazing|wonderful|fantastic|love|happy)\b/i', $text);
         $negative = preg_match_all('/\b(bad|terrible|awful|horrible|hate|sad|angry|disappointed)\b/i', $text);
         
@@ -1497,7 +1473,7 @@ class TransformationService
         return "Neutral sentiment";
     }
     
-    private function toKeywordExtractor($text) {
+    protected function toKeywordExtractor(string $text): string {
         $words = str_word_count(strtolower($text), 1);
         $stopWords = ['the', 'is', 'at', 'which', 'on', 'a', 'an', 'and', 'or', 'but'];
         $keywords = array_diff($words, $stopWords);
@@ -1506,25 +1482,25 @@ class TransformationService
         return implode(", ", array_slice(array_keys($freq), 0, 5));
     }
     
-    private function toSyllableCounter($text) {
+    protected function toSyllableCounter(string $text): string {
         $count = $this->countSyllables($text);
         return "$count syllables";
     }
     
-    private function toParagraphCounter($text) {
+    protected function toParagraphCounter(string $text): string {
         $paragraphs = preg_split('/\n\n+/', trim($text));
         $count = count(array_filter($paragraphs));
         return "$count paragraph" . ($count !== 1 ? "s" : "");
     }
     
-    private function toUniqueWords($text) {
+    protected function toUniqueWords(string $text): string {
         $words = str_word_count(strtolower($text), 1);
         $unique = count(array_unique($words));
         return "$unique unique words";
     }
     
     // Advanced Format Methods
-    private function toScientificNotation($text) {
+    protected function toScientificNotation(string $text): string {
         if (is_numeric($text)) {
             $num = (float)$text;
             if ($num == 0) return "0";
@@ -1535,7 +1511,7 @@ class TransformationService
         return $text;
     }
     
-    private function toEngineeringNotation($text) {
+    protected function toEngineeringNotation(string $text): string {
         if (is_numeric($text)) {
             $num = (float)$text;
             if ($num == 0) return "0";
@@ -1546,7 +1522,7 @@ class TransformationService
         return $text;
     }
     
-    private function toFractionConverter($text) {
+    protected function toFractionConverter(string $text): string {
         if (is_numeric($text)) {
             $decimal = (float)$text;
             $whole = floor($decimal);
@@ -1566,21 +1542,21 @@ class TransformationService
         return $text;
     }
     
-    private function toPercentageFormat($text) {
+    protected function toPercentageFormat(string $text): string {
         if (is_numeric($text)) {
             return round((float)$text * 100, 2) . "%";
         }
         return $text;
     }
     
-    private function toCurrencyFormat($text) {
+    protected function toCurrencyFormat(string $text): string {
         if (is_numeric($text)) {
             return "$" . number_format((float)$text, 2);
         }
         return $text;
     }
     
-    private function toOrdinalNumbers($text) {
+    protected function toOrdinalNumbers(string $text): string {
         return preg_replace_callback('/\b(\d+)\b/', function($matches) {
             $num = $matches[1];
             $suffix = ['th', 'st', 'nd', 'rd'];
@@ -1589,7 +1565,7 @@ class TransformationService
         }, $text);
     }
     
-    private function toSpelledNumbers($text) {
+    protected function toSpelledNumbers(string $text): string {
         $numbers = [
             '0' => 'zero', '1' => 'one', '2' => 'two', '3' => 'three', '4' => 'four',
             '5' => 'five', '6' => 'six', '7' => 'seven', '8' => 'eight', '9' => 'nine'
@@ -1612,5 +1588,290 @@ class TransformationService
     
     private function gcd($a, $b) {
         return $b ? $this->gcd($b, $a % $b) : $a;
+    }
+    
+    // ================== ENCODING/DECODING METHODS ==================
+    
+    private function toBase64Encode($text) {
+        return base64_encode($text);
+    }
+    
+    private function toBase64Decode($text) {
+        $decoded = base64_decode($text, true);
+        return $decoded !== false ? $decoded : "Invalid Base64 input";
+    }
+    
+    protected function toUrlEncode(string $text): string {
+        return urlencode($text);
+    }
+    
+    protected function toUrlDecode(string $text): string {
+        return urldecode($text);
+    }
+    
+    protected function toHtmlEncode(string $text): string {
+        return htmlentities($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+    
+    protected function toHtmlDecode(string $text): string {
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+    
+    protected function toJsonEscape(string $text): string {
+        return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    }
+    
+    protected function toJsonUnescape(string $text): string {
+        $decoded = json_decode('"' . $text . '"');
+        return $decoded !== null ? $decoded : $text;
+    }
+    
+    protected function toXmlEscape(string $text): string {
+        return htmlspecialchars($text, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+    
+    protected function toXmlUnescape(string $text): string {
+        return htmlspecialchars_decode($text, ENT_XML1 | ENT_QUOTES);
+    }
+    
+    protected function toSqlEscape(string $text): string {
+        return str_replace(["'", '"', "\\", "\0", "\n", "\r", "\x1a"], 
+                          ["''", '""', "\\\\", "\\0", "\\n", "\\r", "\\Z"], $text);
+    }
+    
+    protected function toRegexEscape(string $text): string {
+        return preg_quote($text, '/');
+    }
+    
+    protected function toCsvEscape(string $text): string {
+        if (strpos($text, ',') !== false || strpos($text, '"') !== false || strpos($text, "\n") !== false) {
+            return '"' . str_replace('"', '""', $text) . '"';
+        }
+        return $text;
+    }
+    
+    protected function toShellEscape(string $text): string {
+        return escapeshellarg($text);
+    }
+    
+    protected function toJavascriptEscape(string $text): string {
+        return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    }
+    
+    protected function toBackslashEscape(string $text): string {
+        return addslashes($text);
+    }
+    
+    protected function toDoubleQuoteEscape(string $text): string {
+        return str_replace('"', '\\"', $text);
+    }
+    
+    protected function toSingleQuoteEscape(string $text): string {
+        return str_replace("'", "\\'", $text);
+    }
+    
+    // ================== TEXT FORMATTING METHODS ==================
+    
+    protected function toTabToSpaces(string $text): string {
+        return str_replace("\t", "    ", $text);
+    }
+    
+    protected function toSpacesToTabs(string $text): string {
+        return str_replace("    ", "\t", $text);
+    }
+    
+    protected function toIndentText(string $text): string {
+        $lines = explode("\n", $text);
+        return implode("\n", array_map(function($line) {
+            return "    " . $line;
+        }, $lines));
+    }
+    
+    protected function toOutdentText(string $text): string {
+        $lines = explode("\n", $text);
+        return implode("\n", array_map(function($line) {
+            return preg_replace('/^    /', '', $line);
+        }, $lines));
+    }
+    
+    protected function toWrapText(string $text): string {
+        return wordwrap($text, 80, "\n", true);
+    }
+    
+    protected function toUnwrapText(string $text): string {
+        return str_replace(["\n", "\r"], " ", $text);
+    }
+    
+    protected function toJustifyText(string $text): string {
+        $lines = explode("\n", $text);
+        $justified = [];
+        foreach ($lines as $line) {
+            if (strlen($line) < 80) {
+                $words = explode(' ', $line);
+                if (count($words) > 1) {
+                    $spaces = 80 - strlen(str_replace(' ', '', $line));
+                    $gaps = count($words) - 1;
+                    if ($gaps > 0) {
+                        $spacePerGap = floor($spaces / $gaps);
+                        $extraSpaces = $spaces % $gaps;
+                        $result = '';
+                        foreach ($words as $i => $word) {
+                            $result .= $word;
+                            if ($i < count($words) - 1) {
+                                $result .= str_repeat(' ', $spacePerGap + ($i < $extraSpaces ? 1 : 0));
+                            }
+                        }
+                        $justified[] = $result;
+                    } else {
+                        $justified[] = $line;
+                    }
+                } else {
+                    $justified[] = $line;
+                }
+            } else {
+                $justified[] = $line;
+            }
+        }
+        return implode("\n", $justified);
+    }
+    
+    protected function toCenterText(string $text): string {
+        $lines = explode("\n", $text);
+        $centered = [];
+        foreach ($lines as $line) {
+            $padding = max(0, floor((80 - strlen($line)) / 2));
+            $centered[] = str_repeat(' ', $padding) . $line;
+        }
+        return implode("\n", $centered);
+    }
+    
+    protected function toRightAlign(string $text): string {
+        $lines = explode("\n", $text);
+        $aligned = [];
+        foreach ($lines as $line) {
+            $padding = max(0, 80 - strlen($line));
+            $aligned[] = str_repeat(' ', $padding) . $line;
+        }
+        return implode("\n", $aligned);
+    }
+    
+    protected function toLeftAlign(string $text): string {
+        return $text; // Already left-aligned by default
+    }
+    
+    // ================== VISUAL TEXT EFFECTS ==================
+    
+    protected function toVerticalText(string $text): string {
+        $chars = mb_str_split($text);
+        return implode("\n", $chars);
+    }
+    
+    protected function toDiagonalText(string $text): string {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $result[] = str_repeat(' ', $i) . $char;
+        }
+        return implode("\n", $result);
+    }
+    
+    protected function toWaveText(string $text): string {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $offset = round(sin($i * 0.5) * 3) + 3;
+            $result[] = str_repeat(' ', $offset) . $char;
+        }
+        return implode("\n", $result);
+    }
+    
+    protected function toCircleText(string $text): string {
+        // Simple ASCII circle approximation
+        $length = strlen($text);
+        if ($length < 8) {
+            $text = str_pad($text, 8, ' ');
+            $length = 8;
+        }
+        $quarter = floor($length / 4);
+        return "  " . substr($text, 0, $quarter) . "\n" .
+               substr($text, $length - $quarter, $quarter) . "    " . substr($text, $quarter, $quarter) . "\n" .
+               "  " . substr($text, $length - $quarter * 2, $quarter);
+    }
+    
+    protected function toSpiralText(string $text): string {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $angle = $i * 0.5;
+            $radius = $i * 0.3;
+            $x = round(cos($angle) * $radius);
+            $y = round(sin($angle) * $radius);
+            $padding = str_repeat(' ', max(0, $x + 20));
+            if (!isset($result[$y + 10])) {
+                $result[$y + 10] = str_repeat(' ', 40);
+            }
+            $line = $result[$y + 10];
+            $line[$x + 20] = $char;
+            $result[$y + 10] = $line;
+        }
+        ksort($result);
+        return implode("\n", $result);
+    }
+    
+    protected function toRainbowText(string $text): string {
+        // Return text with rainbow color codes (for terminal/HTML output)
+        $colors = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣'];
+        $chars = mb_str_split($text);
+        $result = '';
+        foreach ($chars as $i => $char) {
+            if ($char !== ' ') {
+                $colorIndex = $i % count($colors);
+                $result .= $colors[$colorIndex] . $char;
+            } else {
+                $result .= $char;
+            }
+        }
+        return $result;
+    }
+    
+    protected function toGradientText(string $text): string {
+        // Simple gradient effect using Unicode block characters
+        $blocks = ['░', '▒', '▓', '█'];
+        $length = strlen($text);
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $gradientIndex = min(3, floor($i * 4 / $length));
+            $result .= $blocks[$gradientIndex] . $text[$i];
+        }
+        return $result;
+    }
+    
+    protected function toShadowText(string $text): string {
+        $lines = explode("\n", $text ?: " ");
+        $shadowed = [];
+        foreach ($lines as $line) {
+            $shadowed[] = $line;
+            $shadowed[] = str_repeat('░', mb_strlen($line));
+        }
+        return implode("\n", $shadowed);
+    }
+    
+    protected function toOutlineText(string $text): string {
+        $length = mb_strlen($text);
+        $border = str_repeat('─', $length + 2);
+        return "┌" . $border . "┐\n│ " . $text . " │\n└" . $border . "┘";
+    }
+    
+    protected function toEmbossText(string $text): string {
+        $chars = mb_str_split($text);
+        $result = '';
+        foreach ($chars as $char) {
+            if (ctype_alpha($char)) {
+                $result .= '【' . $char . '】';
+            } else {
+                $result .= $char;
+            }
+        }
+        return $result;
     }
 }

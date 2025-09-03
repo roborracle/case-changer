@@ -1,212 +1,243 @@
-@extends('conversions.layout')
-
-@section('title', $categoryData['title'] . ' - Case Changer Pro')
-@section('description', $categoryData['description'] . ' - Professional text transformation tools')
-@section('keywords', implode(', ', array_column($categoryData['tools'], 'name')))
-
-@section('breadcrumbs')
-<li class="flex items-center">
-<svg class="w-4 h-4 mx-2 text-tertiary"  fill="currentColor" viewBox="0 0 20 20">
-<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-</svg>
-<a href="{{ route('conversions.index') }}" class="nav-link-hover">All Tools</a>
-</li>
-<li class="flex items-center">
-<svg class="w-4 h-4 mx-2 text-tertiary"  fill="currentColor" viewBox="0 0 20 20">
-<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-</svg>
-<span>{{ $categoryData['title'] }}</span>
-</li>
-@endsection
-
-@section('content')
-<div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Category Header -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center p-4 rounded-xl mb-4 bg-secondary" >
-                @switch($categoryData['icon'])
-                @case('text')
-                <svg class="w-10 h-10 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                @break
-                @case('code')
-                <svg class="w-10 h-10 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                </svg>
-                @break
-                @case('newspaper')
-                <svg class="w-10 h-10 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                </svg>
-                @break
-                @case('academic')
-                <svg class="w-10 h-10 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
-                </svg>
-                @break
-                @default
-                <svg class="w-10 h-10 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                @endswitch
-            </div>
-            <h1 class="text-4xl font-bold mb-4 text-primary" >{{ $categoryData['title'] }}</h1>
-            <p class="text-xl max-w-3xl mx-auto text-secondary" >
-            {{ $categoryData['description'] }}
-            </p>
+<x-layouts.app 
+    :title="$category['name'] . ' - Case Changer Pro Tools'"
+    :description="$category['description'] ?? 'Browse ' . count($tools) . ' professional ' . $category['name'] . ' tools. Transform your text instantly with our free online converters.'"
+    :keywords="strtolower($category['name']) . ', text converter, case changer, ' . implode(', ', array_slice(array_column($tools, 'slug'), 0, 5))"
+>
+    <!-- Breadcrumb Navigation -->
+    <nav class="bg-gray-50 dark:bg-gray-900 py-3" aria-label="Breadcrumb">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li>
+                    <a href="/" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Home</a>
+                </li>
+                <li class="text-gray-400">/</li>
+                <li>
+                    <a href="/conversions" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Conversions</a>
+                </li>
+                <li class="text-gray-400">/</li>
+                <li class="text-gray-900 dark:text-white font-medium">{{ $category['name'] }}</li>
+            </ol>
         </div>
+    </nav>
 
-        <!-- Category Converter Tool -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4 text-center text-primary" >{{ $categoryData['title'] }} Converter</h2>
-            <p class="text-center mb-6 text-secondary" >Convert text using any {{ $categoryData['title'] }} format</p>
-            <div x-data="categoryConverter('{{ $category }}', {{ json_encode(array_map(function($tool) { return $tool['name']; }, $categoryData['tools'])) }})" class="rounded-xl p-6 bg-secondary border" >
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Input Section -->
+    <!-- Category Header -->
+    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-2xl p-8 shadow-xl">
+                <div class="flex items-center justify-between">
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-primary" >Input Text</label>
-                        <textarea
-                        x-model="inputText"
-                        @input="transform"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-primary text-primary"
-                        
-                        placeholder="Enter or paste your text here..."></textarea>
+                        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                            {{ $category['name'] }}
+                        </h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300">
+                            {{ $category['description'] ?? 'Professional text transformation tools for ' . $category['name'] }}
+                        </p>
+                        <div class="mt-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                {{ count($tools) }} tools available
+                            </span>
+                        </div>
+                    </div>
+                    @if(isset($category['icon']))
+                    <div class="hidden lg:block">
+                        <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
+                            {!! $category['icon'] !!}
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+                <!-- Tools Grid -->
+                <div class="lg:col-span-3">
+                    <!-- Filters Bar -->
+                    <div class="mb-8 backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-lg p-4 shadow-lg">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div class="flex items-center space-x-4">
+                                <label for="sort" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+                                <select 
+                                    id="sort" 
+                                    name="sort"
+                                    class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    x-data
+                                    x-on:change="window.location.href = '?sort=' + $event.target.value"
+                                >
+                                    <option value="name">Name</option>
+                                    <option value="popular">Most Popular</option>
+                                    <option value="newest">Newest</option>
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <input 
+                                    type="search" 
+                                    placeholder="Search in category..."
+                                    class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    x-data
+                                    x-on:input.debounce.300ms="
+                                        const query = $event.target.value;
+                                        const cards = document.querySelectorAll('[data-tool-name]');
+                                        cards.forEach(card => {
+                                            const name = card.dataset.toolName.toLowerCase();
+                                            card.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
+                                        });
+                                    "
+                                >
+                                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Output Section -->
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-primary" >Result</label>
-                        <textarea
-                        x-model="outputText"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border bg-primary text-primary"
-                        
-                        readonly></textarea>
+                    <!-- Tools Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @forelse($tools as $tool)
+                            <div 
+                                class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                                data-tool-name="{{ strtolower($tool['name']) }}"
+                            >
+                                @if(isset($tool['is_popular']) && $tool['is_popular'])
+                                <div class="flex justify-end mb-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                                        Popular
+                                    </span>
+                                </div>
+                                @endif
+                                
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                                    <a href="{{ route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']]) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                        {{ $tool['name'] }}
+                                    </a>
+                                </h3>
+                                
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                    {{ Str::limit($tool['description'] ?? 'Transform your text with ' . $tool['name'], 120) }}
+                                </p>
+                                
+                                <div class="flex items-center justify-between">
+                                    <a 
+                                        href="{{ route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']]) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        Try Now
+                                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    @if(isset($tool['usage_count']))
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ number_format($tool['usage_count']) }} uses
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-full text-center py-12">
+                                <p class="text-gray-500 dark:text-gray-400">No tools available in this category yet.</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <!-- Pagination -->
+                    @if(isset($tools) && method_exists($tools, 'links'))
+                        <div class="mt-8">
+                            {{ $tools->links() }}
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Sidebar -->
+                <div class="mt-8 lg:mt-0">
+                    <div class="sticky top-24 space-y-6">
+                        <!-- Quick Filters -->
+                        <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Filters</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                                    Most Popular
+                                </button>
+                                <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                                    Recently Added
+                                </button>
+                                <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                                    A-Z Alphabetical
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Related Categories -->
+                        @if(isset($relatedCategories) && count($relatedCategories) > 0)
+                        <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Related Categories</h3>
+                            <div class="space-y-2">
+                                @foreach($relatedCategories as $related)
+                                <a 
+                                    href="{{ route('conversions.category', $related['slug']) }}"
+                                    class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+                                >
+                                    {{ $related['name'] }}
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">({{ $related['tool_count'] ?? 0 }})</span>
+                                </a>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Category Stats -->
+                        <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Category Statistics</h3>
+                            <dl class="space-y-3">
+                                <div class="flex justify-between">
+                                    <dt class="text-gray-600 dark:text-gray-400">Total Tools:</dt>
+                                    <dd class="font-medium text-gray-900 dark:text-white">{{ count($tools) }}</dd>
+                                </div>
+                                @if(isset($category['total_uses']))
+                                <div class="flex justify-between">
+                                    <dt class="text-gray-600 dark:text-gray-400">Total Uses:</dt>
+                                    <dd class="font-medium text-gray-900 dark:text-white">{{ number_format($category['total_uses']) }}</dd>
+                                </div>
+                                @endif
+                                @if(isset($category['avg_rating']))
+                                <div class="flex justify-between">
+                                    <dt class="text-gray-600 dark:text-gray-400">Avg Rating:</dt>
+                                    <dd class="font-medium text-gray-900 dark:text-white">
+                                        {{ number_format($category['avg_rating'], 1) }}/5.0
+                                    </dd>
+                                </div>
+                                @endif
+                            </dl>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Tool Selection -->
-                <div class="mt-6">
-                    <label class="block text-sm font-medium mb-2 text-primary" >Select Format</label>
-                    <select
-                    x-model="selectedTool"
-                    @change="transform"
-                    class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 bg-primary text-primary"
-                    >
-                    <template x-for="(toolName, toolKey) in tools" :key="toolKey">
-                    <option :value="toolKey" x-text="toolName"></option>
-                    </template>
-                    </select>
-                </div>
-
-                <div class="mt-4 flex gap-2">
-                    <button
-                    @click="copyToClipboard"
-                    :disabled="!outputText"
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                    Copy Result
-                    </button>
-                </div>
-
-                <!-- Error Message -->
-                <div x-show="error" x-text="error" class="mt-4 p-3 bg-red-50 text-red-600 rounded-lg"></div>
             </div>
         </div>
+    </section>
 
-        <!-- Tools Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach($categoryData['tools'] as $toolSlug => $tool)
-            <a href="{{ route('conversions.tool', [$category, $toolSlug]) }}"
-            class="group rounded-lg p-6 hover:shadow-lg transition-all duration-200 bg-primary border hover-border-accent">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold transition-colors text-primary">
-                {{ $tool['name'] }}
-                </h3>
-                <svg class="w-5 h-5 transition-colors transform text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </div>
-            <p class="text-sm text-secondary" >
-            {{ $tool['description'] }}
-            </p>
-
-            <!-- Visual preview of the format -->
-            <div class="mt-4 p-3 rounded-lg bg-secondary" >
-                <p class="text-xs mb-1 text-tertiary" >Example:</p>
-                <p class="font-mono text-sm text-secondary" >
-                @switch($toolSlug)
-                @case('uppercase')
-                SAMPLE TEXT OUTPUT
-                @break
-                @case('lowercase')
-                sample text output
-                @break
-                @case('title-case')
-                Sample Text Output
-                @break
-                @case('sentence-case')
-                Sample text output
-                @break
-                @case('camel-case')
-                sampleTextOutput
-                @break
-                @case('pascal-case')
-                SampleTextOutput
-                @break
-                @case('snake-case')
-                sample_text_output
-                @break
-                @case('kebab-case')
-                sample-text-output
-                @break
-                @case('constant-case')
-                SAMPLE_TEXT_OUTPUT
-                @break
-                @case('dot-case')
-                sample.text.output
-                @break
-                @case('path-case')
-                sample/text/output
-                @break
-                @case('reverse')
-                tuptuO txeT elpmaS
-                @break
-                @case('aesthetic')
-                s a m p l e  t e x t
-                @break
-                @default
-                {{ $tool['name'] }} Format
-                @endswitch
-                </p>
-            </div>
-            </a>
-            @endforeach
-        </div>
-
-        <!-- Related Categories -->
-        <div class="mt-16 rounded-xl p-8 bg-secondary" >
-            <h2 class="text-2xl font-bold mb-6 text-primary" >Explore Other Categories</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach($allCategories as $slug => $cat)
-                @if($slug !== $category)
-                <a href="{{ route('conversions.category', $slug) }}"
-                class="px-4 py-3 rounded-lg text-center hover:shadow transition-all bg-primary border hover-border-accent">
-                <span class="text-sm font-medium text-secondary">
-                {{ $cat['title'] }}
-                </span>
-                <span class="block text-xs mt-1 text-tertiary" >
-                {{ count($cat['tools']) }} tools
-                </span>
-                </a>
-                @endif
-                @endforeach
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    <!-- Schema.org Structured Data -->
+    @push('schema')
+    <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'CollectionPage',
+        'name' => $category['name'],
+        'description' => $category['description'] ?? 'Browse ' . count($tools) . ' professional ' . $category['name'] . ' tools.',
+        'url' => url()->current(),
+        'numberOfItems' => count($tools),
+        'itemListElement' => array_map(function($tool, $index) use ($category) {
+            return [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $tool['name'],
+                'url' => route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']])
+            ];
+        }, $tools, array_keys($tools))
+    ], JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    @endpush
+</x-layouts.app>

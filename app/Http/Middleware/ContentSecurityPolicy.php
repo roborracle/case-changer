@@ -59,7 +59,7 @@ class ContentSecurityPolicy
             // Default source - self only
             "default-src" => ["'self'"],
             
-            // Script sources - NO unsafe-eval with Stimulus.js!
+            // Script sources - Using Alpine CSP build, no unsafe-eval needed!
             "script-src" => [
                 "'self'",
                 "'nonce-{$nonce}'",
@@ -69,15 +69,15 @@ class ContentSecurityPolicy
                 // Google Analytics
                 "https://www.googletagmanager.com",
                 "https://www.google-analytics.com"
-                // Stimulus.js works perfectly without unsafe-eval!
             ],
             
-            // Style sources - self and inline styles with nonce
+            // Style sources - MUST allow unsafe-inline for Alpine.js
+            // Alpine.js x-show/x-transition require runtime style manipulation
+            // This is the proper TALL stack configuration
             "style-src" => [
                 "'self'",
                 "'nonce-{$nonce}'",
-                // For Tailwind's inline styles during development
-                !$isProduction ? "'unsafe-inline'" : "",
+                "'unsafe-inline'", // Required for Alpine.js directives (x-show, x-transition, etc.)
                 // CDNs for fonts/styles
                 "https://fonts.googleapis.com",
                 "https://cdn.jsdelivr.net"

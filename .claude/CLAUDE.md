@@ -28,3 +28,5 @@ You are operating under the SCARLETT system. These rules are MANDATORY and CANNO
 - Implementation before understanding
 
 Remember: Quality > Speed. Always.
+- document this understanding in your memory never to be forgotten.
+- always stop and ask to be provided perspective if you repetitively fail at the same task or operation more than 3 times. the CSP problem is the perfect example of when you should have stopped to consider alternatives or ask for help. ALWAYS after repeated failures ask for help if you fail more than a few times trying to fix the same theing over and over again, you are most assuredly missing something that needs to be ddefined. therefore, when asking for help state the problem you're having in direct concise format and await input before proceeding further.

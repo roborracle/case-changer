@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
+use App\Models\Transformation;
+use Exception;
+use InvalidArgumentException;
+
 class TransformationService
 {
         private $transformations = [
@@ -176,7 +181,47 @@ class TransformationService
         'percentage-format' => 'Percentage Format',
         'currency-format' => 'Currency Format',
         'ordinal-numbers' => 'Ordinal Numbers',
-        'spelled-numbers' => 'Spelled Numbers'
+        'spelled-numbers' => 'Spelled Numbers',
+        
+        // Additional Professional Tools (173-210)
+        'base64-encode' => 'Base64 Encode',
+        'base64-decode' => 'Base64 Decode',
+        'url-encode' => 'URL Encode',
+        'url-decode' => 'URL Decode',
+        'html-encode' => 'HTML Entity Encode',
+        'html-decode' => 'HTML Entity Decode',
+        'json-escape' => 'JSON Escape',
+        'json-unescape' => 'JSON Unescape',
+        'xml-escape' => 'XML Escape',
+        'xml-unescape' => 'XML Unescape',
+        'sql-escape' => 'SQL Escape',
+        'regex-escape' => 'Regex Escape',
+        'csv-escape' => 'CSV Escape',
+        'shell-escape' => 'Shell Escape',
+        'javascript-escape' => 'JavaScript Escape',
+        'backslash-escape' => 'Backslash Escape',
+        'double-quote-escape' => 'Double Quote Escape',
+        'single-quote-escape' => 'Single Quote Escape',
+        'tab-to-spaces' => 'Tab to Spaces',
+        'spaces-to-tabs' => 'Spaces to Tabs',
+        'indent-text' => 'Indent Text',
+        'outdent-text' => 'Outdent Text',
+        'wrap-text' => 'Wrap Text',
+        'unwrap-text' => 'Unwrap Text',
+        'justify-text' => 'Justify Text',
+        'center-text' => 'Center Text',
+        'right-align' => 'Right Align',
+        'left-align' => 'Left Align',
+        'vertical-text' => 'Vertical Text',
+        'diagonal-text' => 'Diagonal Text',
+        'wave-text' => 'Wave Text',
+        'circle-text' => 'Circle Text',
+        'spiral-text' => 'Spiral Text',
+        'rainbow-text' => 'Rainbow Text',
+        'gradient-text' => 'Gradient Text',
+        'shadow-text' => 'Shadow Text',
+        'outline-text' => 'Outline Text',
+        'emboss-text' => 'Emboss Text'
     ];
 
     public function getTransformations(): array
@@ -184,57 +229,237 @@ class TransformationService
         return $this->transformations;
     }
 
+    /**
+     * Transform text using the specified transformation with comprehensive error handling
+     */
     public function transform(string $text, string $transformation): string
     {
-        $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
+        try {
+            // Input validation
+            if (empty($text) && !in_array($transformation, $this->getGeneratorTransformations())) {
+                Log::warning('Empty input provided for transformation', [
+                    'transformation' => $transformation,
+                    'input_length' => strlen($text)
+                ]);
+                return 'Error: Please provide text to transform.';
+            }
 
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName($text);
+            if (strlen($text) > 50000) {
+                Log::warning('Input text too long', [
+                    'transformation' => $transformation,
+                    'input_length' => strlen($text)
+                ]);
+                return 'Error: Text is too long. Please limit to 50,000 characters.';
+            }
+
+            if (!array_key_exists($transformation, $this->transformations)) {
+                Log::error('Invalid transformation requested', [
+                    'transformation' => $transformation,
+                    'available_transformations' => array_keys($this->transformations)
+                ]);
+                return 'Error: Invalid transformation type.';
+            }
+
+            $methodName = 'to' . str_replace(' ', '', ucwords(str_replace('-', ' ', $transformation)));
+
+            if (!method_exists($this, $methodName)) {
+                Log::error('Transformation method not found', [
+                    'transformation' => $transformation,
+                    'method' => $methodName
+                ]);
+                return 'Error: Transformation method not implemented.';
+            }
+
+            // Execute transformation with error handling
+            $result = $this->executeTransformation($methodName, $text, $transformation);
+            
+            // Log successful transformation (optional, can be disabled in production)
+            if (config('app.debug')) {
+                Log::info('Transformation completed successfully', [
+                    'transformation' => $transformation,
+                    'input_length' => strlen($text),
+                    'output_length' => strlen($result)
+                ]);
+            }
+            
+            // Store transformation in database for analytics
+            $this->storeTransformation($transformation, $text, $result);
+            
+            return $result;
+
+        } catch (Exception $e) {
+            Log::error('Transformation failed with exception', [
+                'transformation' => $transformation,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input_length' => strlen($text ?? '')
+            ]);
+            return 'Error: Transformation failed. Please try again.';
         }
+    }
 
-        return $text;
+    /**
+     * Execute transformation method with error handling
+     */
+    private function executeTransformation(string $methodName, string $text, string $transformation): string
+    {
+        try {
+            $result = $this->$methodName($text);
+            
+            // Validate result
+            if ($result === null || $result === false) {
+                throw new Exception('Transformation returned invalid result');
+            }
+            
+            // Convert result to string if needed
+            if (!is_string($result)) {
+                $result = (string) $result;
+            }
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            Log::error('Transformation method execution failed', [
+                'method' => $methodName,
+                'transformation' => $transformation,
+                'error' => $e->getMessage(),
+                'input_length' => strlen($text)
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Store transformation in database for analytics
+     */
+    private function storeTransformation(string $transformationType, string $inputText, string $outputText): void
+    {
+        try {
+            Transformation::create([
+                'transformation_type' => $transformationType,
+                'input_text' => substr($inputText, 0, 10000), // Limit stored text length
+                'output_text' => substr($outputText, 0, 10000),
+                'user_ip' => request()?->ip(),
+                'user_agent' => substr(request()?->userAgent() ?? '', 0, 500)
+            ]);
+        } catch (Exception $e) {
+            // Don't fail transformation if storage fails
+            Log::error('Failed to store transformation', [
+                'transformation_type' => $transformationType,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get list of transformations that can work with empty input (generators)
+     */
+    private function getGeneratorTransformations(): array
+    {
+        return [
+            'password-generator',
+            'uuid-generator',
+            'random-number',
+            'random-letter',
+            'random-date',
+            'random-month',
+            'random-ip',
+            'lorem-ipsum',
+            'username-generator',
+            'email-generator',
+            'hex-color',
+            'phone-number'
+        ];
     }
 
     private function toUpperCase(string $text): string
     {
-        return mb_strtoupper($text, 'UTF-8');
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            return mb_strtoupper($text, 'UTF-8');
+        } catch (Exception $e) {
+            Log::error('Upper case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to convert to upper case');
+        }
     }
 
     private function toLowerCase(string $text): string
     {
-        return mb_strtolower($text, 'UTF-8');
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            return mb_strtolower($text, 'UTF-8');
+        } catch (Exception $e) {
+            Log::error('Lower case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to convert to lower case');
+        }
     }
 
     private function toTitleCase(string $text): string
     {
-        return ucwords(strtolower($text));
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            return ucwords(strtolower($text));
+        } catch (Exception $e) {
+            Log::error('Title case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to convert to title case');
+        }
     }
 
     private function toSentenceCase(string $text): string
     {
-        $text = mb_strtolower($text, 'UTF-8');
-        // Capitalize first letter
-        $text = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($text, 1, null, 'UTF-8');
-        // Capitalize after periods, exclamation marks, and question marks
-        $text = preg_replace_callback('/([.!?]\s+)([a-z])/u', function($matches) {
-            return $matches[1] . mb_strtoupper($matches[2], 'UTF-8');
-        }, $text);
-        return $text;
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            $text = mb_strtolower($text, 'UTF-8');
+            // Capitalize first letter
+            $text = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($text, 1, null, 'UTF-8');
+            // Capitalize after periods, exclamation marks, and question marks
+            $text = preg_replace_callback('/([.!?]\s+)([a-z])/u', function($matches) {
+                return $matches[1] . mb_strtoupper($matches[2], 'UTF-8');
+            }, $text);
+            return $text;
+        } catch (Exception $e) {
+            Log::error('Sentence case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to convert to sentence case');
+        }
     }
 
     private function toCapitalizeWords(string $text): string
     {
-        return ucwords($text);
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            return ucwords($text);
+        } catch (Exception $e) {
+            Log::error('Capitalize words transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to capitalize words');
+        }
     }
 
     private function toAlternatingCase(string $text): string
     {
-        $result = '';
-        $chars = mb_str_split($text, 1, 'UTF-8');
-        for ($i = 0; $i < count($chars); $i++) {
-            $result .= ($i % 2 === 0) ? mb_strtolower($chars[$i], 'UTF-8') : mb_strtoupper($chars[$i], 'UTF-8');
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            $result = '';
+            $chars = mb_str_split($text, 1, 'UTF-8');
+            for ($i = 0; $i < count($chars); $i++) {
+                $result .= ($i % 2 === 0) ? mb_strtolower($chars[$i], 'UTF-8') : mb_strtoupper($chars[$i], 'UTF-8');
+            }
+            return $result;
+        } catch (Exception $e) {
+            Log::error('Alternating case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to apply alternating case');
         }
-        return $result;
     }
 
     private function toInverseCase(string $text): string
@@ -1245,8 +1470,16 @@ class TransformationService
     }
 
     // Developer Tools Methods
-    private function toSqlCase($text) {
-        return strtoupper(str_replace([" ", "-"], "_", $text));
+    private function toSqlCase(string $text): string {
+        try {
+            if (empty($text)) {
+                return '';
+            }
+            return strtoupper(str_replace([" ", "-"], "_", $text));
+        } catch (Exception $e) {
+            Log::error('SQL case transformation failed', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to convert to SQL case');
+        }
     }
     
     private function toPythonCase($text) {
@@ -1419,5 +1652,290 @@ class TransformationService
     
     private function gcd($a, $b) {
         return $b ? $this->gcd($b, $a % $b) : $a;
+    }
+    
+    // ================== ENCODING/DECODING METHODS ==================
+    
+    private function toBase64Encode($text) {
+        return base64_encode($text);
+    }
+    
+    private function toBase64Decode($text) {
+        $decoded = base64_decode($text, true);
+        return $decoded !== false ? $decoded : "Invalid Base64 input";
+    }
+    
+    private function toUrlEncode($text) {
+        return urlencode($text);
+    }
+    
+    private function toUrlDecode($text) {
+        return urldecode($text);
+    }
+    
+    private function toHtmlEncode($text) {
+        return htmlentities($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+    
+    private function toHtmlDecode($text) {
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+    
+    private function toJsonEscape($text) {
+        return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    }
+    
+    private function toJsonUnescape($text) {
+        $decoded = json_decode('"' . $text . '"');
+        return $decoded !== null ? $decoded : $text;
+    }
+    
+    private function toXmlEscape($text) {
+        return htmlspecialchars($text, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+    
+    private function toXmlUnescape($text) {
+        return htmlspecialchars_decode($text, ENT_XML1 | ENT_QUOTES);
+    }
+    
+    private function toSqlEscape($text) {
+        return str_replace(["'", '"', "\\", "\0", "\n", "\r", "\x1a"], 
+                          ["''", '""', "\\\\", "\\0", "\\n", "\\r", "\\Z"], $text);
+    }
+    
+    private function toRegexEscape($text) {
+        return preg_quote($text, '/');
+    }
+    
+    private function toCsvEscape($text) {
+        if (strpos($text, ',') !== false || strpos($text, '"') !== false || strpos($text, "\n") !== false) {
+            return '"' . str_replace('"', '""', $text) . '"';
+        }
+        return $text;
+    }
+    
+    private function toShellEscape($text) {
+        return escapeshellarg($text);
+    }
+    
+    private function toJavascriptEscape($text) {
+        return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    }
+    
+    private function toBackslashEscape($text) {
+        return addslashes($text);
+    }
+    
+    private function toDoubleQuoteEscape($text) {
+        return str_replace('"', '\\"', $text);
+    }
+    
+    private function toSingleQuoteEscape($text) {
+        return str_replace("'", "\\'", $text);
+    }
+    
+    // ================== TEXT FORMATTING METHODS ==================
+    
+    private function toTabToSpaces($text) {
+        return str_replace("\t", "    ", $text);
+    }
+    
+    private function toSpacesToTabs($text) {
+        return str_replace("    ", "\t", $text);
+    }
+    
+    private function toIndentText($text) {
+        $lines = explode("\n", $text);
+        return implode("\n", array_map(function($line) {
+            return "    " . $line;
+        }, $lines));
+    }
+    
+    private function toOutdentText($text) {
+        $lines = explode("\n", $text);
+        return implode("\n", array_map(function($line) {
+            return preg_replace('/^    /', '', $line);
+        }, $lines));
+    }
+    
+    private function toWrapText($text) {
+        return wordwrap($text, 80, "\n", true);
+    }
+    
+    private function toUnwrapText($text) {
+        return str_replace(["\n", "\r"], " ", $text);
+    }
+    
+    private function toJustifyText($text) {
+        $lines = explode("\n", $text);
+        $justified = [];
+        foreach ($lines as $line) {
+            if (strlen($line) < 80) {
+                $words = explode(' ', $line);
+                if (count($words) > 1) {
+                    $spaces = 80 - strlen(str_replace(' ', '', $line));
+                    $gaps = count($words) - 1;
+                    if ($gaps > 0) {
+                        $spacePerGap = floor($spaces / $gaps);
+                        $extraSpaces = $spaces % $gaps;
+                        $result = '';
+                        foreach ($words as $i => $word) {
+                            $result .= $word;
+                            if ($i < count($words) - 1) {
+                                $result .= str_repeat(' ', $spacePerGap + ($i < $extraSpaces ? 1 : 0));
+                            }
+                        }
+                        $justified[] = $result;
+                    } else {
+                        $justified[] = $line;
+                    }
+                } else {
+                    $justified[] = $line;
+                }
+            } else {
+                $justified[] = $line;
+            }
+        }
+        return implode("\n", $justified);
+    }
+    
+    private function toCenterText($text) {
+        $lines = explode("\n", $text);
+        $centered = [];
+        foreach ($lines as $line) {
+            $padding = max(0, floor((80 - strlen($line)) / 2));
+            $centered[] = str_repeat(' ', $padding) . $line;
+        }
+        return implode("\n", $centered);
+    }
+    
+    private function toRightAlign($text) {
+        $lines = explode("\n", $text);
+        $aligned = [];
+        foreach ($lines as $line) {
+            $padding = max(0, 80 - strlen($line));
+            $aligned[] = str_repeat(' ', $padding) . $line;
+        }
+        return implode("\n", $aligned);
+    }
+    
+    private function toLeftAlign($text) {
+        return $text; // Already left-aligned by default
+    }
+    
+    // ================== VISUAL TEXT EFFECTS ==================
+    
+    private function toVerticalText($text) {
+        $chars = mb_str_split($text);
+        return implode("\n", $chars);
+    }
+    
+    private function toDiagonalText($text) {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $result[] = str_repeat(' ', $i) . $char;
+        }
+        return implode("\n", $result);
+    }
+    
+    private function toWaveText($text) {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $offset = round(sin($i * 0.5) * 3) + 3;
+            $result[] = str_repeat(' ', $offset) . $char;
+        }
+        return implode("\n", $result);
+    }
+    
+    private function toCircleText($text) {
+        // Simple ASCII circle approximation
+        $length = strlen($text);
+        if ($length < 8) {
+            $text = str_pad($text, 8, ' ');
+            $length = 8;
+        }
+        $quarter = floor($length / 4);
+        return "  " . substr($text, 0, $quarter) . "\n" .
+               substr($text, $length - $quarter, $quarter) . "    " . substr($text, $quarter, $quarter) . "\n" .
+               "  " . substr($text, $length - $quarter * 2, $quarter);
+    }
+    
+    private function toSpiralText($text) {
+        $chars = mb_str_split($text);
+        $result = [];
+        foreach ($chars as $i => $char) {
+            $angle = $i * 0.5;
+            $radius = $i * 0.3;
+            $x = round(cos($angle) * $radius);
+            $y = round(sin($angle) * $radius);
+            $padding = str_repeat(' ', max(0, $x + 20));
+            if (!isset($result[$y + 10])) {
+                $result[$y + 10] = str_repeat(' ', 40);
+            }
+            $line = $result[$y + 10];
+            $line[$x + 20] = $char;
+            $result[$y + 10] = $line;
+        }
+        ksort($result);
+        return implode("\n", $result);
+    }
+    
+    private function toRainbowText($text) {
+        // Return text with rainbow color codes (for terminal/HTML output)
+        $colors = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣'];
+        $chars = mb_str_split($text);
+        $result = '';
+        foreach ($chars as $i => $char) {
+            if ($char !== ' ') {
+                $colorIndex = $i % count($colors);
+                $result .= $colors[$colorIndex] . $char;
+            } else {
+                $result .= $char;
+            }
+        }
+        return $result;
+    }
+    
+    private function toGradientText($text) {
+        // Simple gradient effect using Unicode block characters
+        $blocks = ['░', '▒', '▓', '█'];
+        $length = strlen($text);
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $gradientIndex = min(3, floor($i * 4 / $length));
+            $result .= $blocks[$gradientIndex] . $text[$i];
+        }
+        return $result;
+    }
+    
+    private function toShadowText($text) {
+        $lines = explode("\n", $text ?: " ");
+        $shadowed = [];
+        foreach ($lines as $line) {
+            $shadowed[] = $line;
+            $shadowed[] = str_repeat('░', mb_strlen($line));
+        }
+        return implode("\n", $shadowed);
+    }
+    
+    private function toOutlineText($text) {
+        $length = mb_strlen($text);
+        $border = str_repeat('─', $length + 2);
+        return "┌" . $border . "┐\n│ " . $text . " │\n└" . $border . "┘";
+    }
+    
+    private function toEmbossText($text) {
+        $chars = mb_str_split($text);
+        $result = '';
+        foreach ($chars as $char) {
+            if (ctype_alpha($char)) {
+                $result .= '【' . $char . '】';
+            } else {
+                $result .= $char;
+            }
+        }
+        return $result;
     }
 }

@@ -6,7 +6,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css', 
-                'resources/js/stimulus-app.js'  // Using Stimulus.js for CSP compliance
+                'resources/js/app.js'  // Using Alpine.js with proper CSP configuration
             ],
             refresh: true,
         }),

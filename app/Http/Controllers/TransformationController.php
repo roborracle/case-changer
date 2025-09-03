@@ -41,12 +41,26 @@ class TransformationController extends Controller
             $outputText = $this->transformationService->transform($inputText, $transformation);
         }
 
+        // Get categories from config
+        $categories = config('categories.categories');
+        $featuredCategories = config('categories.featured_categories', []);
+        
+        // Get only featured categories for homepage
+        $featured = [];
+        foreach ($featuredCategories as $slug) {
+            if (isset($categories[$slug])) {
+                $featured[$slug] = $categories[$slug];
+            }
+        }
+
         // Return the view with all necessary data
         return view('home', [
             'input' => $inputText,
             'output' => $outputText,
             'selectedTransformation' => $transformation,
             'transformations' => $this->transformationService->getTransformations(),
+            'categories' => $categories,
+            'featuredCategories' => $featured,
         ]);
     }
 }

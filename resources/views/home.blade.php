@@ -1,370 +1,316 @@
-@extends('conversions.layout')
-
-@section('title', 'Case Changer Pro - Universal Text Converter & Transformation Tools')
-@section('description', 'The ultimate text transformation tool. Convert text to any case format instantly - uppercase, lowercase, camelCase, snake_case, title case, and 172+ more formats. Free, fast, and professional.')
-@section('keywords', 'case converter, text transformer, case changer, uppercase, lowercase, camelCase, snake_case, title case, sentence case, AP style, APA format, text conversion, developer tools, writing tools')
-
-@section('content')
-<div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Hero Section -->
-        <div class="text-center mb-12">
-            <h1 class="text-5xl font-bold mb-4 text-primary" >
-            Case Changer Pro
-            </h1>
-            <p class="text-xl max-w-3xl mx-auto mb-2 text-secondary" >
-            The Ultimate Text Transformation Tool
-            </p>
-            <p class="text-lg max-w-2xl mx-auto text-tertiary" >
-            Convert text to any format instantly. 170+ conversion styles including case formats,
-            developer conventions, and professional style guides.
-            </p>
-        </div>
-
-        <!-- Universal Converter Tool - Main Feature -->
-        <div class="mb-16 rounded-xl p-8 shadow-lg bg-secondary border" >
-            <h2 class="text-3xl font-bold mb-4 text-center text-primary" >Universal Text Converter</h2>
-            <p class="text-center mb-6 text-lg text-secondary" >One tool to rule them all - select from 170+ conversion formats</p>
-
-            <form method="POST" action="{{ route('transform') }}">
-                @csrf
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Input Section -->
-                    <div>
-                        <label for="input" class="block text-sm font-medium mb-2 text-primary" >Your Text</label>
-                        <textarea
-                        name="input"
-                        id="input"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-primary text-primary"
-                        
-                        placeholder="Enter or paste your text here...">{{ old('input', $input ?? '') }}</textarea>
-                    </div>
-
-                    <!-- Output Section -->
-                    <div>
-                        <label for="output" class="block text-sm font-medium mb-2 text-primary" >Result</label>
-                        <textarea
-                        id="output"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border bg-primary text-primary"
-                        
-                        readonly>{{ $output ?? '' }}</textarea>
-                    </div>
-                </div>
-
-                <!-- Transformation Selection -->
-                <div class="mt-6">
-                    <label for="transformation" class="block text-sm font-medium mb-2 text-primary" >Select Transformation</label>
-                    <div class="flex gap-4">
-                        <select
-                        name="transformation"
-                        id="transformation"
-                        class="flex-1 p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 bg-primary text-primary"
-                        >
-                        @foreach($transformations as $value => $label)
-                        <option value="{{ $value }}" {{ ($selectedTransformation ?? 'upper-case') == $value ? 'selected' : '' }}>
-                        {{ $label }}
-                        </option>
-                        @endforeach
-                        </select>
-                        <button
-                        type="submit"
-                        class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                        Transform Text
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Categories Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @php
-            $categories = [
-            'case-conversions' => [
-            'title' => 'Case Conversions',
-            'description' => 'Traditional text case transformations',
-            'icon' => 'text',
-            'tools' => [
-            'uppercase' => ['name' => 'UPPERCASE'],
-            'lowercase' => ['name' => 'lowercase'],
-            'title-case' => ['name' => 'Title Case'],
-            'sentence-case' => ['name' => 'Sentence case'],
-            'capitalize-words' => ['name' => 'Capitalize Words'],
-            'alternating-case' => ['name' => 'aLtErNaTiNg CaSe'],
-            'inverse-case' => ['name' => 'iNVERSE cASE'],
-            ]
-            ],
-            'developer-formats' => [
-            'title' => 'Developer Formats',
-            'description' => 'Programming and development formats',
-            'icon' => 'code',
-            'tools' => [
-            'camel-case' => ['name' => 'camelCase'],
-            'pascal-case' => ['name' => 'PascalCase'],
-            'snake-case' => ['name' => 'snake_case'],
-            'constant-case' => ['name' => 'CONSTANT_CASE'],
-            'kebab-case' => ['name' => 'kebab-case'],
-            'dot-case' => ['name' => 'dot.case'],
-            'path-case' => ['name' => 'path/case'],
-            'namespace-case' => ['name' => 'namespace\\case'],
-            'ada-case' => ['name' => 'Ada_Case'],
-            'cobol-case' => ['name' => 'COBOL-CASE'],
-            'train-case' => ['name' => 'Train-Case'],
-            'http-header-case' => ['name' => 'Http-Header-Case'],
-            ]
-            ],
-            'journalistic-styles' => [
-            'title' => 'Journalistic Styles',
-            'description' => 'Professional journalism style guides',
-            'icon' => 'newspaper',
-            'tools' => [
-            'ap-style' => ['name' => 'AP Style'],
-            'nyt-style' => ['name' => 'NY Times Style'],
-            'chicago-style' => ['name' => 'Chicago Style'],
-            'guardian-style' => ['name' => 'Guardian Style'],
-            'bbc-style' => ['name' => 'BBC Style'],
-            'reuters-style' => ['name' => 'Reuters Style'],
-            'economist-style' => ['name' => 'Economist Style'],
-            'wsj-style' => ['name' => 'WSJ Style'],
-            ]
-            ],
-            'academic-styles' => [
-            'title' => 'Academic Styles',
-            'description' => 'Academic and scholarly formats',
-            'icon' => 'academic',
-            'tools' => [
-            'apa-style' => ['name' => 'APA Style'],
-            'mla-style' => ['name' => 'MLA Style'],
-            'chicago-author-date' => ['name' => 'Chicago Author-Date'],
-            'chicago-notes' => ['name' => 'Chicago Notes'],
-            'harvard-style' => ['name' => 'Harvard Style'],
-            'vancouver-style' => ['name' => 'Vancouver Style'],
-            'ieee-style' => ['name' => 'IEEE Style'],
-            'ama-style' => ['name' => 'AMA Style'],
-            'bluebook-style' => ['name' => 'Bluebook Style'],
-            ]
-            ],
-            'creative-formats' => [
-            'title' => 'Creative Formats',
-            'description' => 'Fun and creative transformations',
-            'icon' => 'sparkles',
-            'tools' => [
-            'reverse' => ['name' => 'Reverse'],
-            'aesthetic' => ['name' => 'Aesthetic'],
-            'sarcasm' => ['name' => 'Sarcasm Case'],
-            'smallcaps' => ['name' => 'Small Caps'],
-            'bubble' => ['name' => 'Bubble Text'],
-            'square' => ['name' => 'Square Text'],
-            'script' => ['name' => 'Script'],
-            'double-struck' => ['name' => 'Double Struck'],
-            'bold' => ['name' => 'Bold'],
-            'italic' => ['name' => 'Italic'],
-            'emoji-case' => ['name' => 'Emoji Case'],
-            ]
-            ],
-            'business-formats' => [
-            'title' => 'Business Formats',
-            'description' => 'Professional business communication',
-            'icon' => 'briefcase',
-            'tools' => [
-            'email-style' => ['name' => 'Email Style'],
-            'legal-style' => ['name' => 'Legal Style'],
-            'marketing-headline' => ['name' => 'Marketing Headline'],
-            'press-release' => ['name' => 'Press Release'],
-            'memo-style' => ['name' => 'Memo Style'],
-            'report-style' => ['name' => 'Report Style'],
-            'proposal-style' => ['name' => 'Proposal Style'],
-            'invoice-style' => ['name' => 'Invoice Style'],
-            ]
-            ],
-            'social-media-formats' => [
-            'title' => 'Social Media',
-            'description' => 'Optimized for social platforms',
-            'icon' => 'share',
-            'tools' => [
-            'twitter-style' => ['name' => 'Twitter/X Style'],
-            'instagram-style' => ['name' => 'Instagram Style'],
-            'linkedin-style' => ['name' => 'LinkedIn Style'],
-            'facebook-style' => ['name' => 'Facebook Style'],
-            'youtube-title' => ['name' => 'YouTube Title'],
-            'tiktok-style' => ['name' => 'TikTok Style'],
-            'hashtag-style' => ['name' => 'Hashtag Style'],
-            'mention-style' => ['name' => 'Mention Style'],
-            ]
-            ],
-            'technical-documentation' => [
-            'title' => 'Technical Docs',
-            'description' => 'Technical writing formats',
-            'icon' => 'document',
-            'tools' => [
-            'api-docs' => ['name' => 'API Documentation'],
-            'readme-style' => ['name' => 'README Style'],
-            'changelog-style' => ['name' => 'Changelog Style'],
-            'user-manual' => ['name' => 'User Manual'],
-            'technical-spec' => ['name' => 'Technical Spec'],
-            'code-comments' => ['name' => 'Code Comments'],
-            'wiki-style' => ['name' => 'Wiki Style'],
-            'markdown-style' => ['name' => 'Markdown Style'],
-            ]
-            ],
-            'international-formats' => [
-            'title' => 'International',
-            'description' => 'Language and region-specific',
-            'icon' => 'globe',
-            'tools' => [
-            'british-english' => ['name' => 'British English'],
-            'american-english' => ['name' => 'American English'],
-            'canadian-english' => ['name' => 'Canadian English'],
-            'australian-english' => ['name' => 'Australian English'],
-            'eu-format' => ['name' => 'EU Format'],
-            'iso-format' => ['name' => 'ISO Format'],
-            'unicode-normalize' => ['name' => 'Unicode Normalize'],
-            'ascii-convert' => ['name' => 'ASCII Convert'],
-            ]
-            ],
-            'utility-transformations' => [
-            'title' => 'Utilities',
-            'description' => 'Text manipulation utilities',
-            'icon' => 'tool',
-            'tools' => [
-            'remove-spaces' => ['name' => 'Remove Spaces'],
-            'remove-extra-spaces' => ['name' => 'Remove Extra Spaces'],
-            'add-dashes' => ['name' => 'Add Dashes'],
-            'add-underscores' => ['name' => 'Add Underscores'],
-            'add-periods' => ['name' => 'Add Periods'],
-            'remove-punctuation' => ['name' => 'Remove Punctuation'],
-            'extract-letters' => ['name' => 'Extract Letters'],
-            'extract-numbers' => ['name' => 'Extract Numbers'],
-            'remove-duplicates' => ['name' => 'Remove Duplicates'],
-            'sort-words' => ['name' => 'Sort Words'],
-            'shuffle-words' => ['name' => 'Shuffle Words'],
-            'word-frequency' => ['name' => 'Word Frequency'],
-            ]
-            ],
-            ];
-            @endphp
-
-            @foreach($categories as $slug => $category)
-            <a href="{{ route('conversions.category', $slug) }}"
-            class="group rounded-lg p-6 transition-all duration-200 hover:shadow-lg bg-primary border">
-            <div class="flex items-start justify-between mb-4">
-                <div class="p-3 rounded-lg transition-colors bg-secondary" >
-                    @switch($category['icon'])
-                    @case('text')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    @break
-                    @case('code')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                    </svg>
-                    @break
-                    @case('newspaper')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                    </svg>
-                    @break
-                    @case('academic')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
-                    </svg>
-                    @break
-                    @case('sparkles')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                    </svg>
-                    @break
-                    @case('briefcase')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                    @break
-                    @case('share')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-4.631 2.475 5.009 5.009 0 00-2.711-3.784 3.001 3.001 0 10-2.148 0 5.008 5.008 0 00-2.711 3.784 3 3 0 10-4.631-2.475"></path>
-                    </svg>
-                    @break
-                    @case('document')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    @break
-                    @case('globe')
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
-                    </svg>
-                    @break
-                    @default
-                    <svg class="w-6 h-6 text-accent-primary"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    @endswitch
-                </div>
-                <span class="text-xs px-2 py-1 rounded bg-tertiary text-tertiary" >
-                {{ count($category['tools']) }} tools
+<x-layouts.app title="Case Changer Pro - 210+ Text Transformation Tools">
+    <!-- Quick Access Tab Strip -->
+    <section class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center py-2 px-4 overflow-x-auto scrollbar-hide">
+                <!-- Quick convert label -->
+                <span class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mr-4 font-semibold">
+                    Quick Tools:
                 </span>
+                
+                <!-- Primary formats in a compact row -->
+                @php
+                $quickTools = [
+                    ['key' => 'upper-case', 'label' => 'UPPERCASE', 'style' => 'font-bold'],
+                    ['key' => 'lower-case', 'label' => 'lowercase', 'style' => ''],
+                    ['key' => 'title-case', 'label' => 'Title Case', 'style' => ''],
+                    ['key' => 'sentence-case', 'label' => 'Sentence', 'style' => ''],
+                    ['key' => 'camel-case', 'label' => 'camelCase', 'style' => ''],
+                    ['key' => 'pascal-case', 'label' => 'PascalCase', 'style' => ''],
+                    ['key' => 'snake-case', 'label' => 'snake_case', 'style' => ''],
+                    ['key' => 'kebab-case', 'label' => 'kebab-case', 'style' => ''],
+                    ['key' => 'constant-case', 'label' => 'CONSTANT', 'style' => 'font-bold'],
+                    ['key' => 'dot-case', 'label' => 'dot.case', 'style' => ''],
+                    ['key' => 'path-case', 'label' => 'path/case', 'style' => ''],
+                    ['key' => 'reverse', 'label' => '↻ Reverse', 'style' => ''],
+                ];
+                @endphp
+                
+                <div class="flex items-center space-x-1">
+                    @foreach($quickTools as $tool)
+                    <button @click="$dispatch('quick-convert', { transformation: '{{ $tool['key'] }}' })"
+                            class="px-3 py-1 text-xs {{ $tool['style'] }}
+                                   text-gray-600 hover:text-gray-900 hover:bg-gray-100
+                                   dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800
+                                   rounded transition-all whitespace-nowrap">
+                        {{ $tool['label'] }}
+                    </button>
+                    @endforeach
+                    
+                    <!-- Separator -->
+                    <div class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-3"></div>
+                    
+                    <!-- See all link -->
+                    <a href="/conversions" 
+                       class="text-xs text-blue-600 hover:text-blue-700 
+                              dark:text-blue-400 dark:hover:text-blue-300 
+                              whitespace-nowrap font-medium px-2">
+                        All 210+ Tools →
+                    </a>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <h2 class="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors text-primary" >
-            {{ $category['title'] }}
-            </h2>
-            <p class="text-sm mb-4 text-secondary" >
-            {{ $category['description'] }}
-            </p>
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                    Case Changer Pro
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-3xl mx-auto">
+                    Transform text instantly with 210+ professional tools. Fast, free, and easy to use.
+                </p>
+            </div>
+        </div>
+    </section>
 
-            <!-- Preview of tools -->
-            <div class="flex flex-wrap gap-2">
-                @foreach(array_slice($category['tools'], 0, 4) as $toolSlug => $tool)
-                <span class="text-xs px-2 py-1 rounded bg-tertiary text-secondary" >
-                {{ $tool['name'] }}
-                </span>
+    <!-- Universal Converter with Multi-Output Preview -->
+    <section class="py-12 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">Quick Text Converter</h2>
+            
+            <div x-data="improvedConverter" class="space-y-6">
+                <!-- How to Use Instructions - Elegant Integration -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">How to use this tool:</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div class="flex items-center space-x-2">
+                                    <span class="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                    <span class="text-sm text-blue-800 dark:text-blue-200">Type or paste text below</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                    <span class="text-sm text-blue-800 dark:text-blue-200">See instant previews</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                    <span class="text-sm text-blue-800 dark:text-blue-200">Click copy on any format</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                                    <span class="text-sm text-blue-800 dark:text-blue-200">Or use quick tools above</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area with Helper Buttons -->
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <label class="text-lg font-semibold text-gray-900 dark:text-white">Your Text</label>
+                        <div class="flex items-center space-x-2">
+                            <button @click="pasteFromClipboard"
+                                    class="inline-flex items-center px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                Paste
+                            </button>
+                            <button @click="clearText"
+                                    class="inline-flex items-center px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Clear
+                            </button>
+                            <button @click="loadExample"
+                                    class="inline-flex items-center px-3 py-1.5 text-sm text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg border border-blue-300 dark:border-blue-700 transition-colors">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Example
+                            </button>
+                        </div>
+                    </div>
+                    <textarea
+                        x-model="inputText"
+                        @input="generateAllPreviews"
+                        rows="6"
+                        class="w-full px-4 py-3 text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 resize-none"
+                        placeholder="Type or paste your text here to see instant transformations in multiple formats..."
+                    ></textarea>
+                    <div class="mt-2 flex items-center justify-between">
+                        <span class="text-sm text-gray-500 dark:text-gray-400" x-text="characterCountText"></span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">All transformations happen instantly in your browser</span>
+                    </div>
+                </div>
+
+                <!-- Multi-Output Preview Grid -->
+                <div x-show="hasInput" x-cloak class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Instant Results</h3>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Click any result to copy</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                        <template x-for="(preview, index) in previews" :key="index">
+                            <div class="group relative bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer"
+                                 @click="copyToClipboard(preview.output, preview.key)">
+                                <!-- Format Label -->
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider" x-text="preview.label"></h4>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span x-show="shouldShowCopyButton(preview.key)" class="text-xs text-blue-600 dark:text-blue-400">Copy</span>
+                                        <span x-show="isFormatCopied(preview.key)" class="text-xs text-green-600 dark:text-green-400">✓ Copied</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Preview Output -->
+                                <div class="bg-gray-50 dark:bg-gray-900 rounded px-3 py-2 min-h-[60px]">
+                                    <span x-text="getPreviewOutput(preview)" 
+                                          class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all line-clamp-3"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div x-show="noInput" class="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                    </svg>
+                    <p class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                        Start typing to see magic happen!
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">
+                        Your text will be instantly transformed into 12+ different formats
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Why Choose Case Changer Pro?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Lightning Fast</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Instant text transformation with no delays. Process text of any length in milliseconds.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">100% Secure</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        All conversions happen in your browser. Your text never leaves your device.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">210+ Tools</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Comprehensive collection of text transformation tools for every need.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Grid -->
+    @if(isset($categories))
+    <section class="py-16 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore All Categories</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-400">Find the perfect text transformation tool for your needs</p>
+            </div>
+            
+            <!-- Compact Categories Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+                @foreach($categories as $slug => $category)
+                <a href="{{ route('conversions.category', $slug) }}" 
+                   class="group bg-white dark:bg-gray-900 rounded-xl p-4 hover:shadow-lg hover:scale-105 transition-all border border-gray-200 dark:border-gray-700 text-center">
+                    <span class="text-3xl block mb-2">{{ $category['emoji'] ?? '📝' }}</span>
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {{ $category['name'] }}
+                    </p>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-500 mt-1">
+                        {{ $category['tool_count'] ?? 0 }} tools
+                    </p>
+                </a>
                 @endforeach
-                @if(count($category['tools']) > 4)
-                <span class="text-xs text-tertiary" >
-                +{{ count($category['tools']) - 4 }} more
-                </span>
-                @endif
             </div>
-            </a>
-            @endforeach
+            
+            <div class="text-center mt-12">
+                <a href="/conversions" 
+                   class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all shadow-xl transform hover:scale-105">
+                    Browse All Tools
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </div>
         </div>
+    </section>
+    @endif
 
-        <!-- Quick Access Section -->
-        <div class="mt-16 rounded-xl p-8 bg-secondary" >
-            <h2 class="text-2xl font-bold mb-6 text-primary" >Popular Conversions</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                <a href="{{ route('conversions.tool', ['case-conversions', 'uppercase']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium">UPPERCASE</span>
-                </a>
-                <a href="{{ route('conversions.tool', ['case-conversions', 'lowercase']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium">lowercase</span>
-                </a>
-                <a href="{{ route('conversions.tool', ['developer-formats', 'camel-case']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium font-mono">camelCase</span>
-                </a>
-                <a href="{{ route('conversions.tool', ['developer-formats', 'snake-case']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium font-mono">snake_case</span>
-                </a>
-                <a href="{{ route('conversions.tool', ['journalistic-styles', 'ap-style']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium">AP Style</span>
-                </a>
-                <a href="{{ route('conversions.tool', ['academic-styles', 'apa-style']) }}"
-                class="px-4 py-2 rounded-lg text-center transition-all bg-primary border text-primary">
-                <span class="text-sm font-medium">APA Style</span>
-                </a>
-            </div>
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-700">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">Ready to Transform Your Text?</h2>
+            <p class="text-xl text-blue-100 mb-8">
+                Join thousands of users who trust Case Changer Pro for their text transformation needs.
+            </p>
+            <a href="#" @click="window.scrollTo({top: 0, behavior: 'smooth'})" class="inline-block px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                Start Converting Now
+            </a>
         </div>
-    </div>
-</div>
-@endsection
+    </section>
+
+    @push('styles')
+    <style nonce="{{ csp_nonce() }}">
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* Line clamp utility */
+        .line-clamp-3 {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        [x-cloak] { 
+            display: none !important; 
+        }
+    </style>
+    @endpush
+</x-layouts.app>
