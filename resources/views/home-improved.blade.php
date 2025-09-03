@@ -95,16 +95,16 @@
                                 <div class="flex items-center justify-between mb-1.5">
                                     <h4 class="text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider" x-text="preview.label"></h4>
                                     <button @click="copyToClipboard(preview.output, preview.key)"
-                                            :disabled="isPreviewDisabled(preview)"
+                                            :disabled="copyStates[preview.key]?.isDisabled"
                                             class="text-[10px] text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                                        <span x-show="shouldShowCopyButton(preview.key)">Copy</span>
-                                        <span x-show="isFormatCopied(preview.key)" x-cloak>✓</span>
+                                        <span x-show="copyStates[preview.key]?.shouldShowCopy">Copy</span>
+                                        <span x-show="copyStates[preview.key]?.isCopied" x-cloak>✓</span>
                                     </button>
                                 </div>
                                 
                                 <!-- Preview Output -->
                                 <div class="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1.5 text-xs font-mono overflow-x-auto">
-                                    <span x-text="getPreviewOutput(preview)" 
+                                    <span x-text="copyStates[preview.key]?.output || '...'" 
                                           class="text-gray-800 dark:text-gray-200 break-all"></span>
                                 </div>
                             </div>

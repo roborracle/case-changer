@@ -49,13 +49,13 @@
                         
                         <!-- Quick Action Buttons -->
                         <div class="flex flex-wrap gap-3">
-                            <button onclick="copyLink()" class="inline-flex items-center px-4 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all">
+                            <button @click="copyLink()" class="inline-flex items-center px-4 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                 </svg>
                                 Copy Link
                             </button>
-                            <button onclick="shareToolDeux()" class="inline-flex items-center px-4 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all">
+                            <button @click="shareToolDeux()" class="inline-flex items-center px-4 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a9.001 9.001 0 01-1.519 1.523m-5.197-1.523a9.001 9.001 0 101.519 1.523"/>
                                 </svg>
@@ -78,9 +78,9 @@
     </section>
 
     <!-- Main Tool Interface -->
-    <section class="py-8">
+    <section class="py-8" x-data="toolConverter" data-transformation="{{ $tool }}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div data-controller="text-converter" data-transformation="{{ $tool }}" class="space-y-6">
+            <div class="space-y-6">
                 
                 <!-- Transformation Controls -->
                 <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg border border-white/30 dark:border-gray-700/30">
@@ -106,7 +106,7 @@
                         </div>
                         
                         @if(isset($toolData['options']) && count($toolData['options']) > 0)
-                        <button class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" onclick="toggleOptions()">
+                        <button class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" @click="toggleOptions()">
                             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                             </svg>
@@ -157,13 +157,13 @@
                         ></textarea>
                         <div class="mt-3 flex items-center gap-3">
                             <button 
-                                onclick="pasteFromClipboard()"
+                                @click="pasteFromClipboard()"
                                 class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                             >
                                 📋 Paste from clipboard
                             </button>
                             <label class="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer">
-                                <input type="file" accept=".txt" class="hidden" onchange="loadFile(event)">
+                                <input type="file" accept=".txt" class="hidden" @change="loadFile($event)">
                                 📁 Upload file
                             </label>
                         </div>

@@ -420,7 +420,7 @@ class SchemaService
     {
         $breadcrumbs = $this->generateBreadcrumbSchema([
             ['name' => 'Tools', 'url' => $this->baseUrl . '/conversions'],
-            ['name' => $categoryData['title']]
+            ['name' => $categoryData['name']]
         ]);
 
         return [

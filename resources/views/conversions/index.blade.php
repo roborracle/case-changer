@@ -15,63 +15,67 @@
     <div class="mb-16 rounded-xl p-8 shadow-lg bg-secondary">
         <h2 class="text-3xl font-bold mb-6 text-center text-primary">Universal Text Converter</h2>
         
-        <div x-data="universalConverter" class="rounded-lg p-6 bg-primary border">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Input -->
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-primary">Your Text</label>
+        <div x-data="improvedConverter" class="rounded-lg p-6 bg-primary border">
+            <!-- Input Section -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2 text-primary">Enter Your Text</label>
+                <div class="relative">
                     <textarea
                         x-model="inputText"
-                        @input="transform"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 bg-secondary text-primary"
-                        placeholder="Enter or paste your text here..."></textarea>
+                        rows="6"
+                        class="w-full p-4 rounded-lg border focus:ring-2 focus:ring-blue-500 bg-secondary text-primary resize-none"
+                        placeholder="Type or paste your text here..."
+                        :class="{ 'pr-20': hasInput }"
+                    ></textarea>
+                    <div x-show="hasInput" class="absolute bottom-2 right-2 text-xs text-secondary" x-text="characterCountText" x-cloak></div>
                 </div>
-
-                <!-- Output -->
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-primary">Result</label>
-                    <textarea
-                        x-model="outputText"
-                        rows="10"
-                        class="w-full p-4 rounded-lg border bg-secondary text-primary"
-                        readonly></textarea>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="mt-6">
-                <label class="block text-sm font-medium mb-2 text-primary">Select Transformation</label>
-                <div class="flex gap-4">
-                    <select
-                        x-model="selectedTransformation"
-                        @change="transform"
-                        class="flex-1 p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 bg-secondary text-primary">
-                        <template x-for="(label, value) in transformations" :key="value">
-                            <option :value="value" x-text="label"></option>
-                        </template>
-                    </select>
-                    
-                    <button
-                        @click="copyToClipboard"
-                        :disabled="!outputText"
-                        class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
-                        <span x-show="!showCopySuccess">Copy Result</span>
-                        <span x-show="showCopySuccess" x-cloak>✓ Copied!</span>
+                
+                <!-- Quick Actions -->
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button @click="pasteFromClipboard" class="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                        Paste
                     </button>
-                    
-                    <button
-                        @click="downloadResult"
-                        :disabled="!outputText"
-                        class="px-6 py-3 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-secondary">
-                        Download
+                    <button @click="clearText" x-show="hasInput" class="px-3 py-1 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md hover:bg-red-200 dark:hover:bg-red-800 transition-colors" x-cloak>
+                        Clear
+                    </button>
+                    <button @click="loadExample" class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        Load Example
                     </button>
                 </div>
             </div>
 
-            <!-- Status -->
-            <div x-show="isLoading" class="mt-4 text-center text-secondary" x-cloak>Converting...</div>
-            <div x-show="error" x-text="error" class="mt-4 p-3 bg-red-50 text-red-600 rounded-lg" x-cloak></div>
+            <!-- Preview Grid -->
+            <div x-show="hasInput" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" x-cloak>
+                <template x-for="preview in previews" :key="preview.key">
+                    <div class="bg-secondary rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-medium text-primary" x-text="preview.label"></h3>
+                            <button 
+                                @click="copyToClipboard(preview.output, preview.key)"
+                                :disabled="!preview.output"
+                                class="p-1 rounded text-xs bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                                :class="{ 'bg-green-600 hover:bg-green-700': copiedFormat === preview.key }"
+                            >
+                                <span x-show="copiedFormat !== preview.key">Copy</span>
+                                <span x-show="copiedFormat === preview.key" x-cloak>✓</span>
+                            </button>
+                        </div>
+                        <div class="bg-primary border rounded p-2 min-h-[3rem] break-words text-sm text-secondary">
+                            <span x-text="preview.output || '...'"></span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Empty State -->
+            <div x-show="noInput" class="text-center py-12 text-secondary" x-cloak>
+                <div class="text-4xl mb-4">📝</div>
+                <h3 class="text-lg font-medium mb-2">Ready to Transform Your Text</h3>
+                <p class="text-sm mb-4">Enter text above to see instant previews in 12 different formats</p>
+                <button @click="loadExample" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Try Example Text
+                </button>
+            </div>
         </div>
     </div>
 

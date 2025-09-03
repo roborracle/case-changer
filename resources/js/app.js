@@ -1,120 +1,15 @@
 import './bootstrap';
 import Alpine from '@alpinejs/csp';
 import { transform, getMethod, getAllMethods, getGroupedMethods } from './transformations/index.js';
-import converterComponent from './alpine-converter.js';
+// Removed unused converter component import and registration
 
-// Register the new comprehensive converter component
-Alpine.data('converter', converterComponent);
+// Make transform functions globally available for Alpine components
+window.transform = transform;
+window.getMethod = getMethod;
+window.getAllMethods = getAllMethods;
+window.getGroupedMethods = getGroupedMethods;
 
-// Define the universal converter component BEFORE Alpine starts
-Alpine.data('universalConverter', () => ({
-    inputText: '',
-    outputText: '',
-    selectedTransformation: 'upper-case',
-    transformations: {},
-    isLoading: false,
-    error: null,
-    showCopySuccess: false,
-
-    init() {
-        console.log('universalConverter initialized');
-        // Load transformations immediately
-        this.loadTransformations();
-    },
-
-    async loadTransformations() {
-        console.log('Loading transformations...');
-        try {
-            const response = await fetch('/api/transformations');
-            const data = await response.json();
-            this.transformations = data.transformations || {};
-            console.log('Loaded', Object.keys(this.transformations).length, 'transformations');
-        } catch (error) {
-            console.error('Failed to load transformations:', error);
-            // Use fallback transformations
-            this.transformations = {
-                'upper-case': 'UPPERCASE',
-                'lower-case': 'lowercase',
-                'title-case': 'Title Case',
-                'sentence-case': 'Sentence case',
-                'camel-case': 'camelCase',
-                'snake-case': 'snake_case',
-                'kebab-case': 'kebab-case',
-                'constant-case': 'CONSTANT_CASE',
-                'pascal-case': 'PascalCase',
-                'dot-case': 'dot.case'
-            };
-        }
-    },
-
-    async transform() {
-        if (!this.inputText) {
-            this.outputText = '';
-            return;
-        }
-
-        this.isLoading = true;
-        this.error = null;
-
-        try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            
-            const response = await fetch('/api/transform', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken || '',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    text: this.inputText,
-                    transformation: this.selectedTransformation
-                })
-            });
-
-            const data = await response.json();
-            
-            if (data.success) {
-                this.outputText = data.output;
-            } else {
-                this.error = data.error || 'Transformation failed';
-            }
-        } catch (error) {
-            console.error('Transform error:', error);
-            this.error = 'Failed to transform text';
-        } finally {
-            this.isLoading = false;
-        }
-    },
-
-    async copyToClipboard() {
-        if (!this.outputText) return;
-        
-        try {
-            await navigator.clipboard.writeText(this.outputText);
-            this.showCopySuccess = true;
-            setTimeout(() => {
-                this.showCopySuccess = false;
-            }, 2000);
-        } catch (error) {
-            console.error('Copy failed:', error);
-        }
-    },
-
-    downloadResult() {
-        if (!this.outputText) return;
-        
-        const blob = new Blob([this.outputText], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `converted-${Date.now()}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-}));
+// Removed universalConverter component definition - using improvedConverter instead
 
 // Theme toggle component
 Alpine.data('themeToggle', () => ({
@@ -462,23 +357,31 @@ Alpine.data('improvedConverter', () => ({
         return this.characterCount + ' characters';
     },
     
-    // Store current preview for CSP-compliant template access
-    currentPreview: null,
-    
-    // CSP-compliant methods for template access
-    shouldShowCopyForCurrent() {
-        if (!this.currentPreview) return false;
-        return !this.copiedFormat || this.copiedFormat !== this.currentPreview.key;
+    // Helper methods for template expressions (CSP-friendly)
+    shouldShowCopyText(previewKey) {
+        return !this.copiedFormat || this.copiedFormat !== previewKey;
     },
     
-    isCopiedForCurrent() {
-        if (!this.currentPreview) return false;
-        return this.copiedFormat === this.currentPreview.key;
+    shouldShowCopiedText(previewKey) {
+        return this.copiedFormat === previewKey;
     },
     
-    getOutputForCurrent() {
-        if (!this.currentPreview) return '...';
-        return this.currentPreview.output || '...';
+    getPreviewOutput(preview) {
+        return preview && preview.output ? preview.output : '...';
+    },
+    
+    getPreviewLabel(preview) {
+        return preview && preview.label ? preview.label : '';
+    },
+    
+    getPreviewKey(preview) {
+        return preview && preview.key ? preview.key : '';
+    },
+    
+    handlePreviewClick(preview) {
+        if (preview && preview.output && preview.key) {
+            this.copyToClipboard(preview.output, preview.key);
+        }
     },
     
     init() {
@@ -587,6 +490,12 @@ Alpine.data('improvedConverter', () => ({
         this.generateAllPreviews();
     },
     
+    clearAll() {
+        this.inputText = '';
+        this.copiedFormat = null;
+        this.generateAllPreviews();
+    },
+    
     loadExample() {
         this.inputText = 'Hello World - This is a Sample Text';
         this.generateAllPreviews();
@@ -602,6 +511,139 @@ Alpine.data('improvedConverter', () => ({
         const preview = this.previews.find(p => p.key === transformation);
         if (preview && preview.output) {
             this.copyToClipboard(preview.output, preview.key);
+        }
+    }
+}));
+
+// Tool page component for conversion tools
+Alpine.data('toolConverter', () => ({
+    inputText: '',
+    outputText: '',
+    realTimePreview: false,
+    showOptions: false,
+    copiedLink: false,
+    copiedOutput: false,
+    transformation: '',
+    
+    init() {
+        // Get transformation from data attribute if available
+        this.transformation = this.$el.dataset.transformation || '';
+    },
+    
+    async transform() {
+        if (!this.inputText) {
+            this.outputText = '';
+            return;
+        }
+        
+        try {
+            // Use the transform function from transformations module
+            this.outputText = await transform(this.transformation, this.inputText);
+        } catch (error) {
+            console.error('Transformation error:', error);
+            this.outputText = this.inputText; // Fallback to original text
+        }
+    },
+    
+    async copyLink() {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            this.copiedLink = true;
+            this.showToast('Link copied to clipboard!');
+            setTimeout(() => {
+                this.copiedLink = false;
+            }, 2000);
+        } catch (error) {
+            console.error('Copy failed:', error);
+        }
+    },
+    
+    async shareToolDeux() {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: document.title,
+                    url: window.location.href
+                });
+            } catch (error) {
+                console.error('Share failed:', error);
+            }
+        } else {
+            // Fallback to copy link
+            await this.copyLink();
+        }
+    },
+    
+    toggleOptions() {
+        this.showOptions = !this.showOptions;
+    },
+    
+    async pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            this.inputText = text;
+            if (this.realTimePreview) {
+                await this.transform();
+            }
+        } catch (error) {
+            console.error('Paste failed:', error);
+        }
+    },
+    
+    async loadFile(event) {
+        const file = event.target.files[0];
+        if (file && file.type === 'text/plain') {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                this.inputText = e.target.result;
+                if (this.realTimePreview) {
+                    await this.transform();
+                }
+            };
+            reader.readAsText(file);
+        }
+    },
+    
+    async copyOutput() {
+        if (!this.outputText) return;
+        
+        try {
+            await navigator.clipboard.writeText(this.outputText);
+            this.copiedOutput = true;
+            this.showToast('Output copied to clipboard!');
+            setTimeout(() => {
+                this.copiedOutput = false;
+            }, 2000);
+        } catch (error) {
+            console.error('Copy failed:', error);
+        }
+    },
+    
+    clearAll() {
+        this.inputText = '';
+        this.outputText = '';
+    },
+    
+    toggleRealTime() {
+        this.realTimePreview = !this.realTimePreview;
+    },
+    
+    showToast(message) {
+        // Create a simple toast notification
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    },
+    
+    // Watch for input changes in real-time mode
+    handleInputChange() {
+        if (this.realTimePreview) {
+            this.transform();
         }
     }
 }));

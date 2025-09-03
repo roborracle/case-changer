@@ -52,20 +52,6 @@
         </div>
     </section>
 
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-                    Case Changer Pro
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-3xl mx-auto">
-                    210+ professional text transformation tools. Fast, free, and easy to use.
-                </p>
-            </div>
-        </div>
-    </section>
-
     <!-- Universal Converter with Multi-Output Preview -->
     <section class="py-12 bg-white dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,14 +141,13 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                         <template x-for="(preview, index) in previews" :key="index">
                             <div class="group relative bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer"
-                                 @click="currentPreview = preview; copyToClipboard(preview.output, preview.key)"
-                                 @mouseenter="currentPreview = preview">
+                                 @click="copyToClipboard(preview.output, preview.key)">
                                 <!-- Format Label -->
                                 <div class="flex items-center justify-between mb-2">
                                     <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider" x-text="preview.label"></h4>
                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span x-show="shouldShowCopyForCurrent()" class="text-xs text-blue-600 dark:text-blue-400">Copy</span>
-                                        <span x-show="isCopiedForCurrent()" class="text-xs text-green-600 dark:text-green-400">✓ Copied</span>
+                                        <span x-show="!copiedFormat || copiedFormat !== preview.key" class="text-xs text-blue-600 dark:text-blue-400">Copy</span>
+                                        <span x-show="copiedFormat === preview.key" class="text-xs text-green-600 dark:text-green-400">✓ Copied</span>
                                     </div>
                                 </div>
                                 
