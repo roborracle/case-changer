@@ -1,5 +1,6 @@
 import './bootstrap';
 import Alpine from '@alpinejs/csp';
+import { transform, getMethod, getAllMethods, getGroupedMethods } from './transformations/index.js';
 
 // Define the universal converter component BEFORE Alpine starts
 Alpine.data('universalConverter', () => ({
@@ -467,7 +468,7 @@ Alpine.data('improvedConverter', () => ({
         });
     },
     
-    generateAllPreviews() {
+    async generateAllPreviews() {
         if (!this.inputText) {
             this.previews.forEach(preview => {
                 preview.output = '';
@@ -475,14 +476,26 @@ Alpine.data('improvedConverter', () => ({
             return;
         }
         
-        this.previews.forEach(preview => {
-            preview.output = this.transformText(this.inputText, preview.key);
-        });
+        // Transform all previews in parallel for better performance
+        await Promise.all(this.previews.map(async (preview) => {
+            preview.output = await this.transformText(this.inputText, preview.key);
+        }));
     },
     
-    transformText(text, transformation) {
+    async transformText(text, transformation) {
         if (!text) return '';
         
+        try {
+            // Try to use the new transformation system
+            const method = getMethod(transformation);
+            if (method) {
+                return await method.transform(text);
+            }
+        } catch (error) {
+            console.warn(`Transformation ${transformation} failed, using fallback`, error);
+        }
+        
+        // Fallback to basic transformations
         switch (transformation) {
             case 'upper-case':
                 return text.toUpperCase();
