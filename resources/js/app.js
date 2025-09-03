@@ -1,6 +1,10 @@
 import './bootstrap';
 import Alpine from '@alpinejs/csp';
 import { transform, getMethod, getAllMethods, getGroupedMethods } from './transformations/index.js';
+import converterComponent from './alpine-converter.js';
+
+// Register the new comprehensive converter component
+Alpine.data('converter', converterComponent);
 
 // Define the universal converter component BEFORE Alpine starts
 Alpine.data('universalConverter', () => ({
