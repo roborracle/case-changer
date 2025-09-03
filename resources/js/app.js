@@ -325,6 +325,7 @@ Alpine.data('adminDropdown', () => ({
 Alpine.data('improvedConverter', () => ({
     inputText: '',
     copiedFormat: null,
+    selectedTransformation: null,
     previews: [
         { key: 'upper-case', label: 'UPPERCASE', output: '' },
         { key: 'lower-case', label: 'lowercase', output: '' },
@@ -357,31 +358,12 @@ Alpine.data('improvedConverter', () => ({
         return this.characterCount + ' characters';
     },
     
-    // Helper methods for template expressions (CSP-friendly)
-    shouldShowCopyText(previewKey) {
-        return !this.copiedFormat || this.copiedFormat !== previewKey;
-    },
-    
-    shouldShowCopiedText(previewKey) {
+    isPreviewCopied(previewKey) {
         return this.copiedFormat === previewKey;
     },
     
-    getPreviewOutput(preview) {
-        return preview && preview.output ? preview.output : '...';
-    },
-    
-    getPreviewLabel(preview) {
-        return preview && preview.label ? preview.label : '';
-    },
-    
-    getPreviewKey(preview) {
-        return preview && preview.key ? preview.key : '';
-    },
-    
-    handlePreviewClick(preview) {
-        if (preview && preview.output && preview.key) {
-            this.copyToClipboard(preview.output, preview.key);
-        }
+    shouldShowCopyText(previewKey) {
+        return !this.copiedFormat || this.copiedFormat !== previewKey;
     },
     
     init() {
@@ -390,6 +372,17 @@ Alpine.data('improvedConverter', () => ({
         window.addEventListener('quick-convert', (e) => {
             if (e.detail && e.detail.transformation) {
                 this.quickTransform(e.detail.transformation);
+            }
+        });
+        
+        // Listen for transformation selector events
+        window.addEventListener('transformation-selected', (e) => {
+            if (e.detail && e.detail.toolId) {
+                this.selectedTransformation = e.detail.toolId;
+                // If there's text, apply the transformation immediately
+                if (this.inputText) {
+                    this.applySelectedTransformation(e.detail.toolId);
+                }
             }
         });
         
@@ -474,6 +467,13 @@ Alpine.data('improvedConverter', () => ({
         }
     },
     
+    handlePreviewClick(index) {
+        const preview = this.previews[index];
+        if (preview && preview.output && preview.key) {
+            this.copyToClipboard(preview.output, preview.key);
+        }
+    },
+    
     
     async pasteFromClipboard() {
         try {
@@ -511,6 +511,38 @@ Alpine.data('improvedConverter', () => ({
         const preview = this.previews.find(p => p.key === transformation);
         if (preview && preview.output) {
             this.copyToClipboard(preview.output, preview.key);
+        }
+    },
+    
+    async applySelectedTransformation(toolId) {
+        if (!this.inputText || !toolId) return;
+        
+        try {
+            // Transform the text using the selected tool
+            const result = await window.transform(toolId, this.inputText);
+            
+            // Find or create a preview for this transformation
+            let preview = this.previews.find(p => p.key === toolId);
+            if (!preview) {
+                // Add a new preview for this transformation
+                preview = { 
+                    key: toolId, 
+                    label: toolId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                    output: result
+                };
+                this.previews.unshift(preview); // Add to beginning
+                // Keep only the latest 12 previews
+                if (this.previews.length > 12) {
+                    this.previews = this.previews.slice(0, 12);
+                }
+            } else {
+                preview.output = result;
+            }
+            
+            // Copy the result to clipboard
+            this.copyToClipboard(result, toolId);
+        } catch (error) {
+            console.error('Transformation failed:', error);
         }
     }
 }));
@@ -644,6 +676,250 @@ Alpine.data('toolConverter', () => ({
     handleInputChange() {
         if (this.realTimePreview) {
             this.transform();
+        }
+    }
+}));
+
+// Transformation selector component for tool selection UI
+Alpine.data('transformationSelector', (allToolsData = {}, currentToolId = null) => ({
+    // State management
+    dropdownOpen: false,
+    searchQuery: '',
+    selectedTool: currentToolId,
+    selectedToolName: '',
+    allTools: {},
+    filteredTools: {},
+    filteredToolsCount: 0,
+    selectedIndex: -1,
+    
+    init() {
+        // Process the tools data into a structured format
+        this.allTools = this.processToolsData(allToolsData);
+        this.filteredTools = { ...this.allTools };
+        this.countFilteredTools();
+        
+        // Set initial selected tool name if provided
+        if (currentToolId) {
+            this.findAndSetToolName(currentToolId);
+        }
+        
+        // Setup keyboard navigation
+        this.$el.addEventListener('keydown', this.handleKeyNavigation.bind(this));
+    },
+    
+    processToolsData(data) {
+        // Convert flat or API response format to categorized format
+        const processed = {};
+        
+        if (Array.isArray(data)) {
+            // If data is an array, group by category
+            data.forEach(tool => {
+                const category = tool.category || 'General';
+                if (!processed[category]) {
+                    processed[category] = [];
+                }
+                processed[category].push({
+                    id: tool.id,
+                    name: tool.name,
+                    description: tool.description || ''
+                });
+            });
+        } else if (typeof data === 'object') {
+            // If data is already categorized, ensure proper structure
+            Object.keys(data).forEach(category => {
+                if (data[category].tools) {
+                    // API format with nested tools
+                    processed[data[category].title || category] = Object.keys(data[category].tools).map(toolId => ({
+                        id: toolId,
+                        name: data[category].tools[toolId].name,
+                        description: data[category].tools[toolId].description || ''
+                    }));
+                } else if (Array.isArray(data[category])) {
+                    // Already in correct format
+                    processed[category] = data[category];
+                }
+            });
+        }
+        
+        return processed;
+    },
+    
+    toggleDropdown() {
+        this.dropdownOpen = !this.dropdownOpen;
+        if (this.dropdownOpen) {
+            // Focus search input when opening
+            this.$nextTick(() => {
+                if (this.$refs.searchInput) {
+                    this.$refs.searchInput.focus();
+                }
+            });
+        } else {
+            this.resetSearch();
+            // Return focus to trigger button
+            this.$nextTick(() => {
+                const trigger = this.$el.querySelector('[aria-haspopup="true"]');
+                if (trigger) trigger.focus();
+            });
+        }
+    },
+    
+    closeDropdown() {
+        this.dropdownOpen = false;
+        this.resetSearch();
+    },
+    
+    resetSearch() {
+        this.searchQuery = '';
+        this.filteredTools = { ...this.allTools };
+        this.countFilteredTools();
+        this.selectedIndex = -1;
+    },
+    
+    filterTools() {
+        const query = this.searchQuery.toLowerCase().trim();
+        
+        if (!query) {
+            this.filteredTools = { ...this.allTools };
+        } else {
+            this.filteredTools = {};
+            
+            Object.keys(this.allTools).forEach(category => {
+                const matchingTools = this.allTools[category].filter(tool => {
+                    return tool.name.toLowerCase().includes(query) ||
+                           tool.id.toLowerCase().includes(query) ||
+                           (tool.description && tool.description.toLowerCase().includes(query));
+                });
+                
+                if (matchingTools.length > 0) {
+                    this.filteredTools[category] = matchingTools;
+                }
+            });
+        }
+        
+        this.countFilteredTools();
+        this.selectedIndex = -1;
+    },
+    
+    countFilteredTools() {
+        this.filteredToolsCount = Object.values(this.filteredTools)
+            .reduce((count, tools) => count + tools.length, 0);
+    },
+    
+    selectTool(toolId, toolName) {
+        this.selectedTool = toolId;
+        this.selectedToolName = toolName;
+        
+        // Dispatch custom event for parent components to handle
+        this.$dispatch('tool-selected', { 
+            toolId: toolId, 
+            toolName: toolName 
+        });
+        
+        // Also dispatch a window event for non-nested components
+        window.dispatchEvent(new CustomEvent('transformation-selected', {
+            detail: { toolId: toolId, toolName: toolName }
+        }));
+    },
+    
+    findAndSetToolName(toolId) {
+        Object.values(this.allTools).forEach(category => {
+            const tool = category.find(t => t.id === toolId);
+            if (tool) {
+                this.selectedToolName = tool.name;
+            }
+        });
+    },
+    
+    handleKeyNavigation(event) {
+        if (!this.dropdownOpen) return;
+        
+        const allTools = this.getFlatToolsList();
+        
+        switch(event.key) {
+            case 'ArrowDown':
+                event.preventDefault();
+                this.selectedIndex = Math.min(this.selectedIndex + 1, allTools.length - 1);
+                this.scrollToSelected();
+                break;
+                
+            case 'ArrowUp':
+                event.preventDefault();
+                this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+                this.scrollToSelected();
+                break;
+                
+            case 'Enter':
+                event.preventDefault();
+                if (this.selectedIndex >= 0 && this.selectedIndex < allTools.length) {
+                    const tool = allTools[this.selectedIndex];
+                    this.selectTool(tool.id, tool.name);
+                    this.closeDropdown();
+                }
+                break;
+                
+            case 'Escape':
+                event.preventDefault();
+                this.closeDropdown();
+                break;
+        }
+    },
+    
+    getFlatToolsList() {
+        const tools = [];
+        Object.values(this.filteredTools).forEach(category => {
+            tools.push(...category);
+        });
+        return tools;
+    },
+    
+    scrollToSelected() {
+        this.$nextTick(() => {
+            const buttons = this.$el.querySelectorAll('[role="menuitem"]');
+            if (buttons[this.selectedIndex]) {
+                buttons[this.selectedIndex].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+                
+                // Update visual selection
+                buttons.forEach((btn, idx) => {
+                    if (idx === this.selectedIndex) {
+                        btn.classList.add('bg-gray-100', 'dark:bg-gray-800');
+                    } else {
+                        btn.classList.remove('bg-gray-100', 'dark:bg-gray-800');
+                    }
+                });
+            }
+        });
+    },
+    
+    // Method to handle external tool selection events
+    handleToolSelection(event) {
+        if (event.detail && event.detail.toolId) {
+            this.selectedTool = event.detail.toolId;
+            this.selectedToolName = event.detail.toolName || '';
+            this.findAndSetToolName(event.detail.toolId);
+        }
+    },
+    
+    // Additional keyboard navigation methods
+    navigateDown() {
+        const allTools = this.getFlatToolsList();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, allTools.length - 1);
+        this.scrollToSelected();
+    },
+    
+    navigateUp() {
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        this.scrollToSelected();
+    },
+    
+    selectHighlighted() {
+        const allTools = this.getFlatToolsList();
+        if (this.selectedIndex >= 0 && this.selectedIndex < allTools.length) {
+            const tool = allTools[this.selectedIndex];
+            this.selectTool(tool.id, tool.name);
+            this.closeDropdown();
         }
     }
 }));

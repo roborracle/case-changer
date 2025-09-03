@@ -90,6 +90,14 @@
                     </div>
                 </div>
 
+                <!-- Transformation Selector -->
+                <div class="mb-6">
+                    <x-transformation-selector 
+                        :popular-tools="$popularTools ?? []"
+                        :all-tools="$allTools ?? []"
+                        context="homepage" />
+                </div>
+                
                 <!-- Input Area with Helper Buttons -->
                 <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between mb-4">
@@ -141,20 +149,24 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                         <template x-for="(preview, index) in previews" :key="index">
                             <div class="group relative bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer"
-                                 @click="copyToClipboard(preview.output, preview.key)">
+                                 @click="handlePreviewClick(index)">
                                 <!-- Format Label -->
                                 <div class="flex items-center justify-between mb-2">
                                     <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider" x-text="preview.label"></h4>
                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span x-show="!copiedFormat || copiedFormat !== preview.key" class="text-xs text-blue-600 dark:text-blue-400">Copy</span>
-                                        <span x-show="copiedFormat === preview.key" class="text-xs text-green-600 dark:text-green-400">✓ Copied</span>
+                                        <template x-if="!copiedFormat || copiedFormat !== preview.key">
+                                            <span class="text-xs text-blue-600 dark:text-blue-400">Copy</span>
+                                        </template>
+                                        <template x-if="copiedFormat === preview.key">
+                                            <span class="text-xs text-green-600 dark:text-green-400">✓ Copied</span>
+                                        </template>
                                     </div>
                                 </div>
                                 
                                 <!-- Preview Output -->
                                 <div class="bg-gray-50 dark:bg-gray-900 rounded px-3 py-2 min-h-[60px]">
-                                    <span x-text="preview.output || '...'" 
-                                          class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all line-clamp-3"></span>
+                                    <span x-text="preview.output" 
+                                          class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all line-clamp-3">...</span>
                                 </div>
                             </div>
                         </template>
