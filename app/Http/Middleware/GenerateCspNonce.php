@@ -15,12 +15,12 @@ class GenerateCspNonce
 
         $response = $next($request);
 
-        // Strict CSP without unsafe-eval for Alpine
+        // Strict CSP for Livewire-only approach (no Alpine.js, no unsafe-eval required)
         $csp = "default-src 'self'; " .
                "script-src 'self' 'nonce-{$nonce}'; " .
-               "style-src 'self' 'nonce-{$nonce}'; " .
-               "font-src 'self' data:; " .
-               "img-src 'self' data:; " .
+               "style-src 'self' 'nonce-{$nonce}' https://fonts.bunny.net; " .
+               "font-src 'self' data: https://fonts.bunny.net; " .
+               "img-src 'self' data: https:; " .
                "connect-src 'self'; " .
                "frame-ancestors 'self'; " .
                "object-src 'none'; " .
