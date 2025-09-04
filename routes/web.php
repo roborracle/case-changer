@@ -100,8 +100,3 @@ Route::get('/home-improved', function() {
     ];
     return view('home-improved', compact('categories', 'transformations'));
 });
-
-// Test route for Premium Converter
-Route::get('/premium-converter', function() {
-    return view('test-premium-converter');
-});
