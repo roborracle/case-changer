@@ -1,0 +1,214 @@
+# SCARLETT Configuration for Case Changer Pro
+# Version: 1.0
+# Enforcement: MANDATORY
+
+project:
+  name: "Case Changer Pro"
+  type: "Laravel/Livewire Application"
+  standards_version: "3.0"
+  enforcement_level: "STRICT"
+
+# Quality Thresholds (Project-Specific)
+quality_metrics:
+  min_test_coverage: 80
+  max_file_lines: 350
+  max_method_lines: 50
+  max_class_methods: 20
+  max_cyclomatic_complexity: 10
+  min_documentation_coverage: 100
+  max_response_time_ms: 200
+  max_query_time_ms: 50
+  max_memory_mb: 128
+
+# Required Analysis Phases
+analysis_phases:
+  phase_1_deep_understanding:
+    required: true
+    artifacts:
+      - "problem_definition.md"
+      - "architecture_map.json"
+      - "root_cause_analysis.md"
+      - "dependency_graph.json"
+    
+  phase_2_comprehensive_analysis:
+    required: true
+    artifacts:
+      - "system_interaction_map.md"
+      - "impact_assessment.md"
+      - "risk_matrix.csv"
+      - "test_strategy.md"
+
+  phase_3_solution_design:
+    required: true
+    min_alternatives: 5
+    artifacts:
+      - "solution_comparison.md"
+      - "implementation_plan.md"
+      - "rollback_strategy.md"
+
+# Laravel-Specific Standards
+laravel_standards:
+  version: "11.x"
+  php_version: "8.2"
+  conventions:
+    - "Use dependency injection over facades"
+    - "Repository pattern for data access"
+    - "Service layer for business logic"
+    - "Form requests for validation"
+    - "Resources for API responses"
+    - "Observers for model events"
+    - "Jobs for async operations"
+  
+  forbidden:
+    - "Direct DB queries in controllers"
+    - "Business logic in models"
+    - "Validation in controllers"
+    - "Direct model access in views"
+    - "Hardcoded configuration values"
+
+# Livewire-Specific Standards
+livewire_standards:
+  version: "3.x"
+  conventions:
+    - "Single responsibility components"
+    - "Computed properties for derived state"
+    - "Protected properties by default"
+    - "Validation before actions"
+    - "Events for component communication"
+  
+  forbidden:
+    - "Direct DOM manipulation"
+    - "Inline JavaScript in components"
+    - "Public properties for sensitive data"
+    - "Synchronous heavy operations"
+
+# File Organization
+file_structure:
+  app_services: "app/Services/"
+  app_repositories: "app/Repositories/"
+  app_interfaces: "app/Contracts/"
+  app_traits: "app/Traits/"
+  app_enums: "app/Enums/"
+  livewire_components: "app/Livewire/"
+  view_components: "resources/views/components/"
+  test_unit: "tests/Unit/"
+  test_feature: "tests/Feature/"
+  test_browser: "tests/Browser/"
+
+# Testing Requirements
+testing:
+  required_test_types:
+    - unit
+    - feature
+    - browser
+  
+  unit_test_requirements:
+    - "All services must have tests"
+    - "All repositories must have tests"
+    - "All helpers must have tests"
+    - "All transformations must have tests"
+  
+  feature_test_requirements:
+    - "All API endpoints must have tests"
+    - "All Livewire components must have tests"
+    - "All authentication flows must have tests"
+  
+  browser_test_requirements:
+    - "Critical user paths must have tests"
+    - "All forms must have tests"
+    - "Mobile responsiveness must be tested"
+
+# Security Requirements
+security:
+  mandatory_checks:
+    - "Input validation on all user data"
+    - "SQL injection prevention"
+    - "XSS protection"
+    - "CSRF protection"
+    - "Rate limiting on APIs"
+    - "Content Security Policy"
+  
+  forbidden_practices:
+    - "Raw SQL queries with user input"
+    - "Unescaped output in Blade"
+    - "Disabled CSRF for POST routes"
+    - "Exposed .env variables"
+    - "Debug mode in production"
+    - "Default secret keys"
+
+# Performance Standards
+performance:
+  targets:
+    page_load_time_ms: 2000
+    api_response_time_ms: 200
+    transformation_time_ms: 100
+    database_query_time_ms: 50
+    javascript_bundle_kb: 200
+    css_bundle_kb: 50
+  
+  required_optimizations:
+    - "Query optimization with eager loading"
+    - "Response caching where appropriate"
+    - "Asset minification and compression"
+    - "Image optimization"
+    - "Lazy loading for components"
+    - "Database indexing"
+
+# Code Review Checklist
+code_review:
+  automated_checks:
+    - "PHPStan level 8"
+    - "PHP CS Fixer PSR-12"
+    - "ESLint airbnb config"
+    - "Security vulnerability scan"
+    - "Performance benchmark"
+  
+  manual_checks:
+    - "Business logic correctness"
+    - "Error handling completeness"
+    - "Documentation clarity"
+    - "Code maintainability"
+    - "Test coverage adequacy"
+
+# Git Workflow
+git_workflow:
+  branch_naming:
+    feature: "feature/{ticket-id}-{description}"
+    bugfix: "bugfix/{ticket-id}-{description}"
+    hotfix: "hotfix/{description}"
+    release: "release/v{version}"
+  
+  commit_format: "type(scope): description"
+  required_checks_before_merge:
+    - "All tests passing"
+    - "Code review approved"
+    - "No merge conflicts"
+    - "Documentation updated"
+
+# Monitoring & Alerts
+monitoring:
+  required_metrics:
+    - "Application errors"
+    - "Response times"
+    - "Memory usage"
+    - "Queue length"
+    - "Failed jobs"
+  
+  alert_thresholds:
+    error_rate_percent: 1
+    response_time_p95_ms: 500
+    memory_usage_percent: 80
+    queue_backlog: 1000
+
+# Enforcement
+enforcement:
+  violation_tracking: ".scarlett/violations.log"
+  gate_status: ".scarlett/gates/"
+  analysis_artifacts: ".scarlett/analysis/"
+  
+  violation_responses:
+    skip_analysis: "PURGE_AND_RESTART"
+    skip_testing: "BLOCK_PROGRESS"
+    exceed_complexity: "REQUIRE_REFACTOR"
+    missing_documentation: "BLOCK_COMMIT"
+    security_violation: "IMMEDIATE_FIX_REQUIRED"
