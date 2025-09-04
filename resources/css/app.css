@@ -9,7 +9,7 @@
     --color-accent: #3b82f6;
     --text-primary: #111827;
     --text-secondary: #6b7280;
-    --text-tertiary: #9ca3af;
+    --text-tertiary: #707783; /* Improved contrast from #9ca3af for WCAG AA compliance */
     --border-color: #e5e7eb;
 }
 
@@ -19,7 +19,7 @@
     --color-accent: #3b82f6;
     --text-primary: #f9fafb;
     --text-secondary: #d1d5db;
-    --text-tertiary: #9ca3af;
+    --text-tertiary: #a8b2bf; /* Slightly lighter for better contrast in dark mode */
     --border-color: #374151;
 }
 

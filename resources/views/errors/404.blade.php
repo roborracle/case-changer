@@ -54,7 +54,7 @@
                         Go to Homepage
                     </a>
                     <button 
-                        onclick="history.back()"
+                        x-data @click="history.back()"
                         class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

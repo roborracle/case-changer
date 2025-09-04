@@ -109,7 +109,7 @@
                             Follow on Twitter
                         </a>
                         <button 
-                            onclick="window.location.reload()"
+                            x-data @click="window.location.reload()"
                             class="inline-flex items-center justify-center text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                         >
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

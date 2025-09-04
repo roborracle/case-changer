@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Web middleware stack
         $middleware->web(append: [
             \App\Http\Middleware\ForceHttps::class,
-            \App\Http\Middleware\ContentSecurityPolicy::class,
+            \App\Http\Middleware\GenerateCspNonce::class,
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\ApplyTheme::class,
         ]);

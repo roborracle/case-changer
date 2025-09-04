@@ -1,15 +1,16 @@
 # Case Changer Pro 🚀
 
-A professional text transformation tool with 86+ conversion formats, built with Laravel, Alpine.js, and Tailwind CSS.
+A professional text transformation tool with 213+ conversion formats, built with Laravel, Alpine.js (CSP-compliant), and Tailwind CSS.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)
+![CSP](https://img.shields.io/badge/CSP-Compliant-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## ✨ Features
 
-### 🔤 86+ Text Transformation Methods
+### 🔤 213+ Text Transformation Methods
 - **Case Conversions** - UPPERCASE, lowercase, Title Case, Sentence case, and more
 - **Developer Formats** - camelCase, PascalCase, snake_case, kebab-case, dot.case
 - **Style Guides** - AP, NYT, Chicago, Guardian, BBC, Reuters styles

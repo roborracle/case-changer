@@ -227,7 +227,7 @@
                                 </div>
                             </div>
                             <button 
-                                onclick="tryExample('{{ $example['input'] }}')"
+                                @click="tryExample('{{ $example['input'] }}')"
                                 class="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                             >
                                 Try this example →
@@ -242,13 +242,13 @@
                 <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-xl shadow-lg border border-white/30 dark:border-gray-700/30 overflow-hidden">
                     <!-- Tab Headers -->
                     <div class="flex border-b border-gray-200 dark:border-gray-700">
-                        <button onclick="switchTab('documentation')" id="tab-documentation" class="px-6 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-white/50 dark:bg-gray-800/50">
+                        <button @click="switchTab('documentation')" id="tab-documentation" class="px-6 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-white/50 dark:bg-gray-800/50">
                             Documentation
                         </button>
-                        <button onclick="switchTab('api')" id="tab-api" class="px-6 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                        <button @click="switchTab('api')" id="tab-api" class="px-6 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
                             API Reference
                         </button>
-                        <button onclick="switchTab('keyboard')" id="tab-keyboard" class="px-6 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                        <button @click="switchTab('keyboard')" id="tab-keyboard" class="px-6 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
                             Keyboard Shortcuts
                         </button>
                     </div>

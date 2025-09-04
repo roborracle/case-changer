@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Vite;
 use App\Services\SecurityService;
 use App\Services\CacheService;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,5 +35,8 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             \URL::forceScheme('https');
         }
+
+        // Vite and Livewire will use CSP nonce when available
+        // The nonce is set by GenerateCspNonce middleware
     }
 }

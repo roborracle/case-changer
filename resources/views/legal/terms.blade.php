@@ -50,7 +50,7 @@
                                 <p>Last Updated: {{ config('app.legal.terms_updated', 'January 1, 2024') }}</p>
                                 <div class="flex items-center space-x-4 mt-4 sm:mt-0">
                                     <button 
-                                        onclick="window.print()"
+                                        x-data @click="window.print()"
                                         class="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                                         aria-label="Print this page"
                                     >

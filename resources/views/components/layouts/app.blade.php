@@ -20,10 +20,9 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     
-    <!-- Google Fonts Optimization -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bunny Fonts Optimization -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
     
     <!-- Schema.org Markup -->
     <?php 
@@ -47,7 +46,9 @@
     @stack('schema')
     
     <!-- Styles -->
+    {{-- Vite with CSP nonce support --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @stack('styles')
 </head>
 <body class="min-h-screen bg-secondary text-primary">
@@ -57,7 +58,7 @@
     </a>
     
     <header>
-        @includeIf('components.navigation')
+        @livewire('navigation')
     </header>
     
     <main id="main-content" tabindex="-1">
@@ -68,6 +69,7 @@
         @includeIf('components.footer')
     </footer>
     
+    @livewireScripts
     @stack('scripts')
 </body>
 </html>
