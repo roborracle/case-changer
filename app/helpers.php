@@ -8,7 +8,12 @@ if (!function_exists('csp_nonce')) {
      */
     function csp_nonce()
     {
-        // Try to get from request attributes first (preferred)
+        // Try to get from app container first (set by middleware)
+        if (app()->has('csp-nonce')) {
+            return app('csp-nonce');
+        }
+        
+        // Try request attributes
         if (request()->attributes->has('csp-nonce')) {
             return request()->attributes->get('csp-nonce');
         }
