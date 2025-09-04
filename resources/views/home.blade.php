@@ -16,9 +16,9 @@
     <!-- Main Converter Section -->
     <section class="py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Premium Converter with Enhanced Features -->
+            <!-- Main Text Converter -->
             <div class="backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
-                @livewire('premium-converter')
+                @livewire('converter')
             </div>
             
             <!-- Link to Full Tools -->
