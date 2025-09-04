@@ -1,22 +1,30 @@
-<x-layouts.app title="Case Changer Pro - Instant Text Transformation Tools">
-    <!-- Universal Converter with Instant Preview -->
-    <section class="py-12 bg-white dark:bg-gray-900">
+<x-layouts.app title="Case Changer Pro - 210+ Text Transformation Tools">
+    <!-- Hero Section -->
+    <section class="py-8 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-                    Instant Text Transformation
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+                    Case Changer Pro
                 </h1>
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Transform your text instantly with live previews. Type once, see all formats, click to copy.
+                    Transform text instantly with 210+ professional tools. Type or paste your text below and click any button to transform.
                 </p>
             </div>
-            
-            @livewire('instant-preview')
+        </div>
+    </section>
+
+    <!-- Main Converter Section -->
+    <section class="py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Premium Converter with Enhanced Features -->
+            <div class="backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+                @livewire('premium-converter')
+            </div>
             
             <!-- Link to Full Tools -->
             <div class="text-center mt-8">
                 <a href="{{ route('conversions.index') }}" 
-                   class="inline-flex items-center px-6 py-3 text-lg font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-xl border border-blue-300 dark:border-blue-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
+                   class="inline-flex items-center px-6 py-3 text-lg font-semibold text-blue-600 hover:text-blue-700 bg-white/70 hover:bg-white/90 dark:bg-gray-800/70 dark:text-blue-400 dark:hover:bg-gray-800/90 rounded-xl border border-blue-300/50 dark:border-blue-700/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 backdrop-blur-sm">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
@@ -25,15 +33,79 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                     </svg>
                 </a>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">
                     Need more transformations? Access our complete collection of specialized tools
                 </p>
             </div>
         </div>
     </section>
 
+    <!-- Categories Section -->
+    <section class="py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                    Browse by Category
+                </h2>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    Explore our complete collection of 210+ text transformation tools organized by category
+                </p>
+            </div>
+            
+            <!-- Categories Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @php
+                $categories = config('categories.categories');
+                $featuredCategories = array_slice($categories, 0, 8, true); // Show first 8 categories
+                @endphp
+                
+                @foreach($featuredCategories as $slug => $category)
+                <a href="{{ route('conversions.category', $slug) }}"
+                   class="group relative overflow-hidden backdrop-blur-lg bg-white/70 dark:bg-gray-800/70 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200/50 dark:border-gray-700/50">
+                    <!-- Background Gradient on Hover -->
+                    <div class="absolute inset-0 bg-gradient-to-br {{ $category['gradient'] ?? 'from-blue-500 to-blue-600' }} opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    
+                    <!-- Content -->
+                    <div class="relative z-10">
+                        <div class="flex items-start gap-4">
+                            <span class="text-4xl flex-shrink-0">{{ $category['emoji'] ?? $category['icon'] ?? '📝' }}</span>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    {{ $category['name'] }}
+                                </h3>
+                                <p class="text-sm mb-3 text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    {{ $category['description'] }}
+                                </p>
+                                <div class="flex items-center justify-between">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200">
+                                        {{ $category['tool_count'] ?? 0 }} tools
+                                    </span>
+                                    <span class="text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
+                                        →
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+            
+            <!-- View All Categories -->
+            <div class="text-center mt-8">
+                <a href="{{ route('conversions.index') }}" 
+                   class="inline-flex items-center px-8 py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    View All 18 Categories
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <section class="py-16 bg-white dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Why Choose Case Changer Pro?</h2>
             

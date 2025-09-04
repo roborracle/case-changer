@@ -1,6 +1,6 @@
 # Case Changer Pro 🚀
 
-A professional text transformation tool with 213+ conversion formats, built with Laravel, Alpine.js (CSP-compliant), and Tailwind CSS.
+A professional text transformation tool with 86+ conversion formats, built with Laravel, Livewire (CSP-compliant), and Tailwind CSS.
 
 ![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)
@@ -10,7 +10,7 @@ A professional text transformation tool with 213+ conversion formats, built with
 
 ## ✨ Features
 
-### 🔤 213+ Text Transformation Methods
+### 🔤 86+ Text Transformation Methods
 - **Case Conversions** - UPPERCASE, lowercase, Title Case, Sentence case, and more
 - **Developer Formats** - camelCase, PascalCase, snake_case, kebab-case, dot.case
 - **Style Guides** - AP, NYT, Chicago, Guardian, BBC, Reuters styles
@@ -28,11 +28,19 @@ A professional text transformation tool with 213+ conversion formats, built with
 - **Copy to Clipboard** - One-click copying
 - **Keyboard Navigation** - Full accessibility support
 
+### 💎 Premium Features
+- **Real-time Statistics** - Character, word, line counts with instant updates
+- **Diff Visualization** - See exact changes between original and transformed text
+- **Performance Metrics** - Track transformation speed and memory usage
+- **Session Persistence** - Save preferences and transformation history
+- **Large Text Support** - Handle documents up to 45k+ characters
+- **Smart Utility Bar** - Quick access to common transformations
+
 ### ⚡ Performance
-- **Sub-21ms Response Times** - Lightning fast
-- **88KB JavaScript Bundle** - Optimized and minified
-- **Lazy Loading** - Efficient resource management
-- **Cache Optimization** - Smart caching strategies
+- **Sub-21ms Response Times** - Lightning fast transformations
+- **Livewire Reactive** - Real-time updates without page refresh
+- **Optimized Bundle** - Minimal JavaScript footprint
+- **Smart Caching** - Efficient resource management
 
 ### ♿ Accessibility
 - **WCAG 2.1 AA Compliant** - Full accessibility
@@ -108,17 +116,90 @@ npm run optimize
 
 ### Testing
 ```bash
-# Run transformation validation tests
-php validate-transformations.php
+# Run Laravel test suite
+php artisan test
 
-# Test category-based transformations
-php test-transformation-categories.php
+# Run specific test files
+php artisan test --filter=TransformationTest
 
-# Performance and accessibility testing
-php test-performance-accessibility.php
+# Run tests with coverage
+php artisan test --coverage
 ```
 
 ## 📦 Deployment
+
+## 🧑‍💻 AI Project Management & Automation
+
+### Task Master Integration
+
+Case Changer Pro uses [Task Master](https://docs.task-master.dev/) for automated project management, task breakdown, and documentation sync.
+
+#### Common Commands
+```bash
+# Install Task Master CLI
+yarn global add task-master-ai # or npm install -g task-master-ai
+
+# Initialize project (if not already)
+task-master init
+
+# Parse PRD into tasks
+task-master parse-prd scripts/PRD.txt
+
+# Expand all tasks into subtasks
+task-master expand --all
+
+# Analyze task complexity
+task-master analyze-complexity --research
+
+# List and show tasks
+task-master list
+task-master show <id>
+
+# Sync tasks to README
+task-master sync-readme --with-subtasks
+```
+
+#### Task Master Configuration
+All API keys are already connected. To update, edit your `.env` or `.taskmaster/config.json` as needed.
+
+### Claude Code Integration
+
+Case Changer Pro supports [Claude Code](https://www.claudecode.pro/) for AI-assisted coding, debugging, and code generation.
+
+#### Quickstart
+```bash
+# Install Claude Code CLI
+npm install -g @anthropic/claude-code
+
+# Initialize Claude Code in your project
+claude init
+
+# Start a chat or run a command
+claude chat
+claude "Create a user login form component"
+```
+
+### context7 MCP Server
+
+The project is context7-ready for up-to-date documentation and code generation.
+
+#### Example config (already set):
+```json
+{
+  "servers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "type": "stdio"
+    }
+  },
+  "inputs": []
+}
+```
+
+No further action is needed unless you wish to update the context7 version or add API keys.
+
+---
 
 ### Railway Deployment
 
@@ -209,7 +290,7 @@ Content-Type: application/json
 
 ### Available Transformations
 
-See `/api/transformations` for the complete list of 86 available transformations.
+See `/api/transformations` for the complete list of available transformations.
 
 ## 🎯 Project Structure
 
@@ -241,7 +322,7 @@ case-changer-pro/
 ## 🧪 Testing & Validation
 
 ### Transformation Testing
-- 86/86 transformations tested and working
+- All transformations tested and working
 - 100% test success rate
 - Performance under 1ms per transformation
 - Large text handling (45k+ characters)
@@ -280,17 +361,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Laravel](https://laravel.com/)
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
-- Interactive with [Alpine.js](https://alpinejs.dev/)
+- Reactive with [Livewire](https://livewire.laravel.com/)
 - Icons from [Heroicons](https://heroicons.com/)
 - Fonts from [Bunny Fonts](https://fonts.bunny.net/)
 
 ## 📊 Performance Metrics
 
-- **Page Load**: <21ms
-- **JavaScript Bundle**: 88KB (30KB gzipped)
-- **CSS Bundle**: 59KB (11KB gzipped)
+- **Response Time**: <21ms for transformations
+- **Livewire Updates**: Real-time reactive
+- **Bundle Size**: Optimized for production
 - **Lighthouse Score**: 95+
-- **Accessibility Score**: 95+
+- **Accessibility Score**: WCAG 2.1 AA compliant
 
 ## 🔒 Security
 
@@ -305,8 +386,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues and questions:
 - Create an issue on GitHub
-- Email: support@casechanger.pro
-- Documentation: [docs.casechanger.pro](https://docs.casechanger.pro)
+- Contact via the project repository
 
 ---
 

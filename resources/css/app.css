@@ -28,6 +28,69 @@
 .bg-secondary { background-color: var(--color-secondary); }
 .text-primary { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
+
+/* Smart Utility Bar additional styles */
+.smart-utility-bar-spring-enter {
+    animation: smart-utility-spring-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.smart-utility-bar-spring-exit {
+    animation: smart-utility-spring-out 0.3s ease-in forwards;
+}
+
+@keyframes smart-utility-spring-in {
+    0% {
+        transform: scale(0.8) translateY(20px);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.05) translateY(-5px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes smart-utility-spring-out {
+    0% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8) translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* Accessibility improvements for utility bar */
+.smart-utility-bar-container [role="button"],
+.smart-utility-bar-container button {
+    position: relative;
+}
+
+.smart-utility-bar-container [role="button"]:focus,
+.smart-utility-bar-container button:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .smart-utility-bar-container .fab-button,
+    .smart-utility-bar-container .action-button {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Force hardware acceleration for smooth animations */
+.smart-utility-bar-container .fab-button,
+.smart-utility-bar-container .action-button,
+.smart-utility-bar-container .pinned-utility-bar {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+}
 .text-tertiary { color: var(--text-tertiary); }
 .border { border-color: var(--border-color); }
 .accent-primary { color: var(--color-accent); }
@@ -126,5 +189,448 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* ================================
+   RESPONSIVE BREAKPOINT SYSTEM
+   ================================ */
+
+/* Mobile-first responsive design variables */
+:root {
+    /* Touch target sizes */
+    --touch-target-min: 44px;
+    --touch-target-preferred: 48px;
+    
+    /* Responsive spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Responsive typography */
+    --font-size-xs: clamp(0.75rem, 2.5vw, 0.875rem);
+    --font-size-sm: clamp(0.875rem, 3vw, 1rem);
+    --font-size-base: clamp(1rem, 3.5vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 4vw, 1.25rem);
+    --font-size-xl: clamp(1.25rem, 4.5vw, 1.5rem);
+    --font-size-2xl: clamp(1.5rem, 5vw, 1.875rem);
+    
+    /* Container breakpoints */
+    --container-xs: 20rem;     /* 320px */
+    --container-sm: 30rem;     /* 480px */
+    --container-md: 48rem;     /* 768px */
+    --container-lg: 64rem;     /* 1024px */
+    --container-xl: 80rem;     /* 1280px */
+}
+
+/* ================================
+   RESPONSIVE TRANSFORMATION GRID
+   ================================ */
+
+/* Primary transformation buttons */
+.transformation-btn {
+    /* Mobile-first responsive sizing */
+    font-size: var(--font-size-sm);
+    min-height: var(--touch-target-preferred);
+    
+    /* Touch optimization */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    
+    /* Smooth transitions */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transformation-btn:active {
+    transform: scale(0.95);
+    transition-duration: 0.1s;
+}
+
+/* Long press support */
+.transformation-btn.long-press-active {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Secondary transformation buttons */
+.transformation-btn-secondary {
+    font-size: var(--font-size-xs);
+    min-height: var(--touch-target-min);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transformation-btn-secondary:active {
+    transform: scale(0.95);
+    transition-duration: 0.1s;
+}
+
+/* ================================
+   MOBILE BREAKPOINT STYLES
+   ================================ */
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+    .transformation-btn {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-xs);
+        border-radius: 0.5rem;
+    }
+    
+    .transformation-btn-secondary {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Stack utility buttons vertically on very small screens */
+    .utility-stack-mobile {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .utility-stack-mobile > * {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .utility-stack-mobile > *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    .transformation-btn {
+        padding: 1rem 1.5rem;
+        font-size: var(--font-size-sm);
+    }
+    
+    .transformation-btn-secondary {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .transformation-btn {
+        padding: 1rem 1.5rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .transformation-btn-secondary {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-sm);
+    }
+    
+    /* Enable hover effects on non-touch devices */
+    .transformation-btn:hover:not(:disabled) {
+        transform: scale(1.05);
+    }
+    
+    .transformation-btn-secondary:hover:not(:disabled) {
+        transform: scale(1.05);
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .transformation-btn {
+        padding: 1rem 1.5rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .transformation-btn-secondary {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .transformation-btn {
+        padding: 1.25rem 2rem;
+        font-size: var(--font-size-lg);
+    }
+    
+    .transformation-btn-secondary {
+        padding: 1rem 1.25rem;
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ================================
+   TOUCH GESTURE SUPPORT
+   ================================ */
+
+/* Pull-to-refresh indicator */
+.pull-refresh-indicator {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+    border: 2px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    z-index: 10;
+}
+
+.pull-refresh-indicator.active {
+    opacity: 1;
+    top: -50px;
+}
+
+.pull-refresh-indicator svg {
+    width: 20px;
+    height: 20px;
+    color: #3b82f6;
+    transition: transform 0.3s ease;
+}
+
+.pull-refresh-indicator.triggered svg {
+    transform: rotate(180deg);
+}
+
+/* Swipe indicator for mobile navigation */
+.swipe-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.swipe-indicator.show {
+    opacity: 1;
+}
+
+/* Long press feedback */
+.long-press-feedback {
+    position: relative;
+    overflow: hidden;
+}
+
+.long-press-feedback::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4));
+    transition: width 0.6s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.long-press-feedback.active::before {
+    width: 100%;
+}
+
+/* ================================
+   CONTAINER QUERIES SUPPORT
+   ================================ */
+
+/* Container query for transformation grid */
+@container (max-width: 400px) {
+    .transformation-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+@container (min-width: 401px) and (max-width: 600px) {
+    .transformation-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@container (min-width: 601px) and (max-width: 900px) {
+    .transformation-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+}
+
+@container (min-width: 901px) {
+    .transformation-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+/* ================================
+   MOBILE BOTTOM SHEET
+   ================================ */
+
+.mobile-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.mobile-bottom-sheet.active {
+    transform: translateY(0);
+}
+
+.mobile-bottom-sheet::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 2px;
+}
+
+.dark .mobile-bottom-sheet {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark .mobile-bottom-sheet::before {
+    background: #4b5563;
+}
+
+/* ================================
+   ORIENTATION HANDLING
+   ================================ */
+
+@media (orientation: landscape) and (max-height: 500px) {
+    .transformation-btn {
+        padding: 0.5rem 1rem;
+        font-size: var(--font-size-xs);
+        min-height: 36px;
+    }
+    
+    .transformation-btn-secondary {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        min-height: 32px;
+    }
+    
+    /* Compact spacing for landscape mobile */
+    .landscape-compact {
+        gap: 0.5rem !important;
+        padding: 1rem !important;
+    }
+}
+
+/* ================================
+   CSP-COMPLIANT STYLES
+   ================================ */
+
+/* Textarea dimensions for converter areas */
+.converter-textarea {
+    min-height: 40vh;
+    max-height: 60vh;
+    height: 40vh;
+    will-change: height, transform;
+}
+
+.converter-textarea-output {
+    min-height: 40vh;
+    max-height: 60vh;
+    height: 40vh;
+    will-change: transform;
+}
+
+.converter-textarea-compact {
+    min-height: 40vh;
+    max-height: 60vh;
+}
+
+/* Cubic bezier transition for buttons */
+.bounce-transition {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Container query support */
+.container-inline-size {
+    container-type: inline-size;
+}
+
+/* Frequency bar height (will be set via CSS custom properties) */
+.frequency-bar {
+    height: var(--bar-height, 0%);
+    margin-top: var(--bar-margin, 100%);
+    background: linear-gradient(to top, #3b82f6, #60a5fa);
+    transition: height 0.3s ease;
+}
+
+/* Progress bar width control */
+.progress-bar-dynamic {
+    width: var(--progress-width, 0%);
+}
+
+/* ================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================ */
+
+/* Enhanced focus styles for touch navigation */
+@media (hover: none) and (pointer: coarse) {
+    .transformation-btn:focus,
+    .transformation-btn-secondary:focus {
+        outline: 3px solid var(--color-accent);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.2);
+    }
+}
+
+/* High contrast mode for mobile */
+@media (prefers-contrast: high) and (max-width: 768px) {
+    .transformation-btn,
+    .transformation-btn-secondary {
+        border: 2px solid currentColor;
+        font-weight: 600;
+    }
+}
+
+/* Reduced motion for touch devices */
+@media (prefers-reduced-motion: reduce) and (hover: none) {
+    .transformation-btn,
+    .transformation-btn-secondary {
+        transition: none !important;
+    }
+    
+    .transformation-btn:active,
+    .transformation-btn-secondary:active {
+        transform: none !important;
     }
 }

@@ -28,7 +28,7 @@ class GenerateCspNonce
         ];
         
         $csp = "default-src 'self'; " .
-               "script-src 'self' 'nonce-{$nonce}' " . implode(' ', $livewireScriptHashes) . "; " .
+               "script-src 'self' 'unsafe-eval' 'nonce-{$nonce}' " . implode(' ', $livewireScriptHashes) . "; " .
                "style-src 'self' 'nonce-{$nonce}' https://fonts.bunny.net " . implode(' ', $livewireStyleHashes) . "; " .
                "font-src 'self' data: https://fonts.bunny.net; " .
                "img-src 'self' data: https:; " .

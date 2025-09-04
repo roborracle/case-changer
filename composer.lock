@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83e3d594cd3e48d445e8893a0d30e741",
+    "content-hash": "4c2e6171dd3a139d9d9abbe7f9a7eb9d",
     "packages": [
         {
             "name": "brick/math",
@@ -1052,6 +1052,75 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "jblond/php-diff",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JBlond/php-diff.git",
+                "reference": "054d249c58417ed72117ff570a6b18da69ed4ddc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JBlond/php-diff/zipball/054d249c58417ed72117ff570a6b18da69ed4ddc",
+                "reference": "054d249c58417ed72117ff570a6b18da69ed4ddc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "ext-pcre": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "digilive/git-changelog": "^1",
+                "jblond/php-cli": "^1.0",
+                "phpmd/phpmd": "2.*",
+                "phpunit/phpunit": "^8 || ^9",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "suggest": {
+                "jblond/php-cli": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "jblond\\": "lib/jblond"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Mario",
+                    "email": "leet31337@web.de"
+                },
+                {
+                    "name": "Ferry Cools",
+                    "email": "info@digilive.nl"
+                },
+                {
+                    "name": "Chris Boulton",
+                    "email": "chris.boulton@interspire.com"
+                }
+            ],
+            "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
+            "keywords": [
+                "diff",
+                "php",
+                "side-by-sidediff",
+                "udiff",
+                "unidiff",
+                "unified",
+                "unified diff"
+            ],
+            "support": {
+                "issues": "https://github.com/JBlond/php-diff/issues",
+                "source": "https://github.com/JBlond/php-diff/tree/v2.4.0"
+            },
+            "time": "2021-10-26T18:11:06+00:00"
         },
         {
             "name": "laravel/framework",

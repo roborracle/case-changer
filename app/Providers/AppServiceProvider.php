@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\Vite;
+use Illuminate\Support\Facades\Vite;
 use App\Services\SecurityService;
 use App\Services\CacheService;
 use Livewire\Livewire;
@@ -38,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
 
         // Vite and Livewire will use CSP nonce when available
         // The nonce is set by GenerateCspNonce middleware
+        Vite::useCspNonce();
     }
 }
