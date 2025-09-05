@@ -5,7 +5,7 @@
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center space-x-2">
                     <span class="text-2xl">📝</span>
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">Case Changer Pro</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">Text Transformer</span>
                 </a>
             </div>
 

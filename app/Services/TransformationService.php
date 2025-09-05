@@ -241,7 +241,7 @@ class TransformationService extends BaseTransformationService
     /**
      * Transform text using the specified transformation with comprehensive error handling
      */
-    public function transform(string $text, string $transformation): string
+    public function transform(string $text, string $transformation, ?string $styleGuide = null): string
     {
         try {
             // Check if transformation exists

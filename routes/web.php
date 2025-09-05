@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransformationController;
+use App\Http\Controllers\SitemapController;
 
 // Health check for Railway monitoring
 Route::get('/up', function () {
@@ -18,7 +19,6 @@ Route::get('/up', function () {
 // Homepage - Professional Case Changer Pro
 Route::get('/', [TransformationController::class, 'transform'])->name('home');
 Route::post('/', [TransformationController::class, 'transform'])->name('home.post');
-Route::post('/api/transform', [\App\Http\Controllers\Api\TransformationApiController::class, 'transform'])->name('transform');
 
 // Legacy routes (redirect to home)
 Route::get('/case-changer', function() {
@@ -40,9 +40,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
 });
 
 // Sitemap
-Route::get('/sitemap', function() {
-    return view('sitemap');
-})->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Legal Pages
 Route::get('/terms', function() {

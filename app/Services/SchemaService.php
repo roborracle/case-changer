@@ -202,7 +202,7 @@ class SchemaService
             '@context' => 'https://schema.org',
             '@type' => 'CollectionPage',
             '@id' => $this->baseUrl . "/conversions/{$category}#collection",
-            'name' => $categoryData['title'],
+            'name' => $categoryData['name'] ?? $categoryData['title'] ?? '',
             'description' => $categoryData['description'],
             'url' => $this->baseUrl . "/conversions/{$category}",
             'isPartOf' => [
@@ -436,7 +436,7 @@ class SchemaService
     {
         $breadcrumbs = $this->generateBreadcrumbSchema([
             ['name' => 'Tools', 'url' => $this->baseUrl . '/conversions'],
-            ['name' => $categoryData['title'], 'url' => $this->baseUrl . "/conversions/{$category}"],
+            ['name' => $categoryData['name'], 'url' => $this->baseUrl . "/conversions/{$category}"],
             ['name' => $toolData['name']]
         ]);
 

@@ -54,4 +54,45 @@ class TransformationApiController extends Controller
             'transformations' => $this->transformationService->getTransformations(),
         ]);
     }
+
+    /**
+     * Get all categories with their tools
+     */
+    public function categories(): JsonResponse
+    {
+        $categoriesConfig = config('categories.categories', []);
+        $tools = config('tools');
+        
+        $result = [];
+        
+        foreach ($categoriesConfig as $category) {
+            $categorySlug = $category['slug'] ?? '';
+            
+            $categoryData = [
+                'slug' => $categorySlug,
+                'name' => $category['name'] ?? $category['title'] ?? ucfirst(str_replace('-', ' ', $categorySlug)),
+                'description' => $category['description'] ?? '',
+                'icon' => $category['icon'] ?? '',
+                'tools' => []
+            ];
+            
+            // Get tools for this category
+            if (isset($tools[$categorySlug])) {
+                foreach ($tools[$categorySlug] as $toolSlug => $tool) {
+                    $categoryData['tools'][] = [
+                        'slug' => $toolSlug,
+                        'name' => $tool['name'] ?? $tool['title'] ?? ucfirst(str_replace('-', ' ', $toolSlug)),
+                        'description' => $tool['description'] ?? '',
+                        'type' => $tool['type'] ?? 'transformation'
+                    ];
+                }
+            }
+            
+            $result[] = $categoryData;
+        }
+        
+        return response()->json([
+            'data' => $result
+        ]);
+    }
 }

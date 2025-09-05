@@ -436,6 +436,8 @@
                 activeTab: 'title-case',
                 activeTransformation: 'title-case', 
                 showStyleGuide: true,
+                showToast: false,
+                toastMessage: '',
                 
                 init() {
                     // Listen for tab changes
@@ -448,6 +450,38 @@
                     this.$el.addEventListener('tab-changed', (e) => {
                         this.activeTab = e.detail.tabId;
                     });
+                },
+                
+                async copyToClipboard(text) {
+                    if (!text) return;
+                    
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        this.showToastNotification('Copied to clipboard!');
+                    } catch (err) {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            this.showToastNotification('Copied to clipboard!');
+                        } catch (fallbackErr) {
+                            this.showToastNotification('Copy failed', true);
+                        }
+                        document.body.removeChild(textArea);
+                    }
+                },
+                
+                showToastNotification(message, isError = false) {
+                    this.toastMessage = message;
+                    this.showToast = true;
+                    
+                    setTimeout(() => {
+                        this.showToast = false;
+                    }, 3000);
                 }
             }));
         });
@@ -460,7 +494,7 @@
     </a>
     
     {{-- Theme Toggle Component --}}
-    @include('components.theme-toggle')
+    <x-theme-toggle />
     
     {{-- Global Keyboard Shortcuts --}}
     @include('components.keyboard-shortcuts')

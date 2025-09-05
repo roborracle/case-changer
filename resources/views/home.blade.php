@@ -1,28 +1,33 @@
-<x-layouts.app title="Case Changer Pro - 210+ Text Transformation Tools">
-    <!-- Hero Section -->
-    <section class="py-8 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-                    Case Changer Pro
-                </h1>
-                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-5xl mx-auto">
-                    Transform text instantly with 210+ professional tools. Type or paste your text below and click any button to transform.
-                </p>
-            </div>
-        </div>
-    </section>
+<x-layouts.app title="Text Transformer - 210+ Text Transformation Tools">
+    <!-- Hero section removed - now handled by converter component -->
 
-    <!-- Main Converter Section -->
-    <section class="py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Main Text Converter -->
-            <div class="backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
-                @livewire('converter')
-            </div>
+    <!-- Hero Section with Main Converter -->
+    <section class="relative overflow-hidden">
+        <!-- Background Gradient Layer -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20"></div>
+        
+        <!-- Content Container -->
+        <div class="relative py-16 sm:py-20 lg:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Hero Content -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                        Transform Your Text
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+                            210+ Professional Tools
+                        </span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        Instant text transformation with case converters, developer formats, social media styles, and more. All tools work directly in your browser for maximum privacy and speed.
+                    </p>
+                </div>
+                <!-- Main Text Converter -->
+                <div class="backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+                    @livewire('converter')
+                </div>
             
-            <!-- Link to Full Tools -->
-            <div class="text-center mt-8">
+                <!-- Link to Full Tools -->
+                <div class="text-center mt-8">
                 <a href="{{ route('conversions.index') }}" 
                    class="inline-flex items-center px-6 py-3 text-lg font-semibold text-blue-600 hover:text-blue-700 bg-white/70 hover:bg-white/90 dark:bg-gray-800/70 dark:text-blue-400 dark:hover:bg-gray-800/90 rounded-xl border border-blue-300/50 dark:border-blue-700/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 backdrop-blur-sm">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,13 +41,14 @@
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">
                     Need more transformations? Access our complete collection of specialized tools
                 </p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Categories Section -->
-    <section class="py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
-        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                     Browse by Category
@@ -105,8 +111,8 @@
     </section>
 
     <!-- Features Section -->
-    <section class="py-16 bg-white dark:bg-gray-900">
-        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-16 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Why Choose Case Changer Pro?</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">

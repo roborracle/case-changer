@@ -6,917 +6,1072 @@
  */
 
 return [
-    'case-conversions' => [
-        'upper-case' => [
+        'case-conversions' => [
+          'upper-case' => [
             'name' => 'Upper Case',
             'description' => 'Convert text to uppercase letters',
-            'icon' => '🔤'
-        ],
-        'lower-case' => [
+            'icon' => '🔤',
+            'type' => 'case',
+    ],
+          'lower-case' => [
             'name' => 'Lower Case',
             'description' => 'Convert text to lowercase letters',
-            'icon' => '🔡'
-        ],
-        'title-case' => [
+            'icon' => '🔡',
+            'type' => 'case',
+    ],
+          'title-case' => [
             'name' => 'Title Case',
             'description' => 'Capitalize the first letter of each word',
-            'icon' => '📝'
-        ],
-        'sentence-case' => [
+            'icon' => '📝',
+            'type' => 'case',
+    ],
+          'sentence-case' => [
             'name' => 'Sentence Case',
             'description' => 'Capitalize the first letter of each sentence',
-            'icon' => '📄'
-        ],
-        'capitalize-words' => [
+            'icon' => '📄',
+            'type' => 'case',
+    ],
+          'capitalize-words' => [
             'name' => 'Capitalize Words',
             'description' => 'Capitalize the first letter of every word',
-            'icon' => '🔤'
-        ],
-        'alternating-case' => [
+            'icon' => '🔤',
+            'type' => 'case',
+    ],
+          'alternating-case' => [
             'name' => 'Alternating Case',
             'description' => 'Alternate between uppercase and lowercase letters',
-            'icon' => '🔀'
-        ],
-        'inverse-case' => [
+            'icon' => '🔀',
+            'type' => 'case',
+    ],
+          'inverse-case' => [
             'name' => 'Inverse Case',
             'description' => 'Swap uppercase and lowercase letters',
-            'icon' => '🔄'
-        ]
+            'icon' => '🔄',
+            'type' => 'case',
     ],
-    
-    'developer-formats' => [
-        'camel-case' => [
+  ],
+        'developer-formats' => [
+          'camel-case' => [
             'name' => 'Camel Case',
             'description' => 'Convert to camelCase format',
-            'icon' => '🐪'
-        ],
-        'pascal-case' => [
+            'icon' => '🐪',
+            'type' => 'case',
+    ],
+          'pascal-case' => [
             'name' => 'Pascal Case',
             'description' => 'Convert to PascalCase format',
-            'icon' => '📦'
-        ],
-        'snake-case' => [
+            'icon' => '📦',
+            'type' => 'case',
+    ],
+          'snake-case' => [
             'name' => 'Snake Case',
             'description' => 'Convert to snake_case format',
-            'icon' => '🐍'
-        ],
-        'constant-case' => [
+            'icon' => '🐍',
+            'type' => 'case',
+    ],
+          'constant-case' => [
             'name' => 'Constant Case',
             'description' => 'Convert to CONSTANT_CASE format',
-            'icon' => '📊'
-        ],
-        'kebab-case' => [
+            'icon' => '📊',
+            'type' => 'case',
+    ],
+          'kebab-case' => [
             'name' => 'Kebab Case',
             'description' => 'Convert to kebab-case format',
-            'icon' => '🍢'
-        ],
-        'dot-case' => [
+            'icon' => '🍢',
+            'type' => 'case',
+    ],
+          'dot-case' => [
             'name' => 'Dot Case',
             'description' => 'Convert to dot.case format',
-            'icon' => '⚫'
-        ],
-        'path-case' => [
+            'icon' => '⚫',
+            'type' => 'case',
+    ],
+          'path-case' => [
             'name' => 'Path Case',
             'description' => 'Convert to path/case format',
-            'icon' => '📁'
-        ],
-        'sql-case' => [
+            'icon' => '📁',
+            'type' => 'case',
+    ],
+          'sql-case' => [
             'name' => 'SQL Case',
             'description' => 'Format for SQL queries',
-            'icon' => '🗃️'
-        ],
-        'python-case' => [
+            'icon' => '🗃️',
+            'type' => 'case',
+    ],
+          'python-case' => [
             'name' => 'Python Case',
             'description' => 'Python naming convention',
-            'icon' => '🐍'
-        ],
-        'java-case' => [
+            'icon' => '🐍',
+            'type' => 'case',
+    ],
+          'java-case' => [
             'name' => 'Java Case',
             'description' => 'Java naming convention',
-            'icon' => '☕'
-        ],
-        'php-case' => [
+            'icon' => '☕',
+            'type' => 'case',
+    ],
+          'php-case' => [
             'name' => 'PHP Case',
             'description' => 'PHP naming convention',
-            'icon' => '🐘'
-        ],
-        'ruby-case' => [
+            'icon' => '🐘',
+            'type' => 'case',
+    ],
+          'ruby-case' => [
             'name' => 'Ruby Case',
             'description' => 'Ruby naming convention',
-            'icon' => '💎'
-        ]
+            'icon' => '💎',
+            'type' => 'case',
     ],
-    
-    'journalistic-styles' => [
-        'ap-style' => [
+  ],
+        'journalistic-styles' => [
+          'ap-style' => [
             'name' => 'AP Style',
             'description' => 'Associated Press style guide',
-            'icon' => '📰'
-        ],
-        'nyt-style' => [
+            'icon' => '📰',
+            'type' => 'style',
+    ],
+          'nyt-style' => [
             'name' => 'NY Times Style',
             'description' => 'New York Times style guide',
-            'icon' => '🗞️'
-        ],
-        'chicago-style' => [
+            'icon' => '🗞️',
+            'type' => 'style',
+    ],
+          'chicago-style' => [
             'name' => 'Chicago Style',
             'description' => 'Chicago Manual of Style',
-            'icon' => '📚'
-        ],
-        'guardian-style' => [
+            'icon' => '📚',
+            'type' => 'style',
+    ],
+          'guardian-style' => [
             'name' => 'Guardian Style',
             'description' => 'Guardian newspaper style',
-            'icon' => '📰'
-        ],
-        'bbc-style' => [
+            'icon' => '📰',
+            'type' => 'style',
+    ],
+          'bbc-style' => [
             'name' => 'BBC Style',
             'description' => 'BBC News style guide',
-            'icon' => '📺'
-        ],
-        'reuters-style' => [
+            'icon' => '📺',
+            'type' => 'style',
+    ],
+          'reuters-style' => [
             'name' => 'Reuters Style',
             'description' => 'Reuters news agency style',
-            'icon' => '📡'
-        ],
-        'economist-style' => [
+            'icon' => '📡',
+            'type' => 'style',
+    ],
+          'economist-style' => [
             'name' => 'Economist Style',
             'description' => 'The Economist style guide',
-            'icon' => '📊'
-        ],
-        'wsj-style' => [
+            'icon' => '📊',
+            'type' => 'style',
+    ],
+          'wsj-style' => [
             'name' => 'WSJ Style',
             'description' => 'Wall Street Journal style',
-            'icon' => '💼'
-        ]
+            'icon' => '💼',
+            'type' => 'style',
     ],
-    
-    'academic-styles' => [
-        'apa-style' => [
+  ],
+        'academic-styles' => [
+          'apa-style' => [
             'name' => 'APA Style',
             'description' => 'American Psychological Association style',
-            'icon' => '🎓'
-        ],
-        'mla-style' => [
+            'icon' => '🎓',
+            'type' => 'style',
+    ],
+          'mla-style' => [
             'name' => 'MLA Style',
             'description' => 'Modern Language Association style',
-            'icon' => '📖'
-        ],
-        'chicago-author-date' => [
+            'icon' => '📖',
+            'type' => 'style',
+    ],
+          'chicago-author-date' => [
             'name' => 'Chicago Author-Date',
             'description' => 'Chicago author-date citation',
-            'icon' => '📅'
-        ],
-        'chicago-notes' => [
+            'icon' => '📅',
+            'type' => 'style',
+    ],
+          'chicago-notes' => [
             'name' => 'Chicago Notes',
             'description' => 'Chicago notes and bibliography',
-            'icon' => '📝'
-        ],
-        'harvard-style' => [
+            'icon' => '📝',
+            'type' => 'style',
+    ],
+          'harvard-style' => [
             'name' => 'Harvard Style',
             'description' => 'Harvard referencing style',
-            'icon' => '🏛️'
-        ],
-        'vancouver-style' => [
+            'icon' => '🏛️',
+            'type' => 'style',
+    ],
+          'vancouver-style' => [
             'name' => 'Vancouver Style',
             'description' => 'Vancouver citation style',
-            'icon' => '🏥'
-        ],
-        'ieee-style' => [
+            'icon' => '🏥',
+            'type' => 'style',
+    ],
+          'ieee-style' => [
             'name' => 'IEEE Style',
             'description' => 'IEEE citation style',
-            'icon' => '⚡'
-        ],
-        'ama-style' => [
+            'icon' => '⚡',
+            'type' => 'style',
+    ],
+          'ama-style' => [
             'name' => 'AMA Style',
             'description' => 'American Medical Association style',
-            'icon' => '⚕️'
-        ],
-        'bluebook-style' => [
+            'icon' => '⚕️',
+            'type' => 'style',
+    ],
+          'bluebook-style' => [
             'name' => 'Bluebook Style',
             'description' => 'Legal citation format',
-            'icon' => '⚖️'
-        ]
+            'icon' => '⚖️',
+            'type' => 'style',
     ],
-    
-    'creative-formats' => [
-        'vertical-text' => [
+  ],
+        'creative-formats' => [
+          'vertical-text' => [
             'name' => 'Vertical Text',
             'description' => 'Display text vertically',
-            'icon' => '📐'
-        ],
-        'reversed-text' => [
+            'icon' => '📐',
+            'type' => 'creative',
+    ],
+          'reversed-text' => [
             'name' => 'Reversed Text',
             'description' => 'Reverse the text order',
-            'icon' => '⬅️'
-        ],
-        'mirrored-text' => [
+            'icon' => '⬅️',
+            'type' => 'creative',
+    ],
+          'mirrored-text' => [
             'name' => 'Mirrored Text',
             'description' => 'Mirror the text horizontally',
-            'icon' => '🪞'
-        ],
-        'upside-down' => [
+            'icon' => '🪞',
+            'type' => 'creative',
+    ],
+          'upside-down' => [
             'name' => 'Upside Down',
             'description' => 'Flip text upside down',
-            'icon' => '🙃'
-        ],
-        'diagonal-text' => [
+            'icon' => '🙃',
+            'type' => 'creative',
+    ],
+          'diagonal-text' => [
             'name' => 'Diagonal Text',
             'description' => 'Display text diagonally',
-            'icon' => '↗️'
-        ],
-        'wave-text' => [
+            'icon' => '↗️',
+            'type' => 'creative',
+    ],
+          'wave-text' => [
             'name' => 'Wave Text',
             'description' => 'Create wavy text effect',
-            'icon' => '🌊'
-        ],
-        'circle-text' => [
+            'icon' => '🌊',
+            'type' => 'creative',
+    ],
+          'circle-text' => [
             'name' => 'Circle Text',
             'description' => 'Arrange text in a circle',
-            'icon' => '⭕'
-        ],
-        'zigzag-text' => [
+            'icon' => '⭕',
+            'type' => 'creative',
+    ],
+          'zigzag-text' => [
             'name' => 'Zigzag Text',
             'description' => 'Create zigzag text pattern',
-            'icon' => '⚡'
-        ],
-        'pyramid-text' => [
+            'icon' => '⚡',
+            'type' => 'creative',
+    ],
+          'pyramid-text' => [
             'name' => 'Pyramid Text',
             'description' => 'Arrange text in pyramid shape',
-            'icon' => '🔺'
-        ],
-        'spiral-text' => [
+            'icon' => '🔺',
+            'type' => 'creative',
+    ],
+          'spiral-text' => [
             'name' => 'Spiral Text',
             'description' => 'Create spiral text effect',
-            'icon' => '🌀'
-        ],
-        'rainbow-text' => [
+            'icon' => '🌀',
+            'type' => 'creative',
+    ],
+          'rainbow-text' => [
             'name' => 'Rainbow Text',
             'description' => 'Add rainbow colors to text',
-            'icon' => '🌈'
-        ]
+            'icon' => '🌈',
+            'type' => 'creative',
     ],
-    
-    'business-formats' => [
-        'email-format' => [
+  ],
+        'business-formats' => [
+          'email-format' => [
             'name' => 'Email Format',
             'description' => 'Professional email formatting',
-            'icon' => '📧'
-        ],
-        'business-letter' => [
+            'icon' => '📧',
+            'type' => 'format',
+    ],
+          'business-letter' => [
             'name' => 'Business Letter',
             'description' => 'Formal business letter format',
-            'icon' => '✉️'
-        ],
-        'memo-format' => [
+            'icon' => '✉️',
+            'type' => 'format',
+    ],
+          'memo-format' => [
             'name' => 'Memo Format',
             'description' => 'Business memorandum format',
-            'icon' => '📋'
-        ],
-        'invoice-format' => [
+            'icon' => '📋',
+            'type' => 'format',
+    ],
+          'invoice-format' => [
             'name' => 'Invoice Format',
             'description' => 'Professional invoice layout',
-            'icon' => '🧾'
-        ],
-        'proposal-format' => [
+            'icon' => '🧾',
+            'type' => 'format',
+    ],
+          'proposal-format' => [
             'name' => 'Proposal Format',
             'description' => 'Business proposal structure',
-            'icon' => '📑'
-        ],
-        'resume-format' => [
+            'icon' => '📑',
+            'type' => 'format',
+    ],
+          'resume-format' => [
             'name' => 'Resume Format',
             'description' => 'Professional resume layout',
-            'icon' => '📄'
-        ],
-        'report-format' => [
+            'icon' => '📄',
+            'type' => 'format',
+    ],
+          'report-format' => [
             'name' => 'Report Format',
             'description' => 'Business report structure',
-            'icon' => '📊'
-        ],
-        'contract-format' => [
+            'icon' => '📊',
+            'type' => 'format',
+    ],
+          'contract-format' => [
             'name' => 'Contract Format',
             'description' => 'Legal contract formatting',
-            'icon' => '📜'
-        ]
+            'icon' => '📜',
+            'type' => 'format',
     ],
-    
-    'social-media-formats' => [
-        'twitter-thread' => [
+  ],
+        'social-media-formats' => [
+          'twitter-thread' => [
             'name' => 'Twitter Thread',
             'description' => 'Format text for Twitter threads',
-            'icon' => '🐦'
-        ],
-        'instagram-caption' => [
+            'icon' => '🐦',
+            'type' => 'social',
+    ],
+          'instagram-caption' => [
             'name' => 'Instagram Caption',
             'description' => 'Format Instagram captions',
-            'icon' => '📸'
-        ],
-        'linkedin-post' => [
+            'icon' => '📸',
+            'type' => 'social',
+    ],
+          'linkedin-post' => [
             'name' => 'LinkedIn Post',
             'description' => 'Professional LinkedIn formatting',
-            'icon' => '💼'
-        ],
-        'facebook-post' => [
+            'icon' => '💼',
+            'type' => 'social',
+    ],
+          'facebook-post' => [
             'name' => 'Facebook Post',
             'description' => 'Format for Facebook posts',
-            'icon' => '👍'
-        ],
-        'youtube-description' => [
+            'icon' => '👍',
+            'type' => 'social',
+    ],
+          'youtube-description' => [
             'name' => 'YouTube Description',
             'description' => 'Format YouTube descriptions',
-            'icon' => '▶️'
-        ],
-        'tiktok-caption' => [
+            'icon' => '▶️',
+            'type' => 'social',
+    ],
+          'tiktok-caption' => [
             'name' => 'TikTok Caption',
             'description' => 'Format TikTok captions',
-            'icon' => '🎵'
-        ],
-        'reddit-post' => [
+            'icon' => '🎵',
+            'type' => 'social',
+    ],
+          'reddit-post' => [
             'name' => 'Reddit Post',
             'description' => 'Format Reddit posts',
-            'icon' => '🔴'
-        ],
-        'discord-message' => [
+            'icon' => '🔴',
+            'type' => 'social',
+    ],
+          'discord-message' => [
             'name' => 'Discord Message',
             'description' => 'Format Discord messages',
-            'icon' => '💬'
-        ]
+            'icon' => '💬',
+            'type' => 'social',
     ],
-    
-    'technical-documentation' => [
-        'markdown-format' => [
+  ],
+        'technical-documentation' => [
+          'markdown-format' => [
             'name' => 'Markdown Format',
             'description' => 'Convert to Markdown syntax',
-            'icon' => '📝'
-        ],
-        'rst-format' => [
+            'icon' => '📝',
+            'type' => 'documentation',
+    ],
+          'rst-format' => [
             'name' => 'RST Format',
             'description' => 'reStructuredText format',
-            'icon' => '📄'
-        ],
-        'api-docs' => [
+            'icon' => '📄',
+            'type' => 'documentation',
+    ],
+          'api-docs' => [
             'name' => 'API Docs',
             'description' => 'API documentation format',
-            'icon' => '📡'
-        ],
-        'jsdoc-format' => [
+            'icon' => '📡',
+            'type' => 'documentation',
+    ],
+          'jsdoc-format' => [
             'name' => 'JSDoc Format',
             'description' => 'JavaScript documentation',
-            'icon' => '📖'
-        ],
-        'javadoc-format' => [
+            'icon' => '📖',
+            'type' => 'documentation',
+    ],
+          'javadoc-format' => [
             'name' => 'JavaDoc Format',
             'description' => 'Java documentation format',
-            'icon' => '☕'
-        ],
-        'phpdoc-format' => [
+            'icon' => '☕',
+            'type' => 'documentation',
+    ],
+          'phpdoc-format' => [
             'name' => 'PHPDoc Format',
             'description' => 'PHP documentation format',
-            'icon' => '🐘'
-        ],
-        'docstring-format' => [
+            'icon' => '🐘',
+            'type' => 'documentation',
+    ],
+          'docstring-format' => [
             'name' => 'Docstring Format',
             'description' => 'Python docstring format',
-            'icon' => '🐍'
-        ],
-        'sphinx-format' => [
+            'icon' => '🐍',
+            'type' => 'documentation',
+    ],
+          'sphinx-format' => [
             'name' => 'Sphinx Format',
             'description' => 'Sphinx documentation format',
-            'icon' => '🔧'
-        ]
+            'icon' => '🔧',
+            'type' => 'documentation',
     ],
-    
-    'international-formats' => [
-        'british-english' => [
+  ],
+        'international-formats' => [
+          'british-english' => [
             'name' => 'British English',
             'description' => 'Convert to British spelling',
-            'icon' => '🇬🇧'
-        ],
-        'american-english' => [
+            'icon' => '🇬🇧',
+            'type' => 'international',
+    ],
+          'american-english' => [
             'name' => 'American English',
             'description' => 'Convert to American spelling',
-            'icon' => '🇺🇸'
-        ],
-        'canadian-english' => [
+            'icon' => '🇺🇸',
+            'type' => 'international',
+    ],
+          'canadian-english' => [
             'name' => 'Canadian English',
             'description' => 'Convert to Canadian spelling',
-            'icon' => '🇨🇦'
-        ],
-        'australian-english' => [
+            'icon' => '🇨🇦',
+            'type' => 'international',
+    ],
+          'australian-english' => [
             'name' => 'Australian English',
             'description' => 'Convert to Australian spelling',
-            'icon' => '🇦🇺'
-        ],
-        'simplified-chinese' => [
+            'icon' => '🇦🇺',
+            'type' => 'international',
+    ],
+          'simplified-chinese' => [
             'name' => 'Simplified Chinese',
             'description' => 'Convert to simplified Chinese',
-            'icon' => '🇨🇳'
-        ],
-        'traditional-chinese' => [
+            'icon' => '🇨🇳',
+            'type' => 'international',
+    ],
+          'traditional-chinese' => [
             'name' => 'Traditional Chinese',
             'description' => 'Convert to traditional Chinese',
-            'icon' => '🇹🇼'
-        ],
-        'european-date' => [
+            'icon' => '🇹🇼',
+            'type' => 'international',
+    ],
+          'european-date' => [
             'name' => 'European Date',
             'description' => 'DD/MM/YYYY format',
-            'icon' => '🇪🇺'
-        ],
-        'us-date' => [
+            'icon' => '🇪🇺',
+            'type' => 'international',
+    ],
+          'us-date' => [
             'name' => 'US Date',
             'description' => 'MM/DD/YYYY format',
-            'icon' => '🇺🇸'
-        ]
+            'icon' => '🇺🇸',
+            'type' => 'international',
     ],
-    
-    'utility-transformations' => [
-        'remove-spaces' => [
+  ],
+        'utility-transformations' => [
+          'remove-spaces' => [
             'name' => 'Remove Spaces',
             'description' => 'Remove all spaces from text',
-            'icon' => '🔽'
-        ],
-        'trim-text' => [
+            'icon' => '🔽',
+            'type' => 'utility',
+    ],
+          'trim-text' => [
             'name' => 'Trim Text',
             'description' => 'Remove leading and trailing spaces',
-            'icon' => '✂️'
-        ],
-        'add-line-numbers' => [
+            'icon' => '✂️',
+            'type' => 'utility',
+    ],
+          'add-line-numbers' => [
             'name' => 'Add Line Numbers',
             'description' => 'Number each line of text',
-            'icon' => '🔢'
-        ],
-        'remove-line-numbers' => [
+            'icon' => '🔢',
+            'type' => 'utility',
+    ],
+          'remove-line-numbers' => [
             'name' => 'Remove Line Numbers',
             'description' => 'Remove line numbers from text',
-            'icon' => '❌'
-        ],
-        'sort-lines' => [
+            'icon' => '❌',
+            'type' => 'utility',
+    ],
+          'sort-lines' => [
             'name' => 'Sort Lines',
             'description' => 'Sort lines alphabetically',
-            'icon' => '📊'
-        ],
-        'reverse-lines' => [
+            'icon' => '📊',
+            'type' => 'utility',
+    ],
+          'reverse-lines' => [
             'name' => 'Reverse Lines',
             'description' => 'Reverse the order of lines',
-            'icon' => '🔄'
-        ],
-        'unique-lines' => [
+            'icon' => '🔄',
+            'type' => 'utility',
+    ],
+          'unique-lines' => [
             'name' => 'Unique Lines',
             'description' => 'Remove duplicate lines',
-            'icon' => '1️⃣'
-        ],
-        'shuffle-lines' => [
+            'icon' => '1️⃣',
+            'type' => 'utility',
+    ],
+          'shuffle-lines' => [
             'name' => 'Shuffle Lines',
             'description' => 'Randomly shuffle lines',
-            'icon' => '🎲'
-        ],
-        'wrap-text' => [
+            'icon' => '🎲',
+            'type' => 'utility',
+    ],
+          'wrap-text' => [
             'name' => 'Wrap Text',
             'description' => 'Wrap text at specified width',
-            'icon' => '📏'
-        ],
-        'unwrap-text' => [
+            'icon' => '📏',
+            'type' => 'utility',
+    ],
+          'unwrap-text' => [
             'name' => 'Unwrap Text',
             'description' => 'Remove line breaks within paragraphs',
-            'icon' => '📐'
-        ],
-        'indent-text' => [
+            'icon' => '📐',
+            'type' => 'utility',
+    ],
+          'indent-text' => [
             'name' => 'Indent Text',
             'description' => 'Add indentation to text',
-            'icon' => '➡️'
-        ],
-        'outdent-text' => [
+            'icon' => '➡️',
+            'type' => 'utility',
+    ],
+          'outdent-text' => [
             'name' => 'Outdent Text',
             'description' => 'Remove indentation from text',
-            'icon' => '⬅️'
-        ]
+            'icon' => '⬅️',
+            'type' => 'utility',
     ],
-    
-    'text-effects' => [
-        'bold-text' => [
+  ],
+        'text-effects' => [
+          'bold-text' => [
             'name' => 'Bold Text',
             'description' => 'Convert to bold Unicode characters',
-            'icon' => '🅱️'
-        ],
-        'italic-text' => [
+            'icon' => '🅱️',
+            'type' => 'effect',
+    ],
+          'italic-text' => [
             'name' => 'Italic Text',
             'description' => 'Convert to italic Unicode characters',
-            'icon' => '📖'
-        ],
-        'underline-text' => [
+            'icon' => '📖',
+            'type' => 'effect',
+    ],
+          'underline-text' => [
             'name' => 'Underline Text',
             'description' => 'Add underline to text',
-            'icon' => '_'
-        ],
-        'strike-through' => [
+            'icon' => '_',
+            'type' => 'effect',
+    ],
+          'strike-through' => [
             'name' => 'Strike Through',
             'description' => 'Add strikethrough effect',
-            'icon' => '➖'
-        ],
-        'double-struck' => [
+            'icon' => '➖',
+            'type' => 'effect',
+    ],
+          'double-struck' => [
             'name' => 'Double Struck',
             'description' => 'Convert to double-struck characters',
-            'icon' => '𝔻'
-        ],
-        'cursive-text' => [
+            'icon' => '𝔻',
+            'type' => 'effect',
+    ],
+          'cursive-text' => [
             'name' => 'Cursive Text',
             'description' => 'Convert to cursive Unicode',
-            'icon' => '✍️'
-        ],
-        'small-caps' => [
+            'icon' => '✍️',
+            'type' => 'effect',
+    ],
+          'small-caps' => [
             'name' => 'Small Caps',
             'description' => 'Convert to small capital letters',
-            'icon' => 'ᴀ'
-        ],
-        'superscript' => [
+            'icon' => 'ᴀ',
+            'type' => 'effect',
+    ],
+          'superscript' => [
             'name' => 'Superscript',
             'description' => 'Convert to superscript characters',
-            'icon' => '²'
-        ],
-        'subscript' => [
+            'icon' => '²',
+            'type' => 'effect',
+    ],
+          'subscript' => [
             'name' => 'Subscript',
             'description' => 'Convert to subscript characters',
-            'icon' => '₂'
-        ],
-        'wide-text' => [
+            'icon' => '₂',
+            'type' => 'effect',
+    ],
+          'wide-text' => [
             'name' => 'Wide Text',
             'description' => 'Convert to full-width characters',
-            'icon' => '🅆'
-        ],
-        'bubble-text' => [
+            'icon' => '🅆',
+            'type' => 'effect',
+    ],
+          'bubble-text' => [
             'name' => 'Bubble Text',
             'description' => 'Convert to bubble letters',
-            'icon' => '🅾️'
-        ],
-        'square-text' => [
+            'icon' => '🅾️',
+            'type' => 'effect',
+    ],
+          'square-text' => [
             'name' => 'Square Text',
             'description' => 'Convert to square letters',
-            'icon' => '🔲'
-        ]
+            'icon' => '🔲',
+            'type' => 'effect',
     ],
-    
-    'generators' => [
-        'lorem-ipsum' => [
+  ],
+        'generators' => [
+          'lorem-ipsum' => [
             'name' => 'Lorem Ipsum',
             'description' => 'Generate Lorem Ipsum text',
-            'icon' => '📝'
-        ],
-        'random-text' => [
+            'icon' => '📝',
+            'type' => 'generator',
+    ],
+          'random-text' => [
             'name' => 'Random Text',
             'description' => 'Generate random text',
-            'icon' => '🎲'
-        ],
-        'random-password' => [
+            'icon' => '🎲',
+            'type' => 'generator',
+    ],
+          'random-password' => [
             'name' => 'Random Password',
             'description' => 'Generate secure password',
-            'icon' => '🔐'
-        ],
-        'uuid-generator' => [
+            'icon' => '🔐',
+            'type' => 'generator',
+    ],
+          'uuid-generator' => [
             'name' => 'UUID Generator',
             'description' => 'Generate unique identifier',
-            'icon' => '🆔'
-        ],
-        'random-name' => [
+            'icon' => '🆔',
+            'type' => 'generator',
+    ],
+          'random-name' => [
             'name' => 'Random Name',
             'description' => 'Generate random names',
-            'icon' => '👤'
-        ],
-        'random-email' => [
+            'icon' => '👤',
+            'type' => 'generator',
+    ],
+          'random-email' => [
             'name' => 'Random Email',
             'description' => 'Generate random email addresses',
-            'icon' => '📧'
-        ],
-        'random-date' => [
+            'icon' => '📧',
+            'type' => 'generator',
+    ],
+          'random-date' => [
             'name' => 'Random Date',
             'description' => 'Generate random dates',
-            'icon' => '📅'
-        ],
-        'random-color' => [
+            'icon' => '📅',
+            'type' => 'generator',
+    ],
+          'random-color' => [
             'name' => 'Random Color',
             'description' => 'Generate random color codes',
-            'icon' => '🎨'
-        ],
-        'random-number' => [
+            'icon' => '🎨',
+            'type' => 'generator',
+    ],
+          'random-number' => [
             'name' => 'Random Number',
             'description' => 'Generate random numbers',
-            'icon' => '🔢'
-        ],
-        'random-ip' => [
+            'icon' => '🔢',
+            'type' => 'generator',
+    ],
+          'random-ip' => [
             'name' => 'Random IP',
             'description' => 'Generate random IP addresses',
-            'icon' => '🌐'
-        ],
-        'random-url' => [
+            'icon' => '🌐',
+            'type' => 'generator',
+    ],
+          'random-url' => [
             'name' => 'Random URL',
             'description' => 'Generate random URLs',
-            'icon' => '🔗'
-        ],
-        'random-phone' => [
+            'icon' => '🔗',
+            'type' => 'generator',
+    ],
+          'random-phone' => [
             'name' => 'Random Phone',
             'description' => 'Generate random phone numbers',
-            'icon' => '📱'
-        ],
-        'random-address' => [
+            'icon' => '📱',
+            'type' => 'generator',
+    ],
+          'random-address' => [
             'name' => 'Random Address',
             'description' => 'Generate random addresses',
-            'icon' => '🏠'
-        ]
+            'icon' => '🏠',
+            'type' => 'generator',
     ],
-    
-    'code-data-tools' => [
-        'json-format' => [
+  ],
+        'code-data-tools' => [
+          'json-format' => [
             'name' => 'JSON Format',
             'description' => 'Format and validate JSON',
-            'icon' => '{ }'
-        ],
-        'json-minify' => [
+            'icon' => '{ }',
+            'type' => 'encoder',
+    ],
+          'json-minify' => [
             'name' => 'JSON Minify',
             'description' => 'Minify JSON data',
-            'icon' => '📉'
-        ],
-        'json-escape' => [
+            'icon' => '📉',
+            'type' => 'encoder',
+    ],
+          'json-escape' => [
             'name' => 'JSON Escape',
             'description' => 'Escape JSON strings',
-            'icon' => '🔒'
-        ],
-        'json-unescape' => [
+            'icon' => '🔒',
+            'type' => 'encoder',
+    ],
+          'json-unescape' => [
             'name' => 'JSON Unescape',
             'description' => 'Unescape JSON strings',
-            'icon' => '🔓'
-        ],
-        'xml-format' => [
+            'icon' => '🔓',
+            'type' => 'encoder',
+    ],
+          'xml-format' => [
             'name' => 'XML Format',
             'description' => 'Format XML documents',
-            'icon' => '📄'
-        ],
-        'xml-minify' => [
+            'icon' => '📄',
+            'type' => 'encoder',
+    ],
+          'xml-minify' => [
             'name' => 'XML Minify',
             'description' => 'Minify XML data',
-            'icon' => '📉'
-        ],
-        'xml-escape' => [
+            'icon' => '📉',
+            'type' => 'encoder',
+    ],
+          'xml-escape' => [
             'name' => 'XML Escape',
             'description' => 'Escape XML entities',
-            'icon' => '🔒'
-        ],
-        'xml-unescape' => [
+            'icon' => '🔒',
+            'type' => 'encoder',
+    ],
+          'xml-unescape' => [
             'name' => 'XML Unescape',
             'description' => 'Unescape XML entities',
-            'icon' => '🔓'
-        ],
-        'html-encode' => [
+            'icon' => '🔓',
+            'type' => 'encoder',
+    ],
+          'html-encode' => [
             'name' => 'HTML Encode',
             'description' => 'Encode HTML entities',
-            'icon' => '🌐'
-        ],
-        'html-decode' => [
+            'icon' => '🌐',
+            'type' => 'encoder',
+    ],
+          'html-decode' => [
             'name' => 'HTML Decode',
             'description' => 'Decode HTML entities',
-            'icon' => '📖'
-        ],
-        'url-encode' => [
+            'icon' => '📖',
+            'type' => 'encoder',
+    ],
+          'url-encode' => [
             'name' => 'URL Encode',
             'description' => 'URL encode text',
-            'icon' => '🔗'
-        ],
-        'url-decode' => [
+            'icon' => '🔗',
+            'type' => 'encoder',
+    ],
+          'url-decode' => [
             'name' => 'URL Decode',
             'description' => 'URL decode text',
-            'icon' => '🔓'
-        ],
-        'base64-encode' => [
+            'icon' => '🔓',
+            'type' => 'encoder',
+    ],
+          'base64-encode' => [
             'name' => 'Base64 Encode',
             'description' => 'Encode to Base64',
-            'icon' => '🔐'
-        ],
-        'base64-decode' => [
+            'icon' => '🔐',
+            'type' => 'encoder',
+    ],
+          'base64-decode' => [
             'name' => 'Base64 Decode',
             'description' => 'Decode from Base64',
-            'icon' => '🔑'
-        ],
-        'hex-encode' => [
+            'icon' => '🔑',
+            'type' => 'encoder',
+    ],
+          'hex-encode' => [
             'name' => 'Hex Encode',
             'description' => 'Convert to hexadecimal',
-            'icon' => '#'
-        ],
-        'binary-encode' => [
+            'icon' => '#',
+            'type' => 'encoder',
+    ],
+          'binary-encode' => [
             'name' => 'Binary Encode',
             'description' => 'Convert to binary',
-            'icon' => '01'
-        ]
+            'icon' => '01',
+            'type' => 'encoder',
     ],
-    
-    'image-converters' => [
-        'text-to-ascii-art' => [
+  ],
+        'image-converters' => [
+          'text-to-ascii-art' => [
             'name' => 'Text to ASCII Art',
             'description' => 'Convert text to ASCII art',
-            'icon' => '🎨'
-        ],
-        'image-to-base64' => [
+            'icon' => '🎨',
+            'type' => 'converter',
+    ],
+          'image-to-base64' => [
             'name' => 'Image to Base64',
             'description' => 'Convert image to Base64',
-            'icon' => '🖼️'
-        ],
-        'svg-to-base64' => [
+            'icon' => '🖼️',
+            'type' => 'converter',
+    ],
+          'svg-to-base64' => [
             'name' => 'SVG to Base64',
             'description' => 'Convert SVG to Base64',
-            'icon' => '🎨'
-        ],
-        'emoji-to-unicode' => [
+            'icon' => '🎨',
+            'type' => 'converter',
+    ],
+          'emoji-to-unicode' => [
             'name' => 'Emoji to Unicode',
             'description' => 'Convert emoji to Unicode',
-            'icon' => '😀'
-        ],
-        'unicode-to-emoji' => [
+            'icon' => '😀',
+            'type' => 'converter',
+    ],
+          'unicode-to-emoji' => [
             'name' => 'Unicode to Emoji',
             'description' => 'Convert Unicode to emoji',
-            'icon' => '🔣'
-        ],
-        'text-to-qrcode' => [
+            'icon' => '🔣',
+            'type' => 'converter',
+    ],
+          'text-to-qrcode' => [
             'name' => 'Text to QR Code',
             'description' => 'Generate QR code from text',
-            'icon' => '📱'
-        ],
-        'text-to-barcode' => [
+            'icon' => '📱',
+            'type' => 'converter',
+    ],
+          'text-to-barcode' => [
             'name' => 'Text to Barcode',
             'description' => 'Generate barcode from text',
-            'icon' => '📊'
-        ],
-        'color-code-converter' => [
+            'icon' => '📊',
+            'type' => 'converter',
+    ],
+          'color-code-converter' => [
             'name' => 'Color Code Converter',
             'description' => 'Convert between color formats',
-            'icon' => '🎨'
-        ],
-        'font-converter' => [
+            'icon' => '🎨',
+            'type' => 'converter',
+    ],
+          'font-converter' => [
             'name' => 'Font Converter',
             'description' => 'Convert between font formats',
-            'icon' => '🔤'
-        ]
+            'icon' => '🔤',
+            'type' => 'converter',
     ],
-    
-    'text-analysis' => [
-        'word-counter' => [
+  ],
+        'text-analysis' => [
+          'word-counter' => [
             'name' => 'Word Counter',
             'description' => 'Count words in text',
-            'icon' => '🔢'
-        ],
-        'character-counter' => [
+            'icon' => '🔢',
+            'type' => 'analysis',
+    ],
+          'character-counter' => [
             'name' => 'Character Counter',
             'description' => 'Count characters in text',
-            'icon' => '📏'
-        ],
-        'line-counter' => [
+            'icon' => '📏',
+            'type' => 'analysis',
+    ],
+          'line-counter' => [
             'name' => 'Line Counter',
             'description' => 'Count lines in text',
-            'icon' => '📊'
-        ],
-        'reading-time' => [
+            'icon' => '📊',
+            'type' => 'analysis',
+    ],
+          'reading-time' => [
             'name' => 'Reading Time',
             'description' => 'Calculate reading time',
-            'icon' => '⏱️'
-        ],
-        'keyword-density' => [
+            'icon' => '⏱️',
+            'type' => 'analysis',
+    ],
+          'keyword-density' => [
             'name' => 'Keyword Density',
             'description' => 'Analyze keyword density',
-            'icon' => '📈'
-        ],
-        'sentiment-analysis' => [
+            'icon' => '📈',
+            'type' => 'analysis',
+    ],
+          'sentiment-analysis' => [
             'name' => 'Sentiment Analysis',
             'description' => 'Analyze text sentiment',
-            'icon' => '😊'
-        ],
-        'readability-score' => [
+            'icon' => '😊',
+            'type' => 'analysis',
+    ],
+          'readability-score' => [
             'name' => 'Readability Score',
             'description' => 'Calculate readability score',
-            'icon' => '📖'
-        ],
-        'language-detector' => [
+            'icon' => '📖',
+            'type' => 'analysis',
+    ],
+          'language-detector' => [
             'name' => 'Language Detector',
             'description' => 'Detect text language',
-            'icon' => '🌐'
-        ]
+            'icon' => '🌐',
+            'type' => 'analysis',
     ],
-    
-    'text-cleanup' => [
-        'remove-duplicates' => [
+  ],
+        'text-cleanup' => [
+          'remove-duplicates' => [
             'name' => 'Remove Duplicates',
             'description' => 'Remove duplicate lines',
-            'icon' => '🔄'
-        ],
-        'remove-empty-lines' => [
+            'icon' => '🔄',
+            'type' => 'cleanup',
+    ],
+          'remove-empty-lines' => [
             'name' => 'Remove Empty Lines',
             'description' => 'Remove blank lines',
-            'icon' => '❌'
-        ],
-        'remove-html-tags' => [
+            'icon' => '❌',
+            'type' => 'cleanup',
+    ],
+          'remove-html-tags' => [
             'name' => 'Remove HTML Tags',
             'description' => 'Strip HTML from text',
-            'icon' => '🏷️'
-        ],
-        'remove-punctuation' => [
+            'icon' => '🏷️',
+            'type' => 'cleanup',
+    ],
+          'remove-punctuation' => [
             'name' => 'Remove Punctuation',
             'description' => 'Remove all punctuation',
-            'icon' => '.'
-        ],
-        'remove-numbers' => [
+            'icon' => '.',
+            'type' => 'cleanup',
+    ],
+          'remove-numbers' => [
             'name' => 'Remove Numbers',
             'description' => 'Remove all numbers',
-            'icon' => '🔢'
-        ],
-        'remove-special-chars' => [
+            'icon' => '🔢',
+            'type' => 'cleanup',
+    ],
+          'remove-special-chars' => [
             'name' => 'Remove Special Chars',
             'description' => 'Remove special characters',
-            'icon' => '@'
-        ],
-        'normalize-whitespace' => [
+            'icon' => '@',
+            'type' => 'cleanup',
+    ],
+          'normalize-whitespace' => [
             'name' => 'Normalize Whitespace',
             'description' => 'Fix irregular spacing',
-            'icon' => '📐'
-        ],
-        'fix-encoding' => [
+            'icon' => '📐',
+            'type' => 'cleanup',
+    ],
+          'fix-encoding' => [
             'name' => 'Fix Encoding',
             'description' => 'Fix text encoding issues',
-            'icon' => '🔧'
-        ]
+            'icon' => '🔧',
+            'type' => 'cleanup',
     ],
-    
-    'social-media-generators' => [
-        'hashtag-generator' => [
+  ],
+        'social-media-generators' => [
+          'hashtag-generator' => [
             'name' => 'Hashtag Generator',
             'description' => 'Generate relevant hashtags',
-            'icon' => '#'
-        ],
-        'twitter-font' => [
+            'icon' => '#',
+            'type' => 'generator',
+    ],
+          'twitter-font' => [
             'name' => 'Twitter Font',
             'description' => 'Special Twitter fonts',
-            'icon' => '🐦'
-        ],
-        'instagram-font' => [
+            'icon' => '🐦',
+            'type' => 'generator',
+    ],
+          'instagram-font' => [
             'name' => 'Instagram Font',
             'description' => 'Instagram bio fonts',
-            'icon' => '📸'
-        ],
-        'emoji-translator' => [
+            'icon' => '📸',
+            'type' => 'generator',
+    ],
+          'emoji-translator' => [
             'name' => 'Emoji Translator',
             'description' => 'Convert text to emojis',
-            'icon' => '😀'
-        ],
-        'bio-generator' => [
+            'icon' => '😀',
+            'type' => 'generator',
+    ],
+          'bio-generator' => [
             'name' => 'Bio Generator',
             'description' => 'Generate social media bio',
-            'icon' => '👤'
-        ],
-        'caption-generator' => [
+            'icon' => '👤',
+            'type' => 'generator',
+    ],
+          'caption-generator' => [
             'name' => 'Caption Generator',
             'description' => 'Generate post captions',
-            'icon' => '💬'
-        ],
-        'username-generator' => [
+            'icon' => '💬',
+            'type' => 'generator',
+    ],
+          'username-generator' => [
             'name' => 'Username Generator',
             'description' => 'Generate unique usernames',
-            'icon' => '@'
-        ],
-        'handle-checker' => [
+            'icon' => '@',
+            'type' => 'generator',
+    ],
+          'handle-checker' => [
             'name' => 'Handle Checker',
             'description' => 'Check username availability',
-            'icon' => '✅'
-        ]
+            'icon' => '✅',
+            'type' => 'generator',
     ],
-    
-    'miscellaneous' => [
-        'morse-code' => [
+  ],
+        'miscellaneous' => [
+          'morse-code' => [
             'name' => 'Morse Code',
             'description' => 'Convert to/from Morse code',
-            'icon' => '📡'
-        ],
-        'binary-translator' => [
+            'icon' => '📡',
+            'type' => 'misc',
+    ],
+          'binary-translator' => [
             'name' => 'Binary Translator',
             'description' => 'Convert to/from binary',
-            'icon' => '01'
-        ],
-        'roman-numerals' => [
+            'icon' => '01',
+            'type' => 'misc',
+    ],
+          'roman-numerals' => [
             'name' => 'Roman Numerals',
             'description' => 'Convert to/from Roman numerals',
-            'icon' => 'Ⅷ'
-        ],
-        'nato-phonetic' => [
+            'icon' => 'Ⅷ',
+            'type' => 'misc',
+    ],
+          'nato-phonetic' => [
             'name' => 'NATO Phonetic',
             'description' => 'NATO phonetic alphabet',
-            'icon' => '🎖️'
-        ],
-        'pig-latin' => [
+            'icon' => '🎖️',
+            'type' => 'misc',
+    ],
+          'pig-latin' => [
             'name' => 'Pig Latin',
             'description' => 'Convert to Pig Latin',
-            'icon' => '🐷'
-        ],
-        'leetspeak' => [
+            'icon' => '🐷',
+            'type' => 'misc',
+    ],
+          'leetspeak' => [
             'name' => 'Leetspeak',
             'description' => 'Convert to 1337 speak',
-            'icon' => '1337'
-        ],
-        'zalgo-text' => [
+            'icon' => '1337',
+            'type' => 'misc',
+    ],
+          'zalgo-text' => [
             'name' => 'Zalgo Text',
             'description' => 'Create glitchy text',
-            'icon' => '👹'
-        ]
-    ]
+            'icon' => '👹',
+            'type' => 'misc',
+    ],
+  ],
 ];

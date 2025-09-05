@@ -21,7 +21,7 @@
     </nav>
 
     <!-- Category Header -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 rounded-2xl p-8 shadow-xl">
                 <div class="flex items-center justify-between">
@@ -51,7 +51,7 @@
     </section>
 
     <!-- Main Content -->
-    <section class="py-12">
+    <section class="py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-4 lg:gap-8">
                 <!-- Tools Grid -->
@@ -111,7 +111,7 @@
                                 @endif
                                 
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                                    <a href="{{ route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']]) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    <a href="{{ route('conversions.tool', ['category' => $categorySlug, 'tool' => $tool['slug']]) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                         {{ $tool['name'] }}
                                     </a>
                                 </h3>
@@ -122,7 +122,7 @@
                                 
                                 <div class="flex items-center justify-between">
                                     <a 
-                                        href="{{ route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']]) }}"
+                                        href="{{ route('conversions.tool', ['category' => $categorySlug, 'tool' => $tool['slug']]) }}"
                                         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         Try Now
@@ -234,7 +234,7 @@
                 '@type' => 'ListItem',
                 'position' => $index + 1,
                 'name' => $tool['name'],
-                'url' => route('conversions.tool', ['category' => $category['slug'], 'tool' => $tool['slug']])
+                'url' => route('conversions.tool', ['category' => $categorySlug, 'tool' => $tool['slug']])
             ];
         }, $tools, array_keys($tools))
     ], JSON_UNESCAPED_SLASHES) !!}
