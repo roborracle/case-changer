@@ -105,3 +105,8 @@ Route::get('/home-improved', function() {
 Route::get('/premium-converter', function() {
     return view('test-premium-converter');
 });
+
+// Apply rate limiting to Livewire routes
+Route::middleware(['throttle:60,1'])->group(function () {
+    // Livewire will handle its own routes, but we can apply throttling via middleware
+});

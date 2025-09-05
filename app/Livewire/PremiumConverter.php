@@ -20,6 +20,16 @@ class PremiumConverter extends Component
     public int $wordCount = 0;
     public int $lineCount = 0;
     
+    // Validation rules
+    protected $rules = [
+        'inputText' => 'required|max:1048576'
+    ];
+    
+    protected $messages = [
+        'inputText.required' => 'Please enter some text to transform.',
+        'inputText.max' => 'The input text cannot be larger than 1MB.'
+    ];
+    
     // Real-time statistics properties
     public array $inputStats = [];
     public array $outputStats = [];
@@ -95,11 +105,23 @@ class PremiumConverter extends Component
     
     // Primary transformations for the main bar
     protected array $primaryTransformations = [
+        'title-case' => 'Title Case',
         'sentence-case' => 'Sentence case',
-        'lower-case' => 'lower case',
-        'upper-case' => 'UPPER CASE',
-        'title-case' => 'Title Case'
+        'upper-case' => 'UPPERCASE',
+        'lower-case' => 'lowercase'
     ];
+    
+    // Style guide options
+    protected array $styleGuides = [
+        'ap' => 'AP Style',
+        'chicago' => 'Chicago Style',
+        'mla' => 'MLA Style',
+        'apa' => 'APA Style',
+        'ieee' => 'IEEE Style'
+    ];
+    
+    public string $selectedStyleGuide = '';
+    public string $themeMode = 'auto'; // auto, light, dark
     
     // Secondary transformations for the drawer
     protected array $secondaryTransformations = [
@@ -261,9 +283,18 @@ class PremiumConverter extends Component
         $this->selectedTransformation = $transformation;
         $this->lastUsedTransformation = $transformation;
         
+        // Validate input
         if (empty($this->inputText)) {
             $this->outputText = '';
+            $this->addError('inputText', 'Please enter some text to transform.');
             $this->dispatch('show-toast', message: 'Please enter some text first', type: 'error');
+            return;
+        }
+        
+        // Validate text size
+        if (strlen($this->inputText) > $this->maxTextSize) {
+            $this->addError('inputText', 'The input text cannot be larger than 1MB.');
+            $this->dispatch('show-toast', message: 'Text exceeds maximum size limit of 1MB', type: 'error');
             return;
         }
         
@@ -1389,11 +1420,94 @@ class PremiumConverter extends Component
         $this->canRedo = count($this->redoStack) > 0;
     }
     
+    /**
+     * Get all available transformations for dropdown/search
+     * This method is required by tests and provides all 210+ transformations
+     */
+    public function getAllTransformations(): array
+    {
+        $transformationService = new TransformationService();
+        $allTransformations = $transformationService->getTransformations();
+        
+        // Format transformations for UI consumption
+        $formatted = [];
+        foreach ($allTransformations as $key => $name) {
+            $formatted[] = [
+                'id' => $key,
+                'name' => $name,
+                'category' => $this->getTransformationCategory($key),
+                'slug' => $key
+            ];
+        }
+        
+        return $formatted;
+    }
+    
+    /**
+     * Get category for a transformation
+     */
+    protected function getTransformationCategory(string $transformation): string
+    {
+        $categories = [
+            'upper-case' => 'Case Conversions',
+            'lower-case' => 'Case Conversions',
+            'title-case' => 'Case Conversions',
+            'sentence-case' => 'Case Conversions',
+            'camel-case' => 'Developer Formats',
+            'pascal-case' => 'Developer Formats',
+            'snake-case' => 'Developer Formats',
+            'kebab-case' => 'Developer Formats',
+            'constant-case' => 'Developer Formats',
+            'ap-style' => 'Journalistic Styles',
+            'chicago-style' => 'Academic Styles',
+            'mla-style' => 'Academic Styles',
+            'apa-style' => 'Academic Styles',
+            'ieee-style' => 'Academic Styles',
+            // Add more categories as needed
+        ];
+        
+        return $categories[$transformation] ?? 'Other Tools';
+    }
+    
+    /**
+     * Set theme mode
+     */
+    public function setThemeMode(string $mode)
+    {
+        if (in_array($mode, ['auto', 'light', 'dark'])) {
+            $this->themeMode = $mode;
+            $this->dispatch('theme-changed', mode: $mode);
+            $this->dispatch('show-toast', message: 'Theme mode set to ' . ucfirst($mode), type: 'success');
+        }
+    }
+    
+    /**
+     * Apply style guide to transformation
+     */
+    public function applyStyleGuide(string $styleGuide)
+    {
+        $this->selectedStyleGuide = $styleGuide;
+        
+        // If we have text and a transformation, reapply with style guide
+        if (!empty($this->inputText) && !empty($this->selectedTransformation)) {
+            $this->applyEnhancedTransformation($this->selectedTransformation);
+        }
+        
+        $guideName = $this->styleGuides[$styleGuide] ?? $styleGuide;
+        $this->dispatch('show-toast', message: $guideName . ' applied', type: 'success');
+    }
+    
     public function render()
     {
         // Update memory usage in performance metrics
         $this->performanceMetrics['memory_usage'] = $this->getMemoryUsage();
         
-        return view('livewire.premium-converter');
+        // Use enhanced view with new UI
+        return view('livewire.premium-converter-enhanced', [
+            'primaryTransformations' => $this->primaryTransformations,
+            'secondaryTransformations' => $this->secondaryTransformations,
+            'styleGuides' => $this->styleGuides,
+            'animatedPlaceholders' => $this->animatedPlaceholders
+        ]);
     }
 }

@@ -229,6 +229,14 @@ class TransformationService extends BaseTransformationService
     {
         return $this->transformations;
     }
+    
+    /**
+     * Get all transformations - alias for getTransformations() for backward compatibility
+     */
+    public function getAllTransformations(): array
+    {
+        return $this->transformations;
+    }
 
     /**
      * Transform text using the specified transformation with comprehensive error handling
@@ -1102,12 +1110,12 @@ class TransformationService extends BaseTransformationService
         return $result;
     }
     
-    private function toMD5Hash(string $text): string
+    protected function toMd5Hash(string $text): string
     {
         return md5($text);
     }
     
-    private function toSHA256Hash(string $text): string
+    protected function toSha256Hash(string $text): string
     {
         return hash('sha256', $text);
     }
@@ -1189,7 +1197,7 @@ class TransformationService extends BaseTransformationService
         return implode("\n", $formatted);
     }
     
-    private function toUTF8Converter(string $text): string
+    protected function toUtf8Converter(string $text): string
     {
         return mb_convert_encoding($text, 'UTF-8', mb_detect_encoding($text));
     }
@@ -1592,11 +1600,11 @@ class TransformationService extends BaseTransformationService
     
     // ================== ENCODING/DECODING METHODS ==================
     
-    private function toBase64Encode($text) {
+    protected function toBase64Encode($text) {
         return base64_encode($text);
     }
     
-    private function toBase64Decode($text) {
+    protected function toBase64Decode($text) {
         $decoded = base64_decode($text, true);
         return $decoded !== false ? $decoded : "Invalid Base64 input";
     }

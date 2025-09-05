@@ -1,0 +1,506 @@
+
+   PASS  Tests\Unit\SecurityTest
+  ✓ xss prevention in html entities                                      0.08s  
+  ✓ sql injection prevention                                             0.01s  
+  ✓ csrf token required on api                                           0.03s  
+  ✓ csp headers are present                                              0.01s  
+  ✓ security headers are present                                         0.01s  
+  ✓ text length limit enforced                                           0.01s  
+  ✓ no code execution in transformations                                 0.01s  
+  ✓ api rate limiting                                                    0.06s  
+  ✓ env variables not exposed                                            0.01s  
+
+   FAIL  Tests\Feature\ApiEndpointsTest
+  ✓ api get all categories                                               0.05s  
+  ⨯ api get specific category                                            0.02s  
+  ⨯ api get tool data                                                    0.01s  
+  ✓ api invalid category 404                                             0.01s  
+  ✓ api invalid tool 404                                                 0.01s  
+  ✓ api transformation endpoint                                          0.01s  
+  ✓ api transformation various inputs                                    0.01s  
+  ✓ api transformation validation                                        0.01s  
+  ✓ api rate limiting                                                    0.01s  
+  ✓ api response headers                                                 0.01s  
+  ✓ api cors headers                                                     0.01s  
+  ✓ api malformed json                                                   0.01s  
+  ✓ api invalid http methods                                             0.01s  
+  ✓ api large payload                                                    0.01s  
+  ✓ api unicode content                                                  0.01s  
+  ✓ api response times                                                   0.01s  
+  ✓ api authentication                                                   0.01s  
+  ✓ api sql injection protection                                         0.01s  
+  ✓ api xss protection                                                   0.01s  
+  ✓ api concurrent requests                                              0.01s  
+  ✓ all category api endpoints                                           0.02s  
+  ✓ sample tool api endpoints                                            0.01s  
+  ✓ api health check
+
+   FAIL  Tests\Feature\CategoryPagesTest
+  ✓ conversions index page loads                                         0.09s  
+  ✓ all categories displayed on index                                    0.01s  
+  ✓ valid category pages load                                            0.03s  
+  ⨯ case conversions category page content                               0.01s  
+  ✓ developer formats category page content                              0.01s  
+  ✓ creative formats category page content                               0.01s  
+  ✓ generators category page content                                     0.01s  
+  ✓ category pages show correct tool counts                              0.04s  
+  ✓ category page breadcrumbs                                            0.01s  
+  ✓ category pages include schema markup                                 0.01s  
+  ✓ category pages have meta descriptions                                0.03s  
+  ✓ high priority categories                                             0.01s  
+  ✓ category pages load with all tools                                   0.03s  
+  ✓ category pages handle special characters                             0.01s  
+  ✓ category pages have required view data                               0.01s  
+
+Tool Accessibility Test Results:
+Total Tools Tested: 172
+Accessible Tools: 172
+Failed Tools: 0
+
+Tool Metadata Validation Results:
+Total Tools: 172
+Valid Tools: 0
+Invalid Tools: 172
+Invalid Tools Details:
+- case-conversions/upper-case: Missing type
+- case-conversions/lower-case: Missing type
+- case-conversions/title-case: Missing type
+- case-conversions/sentence-case: Missing type
+- case-conversions/capitalize-words: Missing type
+- case-conversions/alternating-case: Missing type
+- case-conversions/inverse-case: Missing type
+- developer-formats/camel-case: Missing type
+- developer-formats/pascal-case: Missing type
+- developer-formats/snake-case: Missing type
+
+API Accessibility Test Results:
+Total API Calls: 100
+Successful API Calls: 60
+Failed API Calls: 40
+Failed API Calls Details:
+- social-media-formats/tiktok-caption: Status 429
+- social-media-formats/reddit-post: Status 429
+- social-media-formats/discord-message: Status 429
+- technical-documentation/markdown-format: Status 429
+- technical-documentation/rst-format: Status 429
+
+Tool Distribution by Category:
+- code-data-tools: 16 tools (9.3%)
+- generators: 13 tools (7.6%)
+- developer-formats: 12 tools (7%)
+- utility-transformations: 12 tools (7%)
+- text-effects: 12 tools (7%)
+- creative-formats: 11 tools (6.4%)
+- academic-styles: 9 tools (5.2%)
+- image-converters: 9 tools (5.2%)
+- journalistic-styles: 8 tools (4.7%)
+- business-formats: 8 tools (4.7%)
+- social-media-formats: 8 tools (4.7%)
+- technical-documentation: 8 tools (4.7%)
+- international-formats: 8 tools (4.7%)
+- text-analysis: 8 tools (4.7%)
+- text-cleanup: 8 tools (4.7%)
+- social-media-generators: 8 tools (4.7%)
+- case-conversions: 7 tools (4.1%)
+- miscellaneous: 7 tools (4.1%)
+Total Tools: 172
+Categories: 18
+Average Tools per Category: 9.6
+
+Sample Transformation Test Results:
+Successful Transformations: 2/2
+
+   FAIL  Tests\Feature\ComprehensiveToolValidationTest
+  ⨯ all tools are accessible                                             0.61s  
+  ⨯ all tools have required metadata                                     0.01s  
+  ✓ tool count consistency
+  ⨯ category pages show all tools                                        0.01s  
+  ⨯ all tools api accessible                                             0.92s  
+  ✓ slug consistency                                                     0.01s  
+  ⨯ tool distribution                                                    0.01s  
+  ✓ no duplicate tools                                                   0.01s  
+  ✓ sample tool transformations                                          0.01s  
+
+   FAIL  Tests\Feature\RouteErrorHandlingTest
+  ✓ invalid category returns 404                                         0.05s  
+  ✓ invalid tool returns 404                                             0.01s  
+  ✓ tool in wrong category returns 404                                   0.01s  
+  ⨯ completely invalid urls return 404                                   0.01s  
+  ✓ route model binding category validation                              0.01s  
+  ✓ route model binding tool validation                                  0.01s  
+  ✓ route case sensitivity                                               0.01s  
+  ✓ api invalid category returns 404                                     0.01s  
+  ✓ api invalid tool returns 404                                         0.01s  
+  ✓ route constraints                                                    0.01s  
+  ✓ deep invalid routes                                                  0.01s  
+  ✓ sql injection attempts in routes                                     0.01s  
+  ✓ xss attempts in routes                                               0.01s  
+  ⨯ directory traversal attempts                                         0.01s  
+  ✓ numeric routes                                                       0.01s  
+  ⨯ empty route segments                                                 0.01s  
+  ✓ unicode characters in routes                                         0.01s  
+  ⨯ valid routes still work                                              0.01s  
+  ✓ rate limiting with 404s                                              0.01s  
+  ✓ malformed url encoding                                               0.01s  
+
+   FAIL  Tests\Feature\ToolPagesTest
+  ✓ valid tool pages load                                                0.10s  
+  ⨯ case conversion tool pages                                           0.01s  
+  ⨯ developer format tool pages                                          0.01s  
+  ⨯ tool pages have breadcrumbs                                          0.01s  
+  ✓ tool pages include transformation form                               0.01s  
+  ✓ generator tool pages                                                 0.01s  
+  ✓ utility transformation pages                                         0.01s  
+  ✓ creative format pages                                                0.01s  
+  ✓ tool pages have meta data                                            0.01s  
+  ✓ tool pages show correct metadata                                     0.01s  
+  ✓ hyphenated tool slugs                                                0.01s  
+  ✓ tool pages include category navigation                               0.01s  
+  ✓ international format pages                                           0.01s  
+  ✓ social media pages                                                   0.01s  
+  ✓ code data tool pages                                                 0.01s  
+  ⨯ tool pages json ld schema                                            0.01s  
+  ✓ tool pages load quickly                                              0.01s  
+  ✓ tool pages backward compatibility                                    0.01s  
+  ✓ miscellaneous tool pages                                             0.01s  
+
+   FAIL  Tests\Feature\TransformationFunctionalityTest
+  ✓ case conversion transformations                                      0.07s  
+  ✓ developer format transformations                                     0.01s  
+  ✓ special character handling                                           0.01s  
+  ✓ unicode character handling                                           0.01s  
+  ✓ empty and whitespace handling                                        0.01s  
+  ✓ numeric input handling                                               0.01s  
+  ✓ long text handling                                                   0.01s  
+  ✓ transformation consistency                                           0.01s  
+  ✓ bidirectional transformations                                        0.01s  
+  ✓ invalid transformation handling                                      0.01s  
+  ✓ transformation performance                                           0.01s  
+  ✓ memory usage                                                         0.01s  
+  ✓ concurrent transformations                                           0.01s  
+  ⨯ all registered transformations work                                  0.04s  
+
+   PASS  Tests\Feature\TransformationTest
+  ✓ all transformations are registered                                   0.06s  
+  ✓ uppercase transformation                                             0.01s  
+  ✓ lowercase transformation                                             0.01s  
+  ✓ title case transformation                                            0.01s  
+  ✓ camel case transformation                                            0.01s  
+  ✓ snake case transformation                                            0.01s  
+  ✓ empty string transformation
+  ✓ special characters handling                                          0.01s  
+  ✓ unicode characters handling                                          0.01s  
+  ✓ invalid transformation returns original
+  ✓ api transform endpoint                                               0.01s  
+  ✓ api transform requires text                                          0.01s  
+  ✓ api transform requires transformation                                0.01s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ApiEndpointsTest > api get specific category           
+  Failed asserting that an array has the key 'uppercase'.
+
+  at tests/Feature/ApiEndpointsTest.php:47
+     43▕     {
+     44▕         $response = $this->getJson('/api/conversions/case-conversions');
+     45▕         
+     46▕         $response->assertStatus(200)
+  ➜  47▕                  ->assertJsonStructure([
+     48▕                      'name',
+     49▕                      'description',
+     50▕                      'tools' => [
+     51▕                          'uppercase' => [
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ApiEndpointsTest > api get tool data                   
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests/Feature/ApiEndpointsTest.php:73
+     69▕     public function test_api_get_tool_data(): void
+     70▕     {
+     71▕         $response = $this->getJson('/api/conversions/case-conversions/uppercase');
+     72▕         
+  ➜  73▕         $response->assertStatus(200)
+     74▕                  ->assertJsonStructure([
+     75▕                      'tool' => [
+     76▕                          'name',
+     77▕                          'description'
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\CategoryPagesTest > case conversions category page…    
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" class="light">\n
+  <head>\n
+  ... (879 more lines)
+
+  To contain: UPPERCASE
+
+  at tests/Feature/CategoryPagesTest.php:74
+     70▕         
+     71▕         $response->assertStatus(200)
+     72▕                  ->assertSee('Case Conversions')
+     73▕                  ->assertSee('Traditional text case transformations')
+  ➜  74▕                  ->assertSee('UPPERCASE')
+     75▕                  ->assertSee('lowercase')
+     76▕                  ->assertSee('Title Case');
+     77▕     }
+     78▕
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ComprehensiveToolValidationTest > all tools are acc…   
+  Should have at least 210 tools to test
+Failed asserting that 172 is equal to 210 or is greater than 210.
+
+  at tests/Feature/ComprehensiveToolValidationTest.php:64
+     60▕             }
+     61▕         }
+     62▕         
+     63▕         // Assert that we tested at least 210 tools
+  ➜  64▕         $this->assertGreaterThanOrEqual(210, $totalTools, 'Should have at least 210 tools to test');
+     65▕         
+     66▕         // Assert that at least 95% of tools are accessible
+     67▕         $successRate = $accessibleTools / $totalTools;
+     68▕         $this->assertGreaterThanOrEqual(0.95, $successRate,
+
+  1   tests/Feature/ComprehensiveToolValidationTest.php:64
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ComprehensiveToolValidationTest > all tools have re…   
+  All tools should have valid metadata. Invalid tools: [{"category":"case-conversions","tool":"upper-case","errors":["Missing type"]},{"category":"case-conversions","tool":"lower-case","errors":["Missing type"]},{"category":"case-conversions","tool":"title-case","errors":["Missing type"]},{"category":"case-conversions","tool":"sentence-case","errors":["Missing type"]},{"category":"case-conversions","tool":"capitalize-words","errors":["Missing type"]},{"category":"case-conversions","tool":"alternating-case","errors":["Missing type"]},{"category":"case-conversions","tool":"inverse-case","errors":["Missing type"]},{"category":"developer-formats","tool":"camel-case","errors":["Missing type"]},{"category":"developer-formats","tool":"pascal-case","errors":["Missing type"]},{"category":"developer-formats","tool":"snake-case","errors":["Missing type"]},{"category":"developer-formats","tool":"constant-case","errors":["Missing type"]},{"category":"developer-formats","tool":"kebab-case","errors":["Missing type"]},{"category":"developer-formats","tool":"dot-case","errors":["Missing type"]},{"category":"developer-formats","tool":"path-case","errors":["Missing type"]},{"category":"developer-formats","tool":"sql-case","errors":["Missing type"]},{"category":"developer-formats","tool":"python-case","errors":["Missing type"]},{"category":"developer-formats","tool":"java-case","errors":["Missing type"]},{"category":"developer-formats","tool":"php-case","errors":["Missing type"]},{"category":"developer-formats","tool":"ruby-case","errors":["Missing type"]},{"category":"journalistic-styles","tool":"ap-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"nyt-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"chicago-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"guardian-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"bbc-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"reuters-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"economist-style","errors":["Missing type"]},{"category":"journalistic-styles","tool":"wsj-style","errors":["Missing type"]},{"category":"academic-styles","tool":"apa-style","errors":["Missing type"]},{"category":"academic-styles","tool":"mla-style","errors":["Missing type"]},{"category":"academic-styles","tool":"chicago-author-date","errors":["Missing type"]},{"category":"academic-styles","tool":"chicago-notes","errors":["Missing type"]},{"category":"academic-styles","tool":"harvard-style","errors":["Missing type"]},{"category":"academic-styles","tool":"vancouver-style","errors":["Missing type"]},{"category":"academic-styles","tool":"ieee-style","errors":["Missing type"]},{"category":"academic-styles","tool":"ama-style","errors":["Missing type"]},{"category":"academic-styles","tool":"bluebook-style","errors":["Missing type"]},{"category":"creative-formats","tool":"vertical-text","errors":["Missing type"]},{"category":"creative-formats","tool":"reversed-text","errors":["Missing type"]},{"category":"creative-formats","tool":"mirrored-text","errors":["Missing type"]},{"category":"creative-formats","tool":"upside-down","errors":["Missing type"]},{"category":"creative-formats","tool":"diagonal-text","errors":["Missing type"]},{"category":"creative-formats","tool":"wave-text","errors":["Missing type"]},{"category":"creative-formats","tool":"circle-text","errors":["Missing type"]},{"category":"creative-formats","tool":"zigzag-text","errors":["Missing type"]},{"category":"creative-formats","tool":"pyramid-text","errors":["Missing type"]},{"category":"creative-formats","tool":"spiral-text","errors":["Missing type"]},{"category":"creative-formats","tool":"rainbow-text","errors":["Missing type"]},{"category":"business-formats","tool":"email-format","errors":["Missing type"]},{"category":"business-formats","tool":"business-letter","errors":["Missing type"]},{"category":"business-formats","tool":"memo-format","errors":["Missing type"]},{"category":"business-formats","tool":"invoice-format","errors":["Missing type"]},{"category":"business-formats","tool":"proposal-format","errors":["Missing type"]},{"category":"business-formats","tool":"resume-format","errors":["Missing type"]},{"category":"business-formats","tool":"report-format","errors":["Missing type"]},{"category":"business-formats","tool":"contract-format","errors":["Missing type"]},{"category":"social-media-formats","tool":"twitter-thread","errors":["Missing type"]},{"category":"social-media-formats","tool":"instagram-caption","errors":["Missing type"]},{"category":"social-media-formats","tool":"linkedin-post","errors":["Missing type"]},{"category":"social-media-formats","tool":"facebook-post","errors":["Missing type"]},{"category":"social-media-formats","tool":"youtube-description","errors":["Missing type"]},{"category":"social-media-formats","tool":"tiktok-caption","errors":["Missing type"]},{"category":"social-media-formats","tool":"reddit-post","errors":["Missing type"]},{"category":"social-media-formats","tool":"discord-message","errors":["Missing type"]},{"category":"technical-documentation","tool":"markdown-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"rst-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"api-docs","errors":["Missing type"]},{"category":"technical-documentation","tool":"jsdoc-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"javadoc-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"phpdoc-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"docstring-format","errors":["Missing type"]},{"category":"technical-documentation","tool":"sphinx-format","errors":["Missing type"]},{"category":"international-formats","tool":"british-english","errors":["Missing type"]},{"category":"international-formats","tool":"american-english","errors":["Missing type"]},{"category":"international-formats","tool":"canadian-english","errors":["Missing type"]},{"category":"international-formats","tool":"australian-english","errors":["Missing type"]},{"category":"international-formats","tool":"simplified-chinese","errors":["Missing type"]},{"category":"international-formats","tool":"traditional-chinese","errors":["Missing type"]},{"category":"international-formats","tool":"european-date","errors":["Missing type"]},{"category":"international-formats","tool":"us-date","errors":["Missing type"]},{"category":"utility-transformations","tool":"remove-spaces","errors":["Missing type"]},{"category":"utility-transformations","tool":"trim-text","errors":["Missing type"]},{"category":"utility-transformations","tool":"add-line-numbers","errors":["Missing type"]},{"category":"utility-transformations","tool":"remove-line-numbers","errors":["Missing type"]},{"category":"utility-transformations","tool":"sort-lines","errors":["Missing type"]},{"category":"utility-transformations","tool":"reverse-lines","errors":["Missing type"]},{"category":"utility-transformations","tool":"unique-lines","errors":["Missing type"]},{"category":"utility-transformations","tool":"shuffle-lines","errors":["Missing type"]},{"category":"utility-transformations","tool":"wrap-text","errors":["Missing type"]},{"category":"utility-transformations","tool":"unwrap-text","errors":["Missing type"]},{"category":"utility-transformations","tool":"indent-text","errors":["Missing type"]},{"category":"utility-transformations","tool":"outdent-text","errors":["Missing type"]},{"category":"text-effects","tool":"bold-text","errors":["Missing type"]},{"category":"text-effects","tool":"italic-text","errors":["Missing type"]},{"category":"text-effects","tool":"underline-text","errors":["Missing type"]},{"category":"text-effects","tool":"strike-through","errors":["Missing type"]},{"category":"text-effects","tool":"double-struck","errors":["Missing type"]},{"category":"text-effects","tool":"cursive-text","errors":["Missing type"]},{"category":"text-effects","tool":"small-caps","errors":["Missing type"]},{"category":"text-effects","tool":"superscript","errors":["Missing type"]},{"category":"text-effects","tool":"subscript","errors":["Missing type"]},{"category":"text-effects","tool":"wide-text","errors":["Missing type"]},{"category":"text-effects","tool":"bubble-text","errors":["Missing type"]},{"category":"text-effects","tool":"square-text","errors":["Missing type"]},{"category":"generators","tool":"lorem-ipsum","errors":["Missing type"]},{"category":"generators","tool":"random-text","errors":["Missing type"]},{"category":"generators","tool":"random-password","errors":["Missing type"]},{"category":"generators","tool":"uuid-generator","errors":["Missing type"]},{"category":"generators","tool":"random-name","errors":["Missing type"]},{"category":"generators","tool":"random-email","errors":["Missing type"]},{"category":"generators","tool":"random-date","errors":["Missing type"]},{"category":"generators","tool":"random-color","errors":["Missing type"]},{"category":"generators","tool":"random-number","errors":["Missing type"]},{"category":"generators","tool":"random-ip","errors":["Missing type"]},{"category":"generators","tool":"random-url","errors":["Missing type"]},{"category":"generators","tool":"random-phone","errors":["Missing type"]},{"category":"generators","tool":"random-address","errors":["Missing type"]},{"category":"code-data-tools","tool":"json-format","errors":["Missing type"]},{"category":"code-data-tools","tool":"json-minify","errors":["Missing type"]},{"category":"code-data-tools","tool":"json-escape","errors":["Missing type"]},{"category":"code-data-tools","tool":"json-unescape","errors":["Missing type"]},{"category":"code-data-tools","tool":"xml-format","errors":["Missing type"]},{"category":"code-data-tools","tool":"xml-minify","errors":["Missing type"]},{"category":"code-data-tools","tool":"xml-escape","errors":["Missing type"]},{"category":"code-data-tools","tool":"xml-unescape","errors":["Missing type"]},{"category":"code-data-tools","tool":"html-encode","errors":["Missing type"]},{"category":"code-data-tools","tool":"html-decode","errors":["Missing type"]},{"category":"code-data-tools","tool":"url-encode","errors":["Missing type"]},{"category":"code-data-tools","tool":"url-decode","errors":["Missing type"]},{"category":"code-data-tools","tool":"base64-encode","errors":["Missing type"]},{"category":"code-data-tools","tool":"base64-decode","errors":["Missing type"]},{"category":"code-data-tools","tool":"hex-encode","errors":["Missing type"]},{"category":"code-data-tools","tool":"binary-encode","errors":["Missing type"]},{"category":"image-converters","tool":"text-to-ascii-art","errors":["Missing type"]},{"category":"image-converters","tool":"image-to-base64","errors":["Missing type"]},{"category":"image-converters","tool":"svg-to-base64","errors":["Missing type"]},{"category":"image-converters","tool":"emoji-to-unicode","errors":["Missing type"]},{"category":"image-converters","tool":"unicode-to-emoji","errors":["Missing type"]},{"category":"image-converters","tool":"text-to-qrcode","errors":["Missing type"]},{"category":"image-converters","tool":"text-to-barcode","errors":["Missing type"]},{"category":"image-converters","tool":"color-code-converter","errors":["Missing type"]},{"category":"image-converters","tool":"font-converter","errors":["Missing type"]},{"category":"text-analysis","tool":"word-counter","errors":["Missing type"]},{"category":"text-analysis","tool":"character-counter","errors":["Missing type"]},{"category":"text-analysis","tool":"line-counter","errors":["Missing type"]},{"category":"text-analysis","tool":"reading-time","errors":["Missing type"]},{"category":"text-analysis","tool":"keyword-density","errors":["Missing type"]},{"category":"text-analysis","tool":"sentiment-analysis","errors":["Missing type"]},{"category":"text-analysis","tool":"readability-score","errors":["Missing type"]},{"category":"text-analysis","tool":"language-detector","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-duplicates","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-empty-lines","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-html-tags","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-punctuation","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-numbers","errors":["Missing type"]},{"category":"text-cleanup","tool":"remove-special-chars","errors":["Missing type"]},{"category":"text-cleanup","tool":"normalize-whitespace","errors":["Missing type"]},{"category":"text-cleanup","tool":"fix-encoding","errors":["Missing type"]},{"category":"social-media-generators","tool":"hashtag-generator","errors":["Missing type"]},{"category":"social-media-generators","tool":"twitter-font","errors":["Missing type"]},{"category":"social-media-generators","tool":"instagram-font","errors":["Missing type"]},{"category":"social-media-generators","tool":"emoji-translator","errors":["Missing type"]},{"category":"social-media-generators","tool":"bio-generator","errors":["Missing type"]},{"category":"social-media-generators","tool":"caption-generator","errors":["Missing type"]},{"category":"social-media-generators","tool":"username-generator","errors":["Missing type"]},{"category":"social-media-generators","tool":"handle-checker","errors":["Missing type"]},{"category":"miscellaneous","tool":"morse-code","errors":["Missing type"]},{"category":"miscellaneous","tool":"binary-translator","errors":["Missing type"]},{"category":"miscellaneous","tool":"roman-numerals","errors":["Missing type"]},{"category":"miscellaneous","tool":"nato-phonetic","errors":["Missing type"]},{"category":"miscellaneous","tool":"pig-latin","errors":["Missing type"]},{"category":"miscellaneous","tool":"leetspeak","errors":["Missing type"]},{"category":"miscellaneous","tool":"zalgo-text","errors":["Missing type"]}]
+Failed asserting that 0 matches expected 172.
+
+  at tests/Feature/ComprehensiveToolValidationTest.php:130
+    126▕             }
+    127▕         }
+    128▕         
+    129▕         // Assert that all tools have valid metadata
+  ➜ 130▕         $this->assertEquals($totalTools, $validTools, 
+    131▕             'All tools should have valid metadata. Invalid tools: ' . json_encode($invalidTools)
+    132▕         );
+    133▕     }
+    134▕
+
+  1   tests/Feature/ComprehensiveToolValidationTest.php:130
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ComprehensiveToolValidation…  BadMethodCallException   
+  Method Illuminate\View\View::getContent does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/View/View.php:478
+    474▕             return $this->macroCall($method, $parameters);
+    475▕         }
+    476▕ 
+    477▕         if (! str_starts_with($method, 'with')) {
+  ➜ 478▕             throw new BadMethodCallException(sprintf(
+    479▕                 'Method %s::%s does not exist.', static::class, $method
+    480▕             ));
+    481▕         }
+    482▕
+
+      [2m+1 vendor frames [22m
+  2   tests/Feature/ComprehensiveToolValidationTest.php:190
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ComprehensiveToolValidationTest > all tools api acc…   
+  At least 95% of tool API calls should succeed
+Failed asserting that 0.6 is equal to 0.95 or is greater than 0.95.
+
+  at tests/Feature/ComprehensiveToolValidationTest.php:280
+    276▕         }
+    277▕         
+    278▕         // Assert that at least 95% of API calls succeed
+    279▕         $successRate = $successfulApiCalls / $totalApiCalls;
+  ➜ 280▕         $this->assertGreaterThanOrEqual(0.95, $successRate, 
+    281▕             'At least 95% of tool API calls should succeed'
+    282▕         );
+    283▕     }
+    284▕
+
+  1   tests/Feature/ComprehensiveToolValidationTest.php:280
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ComprehensiveToolValidationTest > tool distribution    
+  Should have at least 210 tools
+Failed asserting that 172 is equal to 210 or is greater than 210.
+
+  at tests/Feature/ComprehensiveToolValidationTest.php:372
+    368▕         echo "Categories: " . count($distribution) . "\n";
+    369▕         echo "Average Tools per Category: " . round($totalTools / count($distribution), 1) . "\n";
+    370▕         
+    371▕         // Verify we have approximately the expected number of tools
+  ➜ 372▕         $this->assertGreaterThanOrEqual(210, $totalTools, 'Should have at least 210 tools');
+    373▕         $this->assertLessThanOrEqual(250, $totalTools, 'Should have no more than 250 tools');
+    374▕     }
+    375▕ 
+    376▕     /**
+
+  1   tests/Feature/ComprehensiveToolValidationTest.php:372
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\RouteErrorHandlingTest > completely invalid urls re…   
+  Failed asserting that an array contains 200.
+
+  at tests/Feature/RouteErrorHandlingTest.php:78
+     74▕         foreach ($invalidUrls as $url) {
+     75▕             $response = $this->get($url);
+     76▕             
+     77▕             // Most should be 404, but some might be other error codes
+  ➜  78▕             $this->assertContains($response->getStatusCode(), [404, 400, 500]);
+     79▕         }
+     80▕     }
+     81▕ 
+     82▕     /**
+
+  1   tests/Feature/RouteErrorHandlingTest.php:78
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\RouteErrorHandlingTest > direc…  BadRequestException   
+  Invalid URI: A URI cannot contain a backslash.
+
+  at vendor/symfony/http-foundation/Request.php:308
+    304▕             throw new BadRequestException('Invalid URI.');
+    305▕         }
+    306▕ 
+    307▕         if (false !== ($i = strpos($uri, '\\')) && $i < strcspn($uri, '?#')) {
+  ➜ 308▕             throw new BadRequestException('Invalid URI: A URI cannot contain a backslash.');
+    309▕         }
+    310▕         if (\strlen($uri) !== strcspn($uri, "\r\n\t")) {
+    311▕             throw new BadRequestException('Invalid URI: A URI cannot contain CR/LF/TAB characters.');
+    312▕         }
+
+      [2m+1 vendor frames [22m
+  2   tests/Feature/RouteErrorHandlingTest.php:241
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\RouteErrorHandlingTest > empty route segments          
+  Expected response status code [404] but received 200.
+Failed asserting that 200 is identical to 404.
+
+  at tests/Feature/RouteErrorHandlingTest.php:272
+    268▕         $response->assertStatus(404);
+    269▕         
+    270▕         // Empty tool
+    271▕         $response = $this->get('/conversions/case-conversions/');
+  ➜ 272▕         $response->assertStatus(404);
+    273▕     }
+    274▕ 
+    275▕     /**
+    276▕      * Test Unicode characters in routes
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\RouteErrorHandlingTest > valid routes still work       
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests/Feature/RouteErrorHandlingTest.php:300
+    296▕     public function test_valid_routes_still_work(): void
+    297▕     {
+    298▕         // Ensure our error handling doesn't break valid routes
+    299▕         $response = $this->get('/conversions/case-conversions/uppercase');
+  ➜ 300▕         $response->assertStatus(200);
+    301▕         
+    302▕         $response = $this->get('/conversions/developer-formats/camel-case');
+    303▕         $response->assertStatus(200);
+    304▕
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ToolPagesTest > case conversion tool pages             
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" class="light">\n
+  <head>\n
+  ... (937 more lines)
+
+  To contain: Convert text
+
+  at tests/Feature/ToolPagesTest.php:60
+     56▕             
+     57▕             $response->assertStatus(200)
+     58▕                      ->assertSee($expectedName)
+     59▕                      ->assertSee('Case Conversions')
+  ➜  60▕                      ->assertSee('Convert text');
+     61▕         }
+     62▕     }
+     63▕ 
+     64▕     /**
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ToolPagesTest > developer format tool pages            
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" class="light">\n
+  <head>\n
+  ... (937 more lines)
+
+  To contain: programming
+
+  at tests/Feature/ToolPagesTest.php:82
+     78▕             $response = $this->get("/conversions/developer-formats/{$toolSlug}");
+     79▕             
+     80▕             $response->assertStatus(200)
+     81▕                      ->assertSee('Developer Formats')
+  ➜  82▕                      ->assertSee('programming', false); // Case insensitive
+     83▕         }
+     84▕     }
+     85▕ 
+     86▕     /**
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ToolPagesTest > tool pages have breadcrumbs            
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" class="light">\n
+  <head>\n
+  ... (937 more lines)
+
+  To contain: UPPERCASE
+
+  at tests/Feature/ToolPagesTest.php:96
+     92▕         
+     93▕         $response->assertStatus(200)
+     94▕                  ->assertSee('All Tools') // Link to conversions index
+     95▕                  ->assertSee('Case Conversions') // Link to category
+  ➜  96▕                  ->assertSee('UPPERCASE'); // Current tool
+     97▕     }
+     98▕ 
+     99▕     /**
+    100▕      * Test tool pages include transformation functionality
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ToolPagesTest > tool pages json ld schema              
+  Expected: <!DOCTYPE html>\n
+  <html lang="en" class="light">\n
+  <head>\n
+  ... (937 more lines)
+
+  To contain: WebPage
+
+  at tests/Feature/ToolPagesTest.php:314
+    310▕         $response->assertStatus(200);
+    311▕         
+    312▕         $content = $response->getContent();
+    313▕         $this->assertStringContainsString('application/ld+json', $content);
+  ➜ 314▕         $this->assertStringContainsString('WebPage', $content);
+    315▕     }
+    316▕ 
+    317▕     /**
+    318▕      * Test tool pages performance and load times
+
+  1   tests/Feature/ToolPagesTest.php:314
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\TransformationFunctionalityTest > all registered tr…   
+  Too many transformations are not working
+Failed asserting that 0.7571428571428571 is greater than 0.8.
+
+  at tests/Feature/TransformationFunctionalityTest.php:380
+    376▕         }
+    377▕         
+    378▕         // At least 80% of transformations should work with basic input
+    379▕         $successRate = $workingCount / count($allTransformations);
+  ➜ 380▕         $this->assertGreaterThan(0.8, $successRate, 'Too many transformations are not working');
+    381▕     }
+    382▕ }
+
+  1   tests/Feature/TransformationFunctionalityTest.php:380
+
+
+  Tests:    17 failed, 105 passed (2420 assertions)
+  Duration: 3.17s
+
