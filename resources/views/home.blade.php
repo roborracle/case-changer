@@ -1,12 +1,12 @@
 <x-layouts.app title="Case Changer Pro - 210+ Text Transformation Tools">
     <!-- Hero Section -->
     <section class="py-8 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
                     Case Changer Pro
                 </h1>
-                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-5xl mx-auto">
                     Transform text instantly with 210+ professional tools. Type or paste your text below and click any button to transform.
                 </p>
             </div>
@@ -15,7 +15,7 @@
 
     <!-- Main Converter Section -->
     <section class="py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Main Text Converter -->
             <div class="backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
                 @livewire('converter')
@@ -42,12 +42,12 @@
 
     <!-- Categories Section -->
     <section class="py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                     Browse by Category
                 </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-5xl mx-auto">
                     Explore our complete collection of 210+ text transformation tools organized by category
                 </p>
             </div>
@@ -106,7 +106,7 @@
 
     <!-- Features Section -->
     <section class="py-16 bg-white dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Why Choose Case Changer Pro?</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
