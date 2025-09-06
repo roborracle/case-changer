@@ -1,0 +1,46 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "task:run": "node scripts/task_watcher.cjs",
+        "task:simulate": "node scripts/dev/simulate_task_complete.cjs"
+    },
+    "devDependencies": {
+        "@axe-core/cli": "^4.10.2",
+        "@lhci/cli": "^0.15.1",
+        "@tailwindcss/forms": "^0.5.8",
+        "@tailwindcss/typography": "^0.5.13",
+        "autoprefixer": "^10.4.19",
+        "axios": "^1.7.2",
+        "laravel-vite-plugin": "^1.0.5",
+        "pa11y": "^9.0.0",
+        "postcss": "^8.4.39",
+        "tailwindcss": "^3.4.7",
+        "vite": "^5.3.4"
+    },
+    "dependencies": {
+        "@hotwired/stimulus": "^3.2.2"
+    },
+    "name": "case-changer",
+    "version": "1.0.0",
+    "description": "A professional text transformation platform with 200+ conversion tools, built with Laravel and Livewire.",
+    "main": "postcss.config.js",
+    "directories": {
+        "doc": "docs",
+        "test": "tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/roborracle/case-changer.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/roborracle/case-changer/issues"
+    },
+    "homepage": "https://github.com/roborracle/case-changer#readme"
+}
